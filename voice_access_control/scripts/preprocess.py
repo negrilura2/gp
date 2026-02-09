@@ -76,7 +76,7 @@ if __name__ == "__main__":
             print(f"   [{i}/{len(wav_list)}] ✔ {wav}")
 
     #波形可视化
-    # test_wav = "data/raw/user01/001.wav"
+    # test_wav = "data/raw/user01/1.wav"
     # y_raw, _ = librosa.load(test_wav, sr=SAMPLE_RATE)
     #
     # y_clean = remove_silence(y_raw)
