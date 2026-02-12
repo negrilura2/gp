@@ -45,3 +45,11 @@ typing_extensions==4.15.0
 urllib3==2.6.2
 zipp==3.23.0
 
+# ---- Django & REST ----
+django==4.2.28
+djangorestframework==3.15.2
+django-cors-headers==4.7.0
+
+# ---- 工具 ----
+python-dotenv==1.1.0
+python_speech_features==0.6
