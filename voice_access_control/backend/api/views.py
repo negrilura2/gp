@@ -15,6 +15,9 @@ import os
 import sys
 import time
 import logging
+import librosa
+import soundfile as sf
+import numpy as np
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -23,7 +26,8 @@ from rest_framework.authtoken.models import Token
 
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
-from django.db.models import Count, Avg
+from django.http import FileResponse
+from django.db.models import Count, Avg, Q
 from django.db.models.functions import TruncDate
 
 from .models import VoiceTemplate, VerifyLog, EnrollLog
@@ -63,6 +67,31 @@ def validate_audio_file(f):
         raise ValueError(f"文件过大: {f.size / 1024 / 1024:.1f}MB，限制: {MAX_UPLOAD_SIZE / 1024 / 1024:.0f}MB")
     if f.size == 0:
         raise ValueError("文件为空")
+
+
+def preprocess_audio(path):
+    ext = os.path.splitext(path)[1].lower()
+    try:
+        if ext == '.wav':
+            y, sr = sf.read(path)
+        else:
+            y, sr = librosa.load(path, sr=None, mono=True)
+    except Exception:
+        y, sr = librosa.load(path, sr=None, mono=True)
+    if y.ndim > 1:
+        y = y.mean(axis=1)
+    if len(y) == 0:
+        raise ValueError("录音为空")
+    if sr != 16000:
+        y = librosa.resample(y, orig_sr=sr, target_sr=16000)
+        sr = 16000
+    out_path = path
+    if ext != '.wav':
+        out_path = os.path.splitext(path)[0] + '.wav'
+    sf.write(out_path, y, sr)
+    if out_path != path:
+        os.remove(path)
+    return out_path
 
 
 # =========================================================
@@ -140,6 +169,11 @@ class EnrollView(APIView):
         except ValueError as e:
             return Response({"error": str(e)}, status=400)
 
+        if user_id != request.user.username and not request.user.is_staff:
+            return Response({"error": "仅管理员可为其他用户注册声纹"}, status=403)
+
+        target_user, _ = User.objects.get_or_create(username=user_id)
+
         # 保存文件到磁盘
         saved_paths = []
         user_dir = os.path.join(ROOT, 'data', 'enroll', user_id)
@@ -151,6 +185,10 @@ class EnrollView(APIView):
             with open(path, 'wb') as out:
                 for chunk in f.chunks():
                     out.write(chunk)
+            try:
+                path = preprocess_audio(path)
+            except Exception as e:
+                return Response({"error": str(e)}, status=400)
             saved_paths.append(path)
 
         # 调用模型进行注册
@@ -159,7 +197,7 @@ class EnrollView(APIView):
 
             # 更新 VoiceTemplate 记录
             vt, created = VoiceTemplate.objects.update_or_create(
-                user=request.user,
+                user=target_user,
                 defaults={
                     'template_path': os.path.join(ROOT, 'data', 'voiceprints', 'user_templates.npy'),
                     'embedding_count': len(saved_paths),
@@ -168,8 +206,8 @@ class EnrollView(APIView):
 
             # 记录日志
             EnrollLog.objects.create(
-                user=request.user,
-                username=user_id,
+                user=target_user,
+                username=target_user.username,
                 wav_count=len(saved_paths),
                 client_ip=client_ip,
                 success=True,
@@ -178,8 +216,8 @@ class EnrollView(APIView):
             logger.info(f"声纹注册成功: {user_id}, {len(saved_paths)} 条音频")
         except Exception as e:
             EnrollLog.objects.create(
-                user=request.user,
-                username=user_id,
+                user=target_user,
+                username=target_user.username,
                 wav_count=len(saved_paths),
                 client_ip=client_ip,
                 success=False,
@@ -228,6 +266,10 @@ class VerifyView(APIView):
         with open(path, 'wb') as out:
             for chunk in f.chunks():
                 out.write(chunk)
+        try:
+            path = preprocess_audio(path)
+        except Exception as e:
+            return Response({"error": str(e)}, status=400)
 
         # 使用模型单例进行验证
         try:
@@ -247,6 +289,7 @@ class VerifyView(APIView):
 
         # 记录日志
         VerifyLog.objects.create(
+            request_user=request.user if request.user.is_authenticated else None,
             wav_path=path,
             predicted_user=str(best_spk),
             score=float(best_score),
@@ -290,6 +333,15 @@ class VerifyLogListView(generics.ListAPIView):
         return qs
 
 
+class MyVerifyLogListView(generics.ListAPIView):
+    """用户查看自己的验证日志"""
+    serializer_class = VerifyLogSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return VerifyLog.objects.filter(request_user=self.request.user)
+
+
 class EnrollLogListView(generics.ListAPIView):
     """管理员查看注册日志列表"""
     serializer_class = EnrollLogSerializer
@@ -311,6 +363,31 @@ class UserDeleteView(generics.DestroyAPIView):
     queryset = User.objects.all()
 
 
+class VoiceTemplateListView(generics.ListAPIView):
+    serializer_class = VoiceTemplateSerializer
+    permission_classes = [IsAdminUser]
+    queryset = VoiceTemplate.objects.select_related('user').all()
+
+
+class VoiceTemplateDeleteView(generics.DestroyAPIView):
+    serializer_class = VoiceTemplateSerializer
+    permission_classes = [IsAdminUser]
+    queryset = VoiceTemplate.objects.select_related('user').all()
+
+    def perform_destroy(self, instance):
+        template_path = instance.template_path or os.path.join(ROOT, 'data', 'voiceprints', 'user_templates.npy')
+        if os.path.exists(template_path):
+            try:
+                templates = np.load(template_path, allow_pickle=True).item()
+                username = instance.user.username
+                if username in templates:
+                    templates.pop(username, None)
+                    np.save(template_path, templates)
+            except Exception as e:
+                logger.error(f"删除模板文件失败: {e}")
+        instance.delete()
+
+
 class StatsView(APIView):
     """统计数据 — 供 ECharts 前端使用"""
     permission_classes = [IsAdminUser]
@@ -321,17 +398,28 @@ class StatsView(APIView):
             VerifyLog.objects
             .annotate(date=TruncDate('timestamp'))
             .values('date')
-            .annotate(total=Count('id'), avg_score=Avg('score'))
+            .annotate(
+                total=Count('id'),
+                avg_score=Avg('score'),
+                accept=Count('id', filter=Q(result='ACCEPT')),
+                reject=Count('id', filter=Q(result='REJECT')),
+            )
             .order_by('date')
         )
-        daily_data = [
-            {
+        daily_data = []
+        for d in daily:
+            total = d['total'] or 0
+            accept = d['accept'] or 0
+            reject = d['reject'] or 0
+            rate = round(accept / total, 4) if total else 0
+            daily_data.append({
                 "date": str(d['date']),
-                "total": d['total'],
+                "total": total,
                 "avg_score": round(d['avg_score'], 4) if d['avg_score'] else 0,
-            }
-            for d in daily
-        ]
+                "accept": accept,
+                "reject": reject,
+                "success_rate": rate,
+            })
 
         # 结果分布
         accept_count = VerifyLog.objects.filter(result='ACCEPT').count()
@@ -352,6 +440,17 @@ class StatsView(APIView):
                 "enrolled": enrolled_users,
             },
         })
+
+
+class RocImageView(APIView):
+    """获取 ROC 图像"""
+    permission_classes = [IsAdminUser]
+
+    def get(self, request):
+        roc_path = os.path.join(ROOT, 'reports', 'roc.png')
+        if not os.path.exists(roc_path):
+            return Response({"error": "ROC 图不存在"}, status=404)
+        return FileResponse(open(roc_path, 'rb'), content_type='image/png')
 
 
 class CurrentUserView(APIView):

@@ -37,6 +37,7 @@ class EnrollLog(models.Model):
 class VerifyLog(models.Model):
     """验证日志"""
     timestamp = models.DateTimeField(auto_now_add=True)
+    request_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='verify_logs')
     wav_path = models.CharField(max_length=512, null=True, blank=True)
     predicted_user = models.CharField(max_length=128)
     score = models.FloatField()

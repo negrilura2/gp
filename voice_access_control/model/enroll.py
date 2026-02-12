@@ -13,6 +13,7 @@ import torch
 from .ecapa_tdnn import LightECAPA
 # use python_speech_features + soundfile for MFCC extraction
 import soundfile as sf
+import librosa
 from python_speech_features import mfcc, delta
 
 # configurable
@@ -27,7 +28,8 @@ def wav_to_feat_tensor(wav_path):
     if y.ndim > 1:
         y = y.mean(axis=1)
     if sr != SAMPLE_RATE:
-        raise RuntimeError(f"采样率不是 {SAMPLE_RATE} Hz: {wav_path}")
+        y = librosa.resample(y, orig_sr=sr, target_sr=SAMPLE_RATE)
+        sr = SAMPLE_RATE
     m = mfcc(y, samplerate=sr, numcep=N_MFCC, winlen=0.025, winstep=0.01, nfft=512)
     d1 = delta(m, 2)
     d2 = delta(d1, 2)
