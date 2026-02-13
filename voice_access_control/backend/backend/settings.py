@@ -129,6 +129,11 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
+# ---------- Voice Access Config ----------
+# 统一声纹验证默认阈值，前后端可通过环境变量 VOICE_VERIFY_THRESHOLD 调整
+VOICE_VERIFY_THRESHOLD = float(os.getenv('VOICE_VERIFY_THRESHOLD', '0.70'))
+
+
 # ---------- Django REST Framework ----------
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [

@@ -3,27 +3,35 @@
     "status": 200,
     "body": "{\"status\":\"enrolled\",\"user\":\"api_user\",\"wav_count\":1}"
   },
-  "verify": {
+  "verify_same_raw": {
     "status": 200,
     "body": "{\"predicted_user\":\"api_user\",\"score\":1.0,\"result\":\"ACCEPT\",\"door_state\":\"OPEN\",\"user_info\":{\"id\":1,\"username\":\"api_user\",\"email\":\"\",\"is_staff\":true},\"threshold\":0.7}"
   },
+  "verify_processed": {
+    "status": 200,
+    "body": "{\"predicted_user\":\"api_user\",\"score\":0.8512164354324341,\"result\":\"ACCEPT\",\"door_state\":\"OPEN\",\"user_info\":{\"id\":1,\"username\":\"api_user\",\"email\":\"\",\"is_staff\":true},\"threshold\":0.7}"
+  },
+  "verify_impostor": {
+    "status": 200,
+    "body": "{\"predicted_user\":\"api_user\",\"score\":0.023371972143650055,\"result\":\"REJECT\",\"door_state\":\"CLOSED\",\"user_info\":null,\"threshold\":0.7}"
+  },
   "stats": {
     "status": 200,
-    "body": "{\"daily\":[{\"date\":\"2026-02-13\",\"total\":1,\"avg_score\":1.0,\"accept_rate\":1.0}],\"result_distribution\":{\"ACCEPT\":1,\"REJECT\":0,\"ACCEPT_RATE\":1.0},\"users\":{\"total\":1,\"enrolled\":1}}"
+    "body": "{\"daily\":[{\"date\":\"2026-02-13\",\"total\":7,\"avg_score\":0.8022,\"accept_rate\":0.5714},{\"date\":\"2026-02-14\",\"total\":15,\"avg_score\":0.6249,\"accept_rate\":0.6667}],\"result_distribution\":{\"ACCEPT\":14,\"REJECT\":8,\"ACCEPT_RATE\":0.6364},\"users\":{\"total\":1,\"enrolled\":1},\"window_summary\":{\"last_7_days\":{\"total\":22,\"accept_rate\":0.6364},\"last_30_days\":{\"total\":22,\"accept_rate\":0.6364}},\"score_stats\":{\"max\":1.0000001192092896,\"min\":0.023371972143650055,\"avg\":0.6812916022132743,\"median\":0.8512164354324341}}"
   },
   "dashboard": {
     "status": 200,
-    "body": "{\"summary\":{\"users_total\":1,\"users_admin\":1,\"users_enrolled\":1,\"verify_total\":1,\"verify_accept\":1,\"verify_reject\":0,\"verify_accept_rate\":1.0,\"enroll_total\":1,\"enroll_success\":1,\"enroll_success_rate\":1.0},\"data_assets\":{\"raw_wav\":1,\"processed_wav\":1,\"feature_files\":1,\"voiceprints\":1,\"recordings\":2},\"trend\":{\"verify_daily\":[{\"date\":\"2026-02-13\",\"total\":1}],\"enroll_daily\":[{\"date\":\"2026-02-13\",\"total\":1}]},\"model\":{\"count\":1,\"latest_name\":\"ecapa_best.pth\",\"latest_mtime\":\"2026-02-13T13:32:19.610868\"}}"
+    "body": "{\"summary\":{\"users_total\":1,\"users_admin\":1,\"users_enrolled\":1,\"verify_total\":22,\"verify_accept\":14,\"verify_reject\":8,\"verify_accept_rate\":0.6364,\"enroll_total\":9,\"enroll_success\":9,\"enroll_success_rate\":1.0,\"threshold_default\":0.7},\"data_assets\":{\"raw_wav\":1210,\"processed_wav\":310,\"feature_files\":310,\"voiceprints\":1,\"recordings\":17},\"trend\":{\"verify_daily\":[{\"date\":\"2026-02-13\",\"total\":7},{\"date\":\"2026-02-14\",\"total\":15}],\"enroll_daily\":[{\"date\":\"2026-02-13\",\"total\":4},{\"date\":\"2026-02-14\",\"total\":5}]},\"model\":{\"count\":1,\"latest_name\":\"ecapa_best.pth\",\"latest_mtime\":\"2026-02-13T13:32:19.610868\"}}"
   },
   "latest_verify_log": {
-    "id": 1,
+    "id": 22,
     "predicted_user": "api_user",
-    "result": "ACCEPT",
-    "door_state": "OPEN",
-    "score": 1.0
+    "result": "REJECT",
+    "door_state": "CLOSED",
+    "score": 0.023371972143650055
   },
   "latest_enroll_log": {
-    "id": 1,
+    "id": 9,
     "username": "api_user",
     "wav_count": 1,
     "success": true

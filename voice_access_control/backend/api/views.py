@@ -15,7 +15,8 @@ import os
 import sys
 import time
 import logging
-from datetime import datetime
+import json
+from datetime import datetime, timedelta
 import soundfile as sf
 
 from rest_framework.views import APIView
@@ -27,8 +28,9 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from django.conf import settings
 from django.db import models
-from django.db.models import Count, Avg
+from django.db.models import Count, Avg, Max, Min
 from django.db.models.functions import TruncDate
+from django.utils import timezone
 
 from .models import VoiceTemplate, VerifyLog, EnrollLog
 from .serializers import (
@@ -254,10 +256,14 @@ class VerifyView(APIView):
         """
         form-data:
         - file: wav 文件
-        - threshold (可选，默认 0.75)
+        - threshold (可选，默认 settings.VOICE_VERIFY_THRESHOLD)
         """
         try:
-            thr = float(request.data.get('threshold', 0.75))
+            thr_raw = request.data.get('threshold', None)
+            if thr_raw is None or thr_raw == "":
+                thr = settings.VOICE_VERIFY_THRESHOLD
+            else:
+                thr = float(thr_raw)
         except (TypeError, ValueError):
             return Response({"error": "threshold 必须是数字"}, status=400)
         if not (0 < thr < 1):
@@ -293,9 +299,31 @@ class VerifyView(APIView):
             )
         except FileNotFoundError as e:
             logger.warning(f"验证失败 — 模板不存在: {e}")
+            VerifyLog.objects.create(
+                user=request.user if request.user.is_authenticated else None,
+                wav_path=path,
+                predicted_user="UNKNOWN",
+                score=0.0,
+                result="ERROR",
+                door_state="CLOSED",
+                threshold=thr,
+                client_ip=client_ip,
+                error_msg=str(e),
+            )
             return Response({"error": f"尚未注册任何声纹: {e}"}, status=404)
         except Exception as e:
             logger.error(f"验证异常: {e}")
+            VerifyLog.objects.create(
+                user=request.user if request.user.is_authenticated else None,
+                wav_path=path,
+                predicted_user="UNKNOWN",
+                score=0.0,
+                result="ERROR",
+                door_state="CLOSED",
+                threshold=thr,
+                client_ip=client_ip,
+                error_msg=str(e),
+            )
             return Response({"error": str(e)}, status=500)
 
         door_state = "OPEN" if result == "ACCEPT" else "CLOSED"
@@ -311,6 +339,7 @@ class VerifyView(APIView):
 
         # 记录日志
         VerifyLog.objects.create(
+            user=request.user if request.user.is_authenticated else None,
             wav_path=path,
             predicted_user=str(best_spk),
             score=float(best_score),
@@ -318,6 +347,7 @@ class VerifyView(APIView):
             door_state=door_state,
             threshold=thr,
             client_ip=client_ip,
+            error_msg="",
         )
 
         logger.info(f"声纹验证: {best_spk} score={best_score:.4f} => {result}")
@@ -366,9 +396,44 @@ class VerifyLogListView(generics.ListAPIView):
         result = self.request.query_params.get('result')
         if result:
             qs = qs.filter(result=result.upper())
-        user = self.request.query_params.get('user')
-        if user:
-            qs = qs.filter(predicted_user__icontains=user)
+        # 按模型预测用户名筛选（predicted / user 参数，user 作为兼容别名）
+        predicted = self.request.query_params.get('predicted')
+        user_param = self.request.query_params.get('user')
+        name = predicted or user_param
+        if name:
+            qs = qs.filter(predicted_user__icontains=name)
+
+        # 按请求发起人用户名筛选（actor 参数）
+        actor = self.request.query_params.get('actor')
+        if actor:
+            qs = qs.filter(user__username__icontains=actor)
+
+        start_date = self.request.query_params.get('start_date')
+        end_date = self.request.query_params.get('end_date')
+        if start_date:
+            qs = qs.filter(timestamp__date__gte=start_date)
+        if end_date:
+            qs = qs.filter(timestamp__date__lte=end_date)
+
+        def _to_float(param):
+            try:
+                return float(param)
+            except (TypeError, ValueError):
+                return None
+
+        min_score = _to_float(self.request.query_params.get('min_score'))
+        max_score = _to_float(self.request.query_params.get('max_score'))
+        if min_score is not None:
+            qs = qs.filter(score__gte=min_score)
+        if max_score is not None:
+            qs = qs.filter(score__lte=max_score)
+
+        min_thr = _to_float(self.request.query_params.get('min_threshold'))
+        max_thr = _to_float(self.request.query_params.get('max_threshold'))
+        if min_thr is not None:
+            qs = qs.filter(threshold__gte=min_thr)
+        if max_thr is not None:
+            qs = qs.filter(threshold__lte=max_thr)
         return qs
 
 
@@ -398,6 +463,8 @@ class StatsView(APIView):
     permission_classes = [IsAdminUser]
 
     def get(self, request):
+        mode = request.query_params.get('mode', '').lower()
+
         # 按天统计验证次数
         daily = (
             VerifyLog.objects
@@ -427,9 +494,72 @@ class StatsView(APIView):
         total_count = accept_count + reject_count
         accept_rate = round(accept_count / total_count, 4) if total_count else 0
 
+        # 时间窗口汇总
+        now = timezone.now()
+        last_7_qs = VerifyLog.objects.filter(timestamp__gte=now - timedelta(days=7))
+        last_30_qs = VerifyLog.objects.filter(timestamp__gte=now - timedelta(days=30))
+
+        def _window_summary(qs):
+            total = qs.count()
+            if total == 0:
+                return {"total": 0, "accept_rate": 0}
+            acc = qs.filter(result='ACCEPT').count()
+            return {
+                "total": total,
+                "accept_rate": round(acc / total, 4),
+            }
+
+        window_summary = {
+            "last_7_days": _window_summary(last_7_qs),
+            "last_30_days": _window_summary(last_30_qs),
+        }
+
+        # 分数统计
+        score_stats = {"max": 0, "min": 0, "avg": 0, "median": 0}
+        all_qs = VerifyLog.objects.all()
+        if all_qs.exists():
+            agg = all_qs.aggregate(
+                max_score=Max('score'),
+                min_score=Min('score'),
+                avg_score=Avg('score'),
+            )
+            scores = list(all_qs.order_by('score').values_list('score', flat=True))
+            n = len(scores)
+            if n > 0:
+                if n % 2 == 1:
+                    median = float(scores[n // 2])
+                else:
+                    median = float((scores[n // 2 - 1] + scores[n // 2]) / 2.0)
+                score_stats = {
+                    "max": float(agg["max_score"]) if agg["max_score"] is not None else 0,
+                    "min": float(agg["min_score"]) if agg["min_score"] is not None else 0,
+                    "avg": float(agg["avg_score"]) if agg["avg_score"] is not None else 0,
+                    "median": median,
+                }
+
         # 用户数
         total_users = User.objects.count()
         enrolled_users = VoiceTemplate.objects.values('user').distinct().count()
+
+        if mode == "echarts":
+            x_axis = [d["date"] for d in daily_data]
+            return Response({
+                "xAxis": x_axis,
+                "series": {
+                    "verify_total": [d["total"] for d in daily_data],
+                    "accept_rate": [d["accept_rate"] for d in daily_data],
+                },
+                "pie": [
+                    {"name": "ACCEPT", "value": accept_count},
+                    {"name": "REJECT", "value": reject_count},
+                ],
+                "users": {
+                    "total": total_users,
+                    "enrolled": enrolled_users,
+                },
+                "window_summary": window_summary,
+                "score_stats": score_stats,
+            })
 
         return Response({
             "daily": daily_data,
@@ -442,6 +572,8 @@ class StatsView(APIView):
                 "total": total_users,
                 "enrolled": enrolled_users,
             },
+            "window_summary": window_summary,
+            "score_stats": score_stats,
         })
 
 
@@ -491,6 +623,7 @@ class DashboardView(APIView):
                 "enroll_total": enroll_total,
                 "enroll_success": enroll_success,
                 "enroll_success_rate": enroll_rate,
+                "threshold_default": settings.VOICE_VERIFY_THRESHOLD,
             },
             "data_assets": {
                 "raw_wav": count_files(os.fspath(settings.RAW_DIR), {'.wav'}),
@@ -524,4 +657,42 @@ class CurrentUserView(APIView):
             "is_staff": user.is_staff,
             "has_voiceprint": has_voiceprint,
             "date_joined": user.date_joined.isoformat(),
+        })
+
+
+class RocView(APIView):
+    """离线 ROC / EER 结果 — 供前端可视化"""
+    permission_classes = [IsAdminUser]
+
+    def get(self, request):
+        reports_dir = os.fspath(settings.REPORTS_DIR)
+        eer_path = os.path.join(reports_dir, "eer_threshold.json")
+        roc_points_path = os.path.join(reports_dir, "roc_points.json")
+
+        if not os.path.exists(eer_path):
+            return Response({"error": "eer_threshold.json not found, 请先运行阈值评估脚本"}, status=404)
+
+        with open(eer_path, "r", encoding="utf-8") as f:
+            metrics = json.load(f)
+
+        roc_data = None
+        if os.path.exists(roc_points_path):
+            with open(roc_points_path, "r", encoding="utf-8") as f:
+                roc_data = json.load(f)
+
+        thr_eer = metrics.get("threshold")
+        thr_default = getattr(settings, "VOICE_VERIFY_THRESHOLD", None)
+        threshold_diff = None
+        if thr_eer is not None and thr_default is not None:
+            threshold_diff = float(thr_default) - float(thr_eer)
+
+        return Response({
+            "auc": metrics.get("auc"),
+            "eer": metrics.get("eer"),
+            "threshold": thr_eer,
+            "threshold_default": thr_default,
+            "threshold_diff": threshold_diff,
+            "fpr": roc_data.get("fpr") if roc_data else None,
+            "tpr": roc_data.get("tpr") if roc_data else None,
+            "thresholds": roc_data.get("thresholds") if roc_data else None,
         })

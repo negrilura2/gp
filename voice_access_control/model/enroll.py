@@ -9,9 +9,10 @@ average them and save/update data/voiceprints/user_templates.npy
 import os
 import numpy as np
 import torch
+import soundfile as sf
+import librosa
 
 from .ecapa_tdnn import LightECAPA
-import soundfile as sf
 from python_speech_features import mfcc, delta
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
@@ -21,17 +22,37 @@ SAMPLE_RATE = 16000
 N_MFCC = 13
 
 
-def wav_to_feat_tensor(wav_path):
-    y, sr = sf.read(wav_path)
+def pre_emphasis(y, coeff=0.97):
+    return np.append(y[0], y[1:] - coeff * y[:-1])
+
+
+def normalize(y):
+    max_val = np.max(np.abs(y))
+    if max_val < 1e-6:
+        return y
+    return y / max_val
+
+
+def preprocess_wave(y, sr):
     if y.ndim > 1:
         y = y.mean(axis=1)
     if sr != SAMPLE_RATE:
-        raise RuntimeError(f"采样率不是 {SAMPLE_RATE} Hz: {wav_path}")
+        y = librosa.resample(y, orig_sr=sr, target_sr=SAMPLE_RATE)
+        sr = SAMPLE_RATE
+    y = pre_emphasis(y)
+    y = normalize(y)
+    return y, sr
+
+
+def wav_to_feat_tensor(wav_path):
+    y, sr = sf.read(wav_path)
+    if len(y) == 0:
+        raise RuntimeError(f"音频文件为空: {wav_path}")
+    y, sr = preprocess_wave(y, sr)
     m = mfcc(y, samplerate=sr, numcep=N_MFCC, winlen=0.025, winstep=0.01, nfft=512)
     d1 = delta(m, 2)
     d2 = delta(d1, 2)
-    feat = np.hstack([m, d1, d2])  # (T,39)
-    # return torch tensor shape (1, C, T)
+    feat = np.hstack([m, d1, d2])
     return torch.from_numpy(feat.T).unsqueeze(0).float()
 
 

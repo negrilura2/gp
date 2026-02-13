@@ -5,6 +5,7 @@ from .views import (
     VerifyLogListView, EnrollLogListView,
     UserListView, UserDeleteView,
     StatsView, DashboardView, CurrentUserView, VoiceprintStatusView,
+    RocView,
 )
 
 urlpatterns = [
@@ -25,4 +26,5 @@ urlpatterns = [
     path('stats/', StatsView.as_view(), name='stats'),
     path('dashboard/', DashboardView.as_view(), name='dashboard'),
     path('voiceprint-status/', VoiceprintStatusView.as_view(), name='voiceprint-status'),
+    path('roc/', RocView.as_view(), name='roc'),
 ]

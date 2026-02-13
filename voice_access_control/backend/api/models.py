@@ -35,8 +35,9 @@ class EnrollLog(models.Model):
 
 
 class VerifyLog(models.Model):
-    """验证日志"""
+    """验证日志：user=请求发起人，predicted_user=模型预测用户名"""
     timestamp = models.DateTimeField(auto_now_add=True)
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='verify_logs')
     wav_path = models.CharField(max_length=512, null=True, blank=True)
     predicted_user = models.CharField(max_length=128)
     score = models.FloatField()
@@ -44,6 +45,7 @@ class VerifyLog(models.Model):
     door_state = models.CharField(max_length=16, default='CLOSED')
     threshold = models.FloatField(default=0.75)
     client_ip = models.GenericIPAddressField(null=True, blank=True)
+    error_msg = models.TextField(blank=True, default='')
 
     class Meta:
         ordering = ['-timestamp']

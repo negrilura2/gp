@@ -8,3 +8,94 @@
 [2026-02-13 16:53:08,774] INFO api 声纹验证: api_user score=1.0000 => ACCEPT
 [2026-02-13 16:58:56,997] INFO api 声纹注册成功: api_user, 1 条音频
 [2026-02-13 16:58:57,052] INFO api 声纹验证: api_user score=1.0000 => ACCEPT
+[2026-02-13 18:10:44,443] INFO api 声纹注册成功: api_user, 1 条音频
+[2026-02-13 18:10:44,533] INFO api 声纹验证: api_user score=1.0000 => ACCEPT
+[2026-02-13 18:10:44,590] INFO api 声纹验证: api_user score=0.4022 => REJECT
+[2026-02-13 18:31:43,142] INFO api 用户注册: api_user
+[2026-02-13 18:31:43,443] INFO api 用户登录: api_user
+[2026-02-13 18:31:43,505] INFO api 声纹注册成功: api_user, 1 条音频
+[2026-02-13 18:31:43,567] INFO api 声纹验证: api_user score=1.0000 => ACCEPT
+[2026-02-13 18:32:02,256] INFO api 声纹注册成功: api_user, 1 条音频
+[2026-02-13 18:32:02,340] INFO api 声纹验证: api_user score=1.0000 => ACCEPT
+[2026-02-13 18:32:02,399] INFO api 声纹验证: api_user score=0.6067 => REJECT
+[2026-02-13 18:42:43,702] INFO api 用户注册: api_user
+[2026-02-13 18:42:43,994] INFO api 用户登录: api_user
+[2026-02-13 18:42:44,050] INFO api 声纹注册成功: api_user, 1 条音频
+[2026-02-13 18:42:44,102] INFO api 声纹验证: api_user score=1.0000 => ACCEPT
+[2026-02-13 18:42:59,755] INFO api 声纹注册成功: api_user, 1 条音频
+[2026-02-13 18:42:59,839] INFO api 声纹验证: api_user score=1.0000 => ACCEPT
+[2026-02-13 18:42:59,896] INFO api 声纹验证: api_user score=0.6067 => REJECT
+[2026-02-14 00:11:44,438] INFO api 声纹注册成功: api_user, 1 条音频
+[2026-02-14 00:11:44,529] INFO api 声纹验证: api_user score=1.0000 => ACCEPT
+[2026-02-14 00:11:44,599] INFO api 声纹验证: api_user score=0.8512 => ACCEPT
+[2026-02-14 00:11:44,683] INFO api 声纹验证: api_user score=0.0234 => REJECT
+[2026-02-14 00:40:34,172] INFO api 用户注册: api_user
+[2026-02-14 00:40:34,471] INFO api 用户登录: api_user
+[2026-02-14 00:40:34,532] INFO api 声纹注册成功: api_user, 1 条音频
+[2026-02-14 00:40:34,590] INFO api 声纹验证: api_user score=1.0000 => ACCEPT
+[2026-02-14 00:40:48,159] INFO api 声纹注册成功: api_user, 1 条音频
+[2026-02-14 00:40:48,243] INFO api 声纹验证: api_user score=1.0000 => ACCEPT
+[2026-02-14 00:40:48,307] INFO api 声纹验证: api_user score=0.8512 => ACCEPT
+[2026-02-14 00:40:48,378] INFO api 声纹验证: api_user score=0.0234 => REJECT
+[2026-02-14 01:01:39,080] INFO api 用户注册: api_user
+[2026-02-14 01:01:39,371] INFO api 用户登录: api_user
+[2026-02-14 01:01:39,426] INFO api 声纹注册成功: api_user, 1 条音频
+[2026-02-14 01:01:39,476] INFO api 声纹验证: api_user score=1.0000 => ACCEPT
+[2026-02-14 01:01:39,566] ERROR django.request Internal Server Error: /api/stats/
+Traceback (most recent call last):
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\views\decorators\csrf.py", line 56, in wrapper_view
+    return view_func(*args, **kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\views\generic\base.py", line 105, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "D:\traepg\gp\voice_access_control\backend\api\views.py", line 489, in get
+    now = timezone.now()
+NameError: name 'timezone' is not defined
+[2026-02-14 01:01:54,109] INFO api 声纹注册成功: api_user, 1 条音频
+[2026-02-14 01:01:54,200] INFO api 声纹验证: api_user score=1.0000 => ACCEPT
+[2026-02-14 01:01:54,265] INFO api 声纹验证: api_user score=0.8512 => ACCEPT
+[2026-02-14 01:01:54,342] INFO api 声纹验证: api_user score=0.0234 => REJECT
+[2026-02-14 01:01:54,472] ERROR django.request Internal Server Error: /api/stats/
+Traceback (most recent call last):
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\views\decorators\csrf.py", line 56, in wrapper_view
+    return view_func(*args, **kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\views\generic\base.py", line 105, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "D:\traepg\gp\voice_access_control\backend\api\views.py", line 489, in get
+    now = timezone.now()
+NameError: name 'timezone' is not defined
+[2026-02-14 01:03:23,477] INFO api 声纹注册成功: api_user, 1 条音频
+[2026-02-14 01:03:23,564] INFO api 声纹验证: api_user score=1.0000 => ACCEPT
+[2026-02-14 01:03:23,628] INFO api 声纹验证: api_user score=0.8512 => ACCEPT
+[2026-02-14 01:03:23,701] INFO api 声纹验证: api_user score=0.0234 => REJECT
+[2026-02-14 01:12:45,182] INFO api 声纹注册成功: api_user, 1 条音频
+[2026-02-14 01:12:45,273] INFO api 声纹验证: api_user score=1.0000 => ACCEPT
+[2026-02-14 01:12:45,341] INFO api 声纹验证: api_user score=0.8512 => ACCEPT
+[2026-02-14 01:12:45,415] INFO api 声纹验证: api_user score=0.0234 => REJECT
+[2026-02-14 01:35:59,723] INFO api 用户注册: api_user
+[2026-02-14 01:36:00,032] INFO api 用户登录: api_user
+[2026-02-14 01:36:00,207] INFO api 声纹注册成功: api_user, 1 条音频
+[2026-02-14 01:36:00,280] INFO api 声纹验证: api_user score=1.0000 => ACCEPT

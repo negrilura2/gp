@@ -12,6 +12,7 @@ from .ecapa_tdnn import LightECAPA
 from .infer import cosine_score
 import soundfile as sf
 from python_speech_features import mfcc, delta
+from .enroll import SAMPLE_RATE, N_MFCC, pre_emphasis, normalize, preprocess_wave
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 TEMPLATE_PATH = os.path.join(ROOT, "data", "voiceprints", "user_templates.npy")
@@ -26,25 +27,17 @@ def load_templates(path=None):
 
 
 def wav_to_feat(wav_path):
-    """将 WAV 文件转换为 MFCC+Δ+Δ² 特征张量 (1, 39, T)"""
     if not os.path.exists(wav_path):
         raise FileNotFoundError(f"音频文件不存在: {wav_path}")
-
     y, sr = sf.read(wav_path)
-    if len(y.shape) > 1:
-        y = y.mean(axis=1)
-
     if len(y) == 0:
         raise ValueError(f"音频文件为空: {wav_path}")
-
-    if sr != 16000:
-        raise ValueError(f"采样率不是 16000Hz (实际 {sr}Hz): {wav_path}，请先预处理")
-
-    m = mfcc(y, samplerate=sr, numcep=13, winlen=0.025, winstep=0.01, nfft=512)
+    y, sr = preprocess_wave(y, sr)
+    m = mfcc(y, samplerate=SAMPLE_RATE, numcep=N_MFCC, winlen=0.025, winstep=0.01, nfft=512)
     d1 = delta(m, 2)
     d2 = delta(d1, 2)
     feat = np.hstack([m, d1, d2])
-    return torch.from_numpy(feat.T).unsqueeze(0).float()  # (1, C, T)
+    return torch.from_numpy(feat.T).unsqueeze(0).float()
 
 
 def verify(wav_path, model_path="models/ecapa_best.pth", threshold=0.75,

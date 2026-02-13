@@ -2,12 +2,34 @@ import os
 import json
 
 
+def build_case(resp):
+    if resp is None:
+        return None
+    return {
+        "status": resp.status_code,
+        "body": resp.content.decode("utf-8"),
+    }
+
+
+def find_impostor_wav(raw_root, reference_path):
+    ref_abs = os.path.abspath(reference_path)
+    for root, _, files in os.walk(raw_root):
+        for name in files:
+            if not name.lower().endswith(".wav"):
+                continue
+            full = os.path.abspath(os.path.join(root, name))
+            if full != ref_abs:
+                return full
+    return None
+
+
 def main():
     output_path = os.path.join(os.path.dirname(__file__), "api_verify_output.json")
     result = {}
     try:
         os.environ.setdefault("DJANGO_SETTINGS_MODULE", "backend.settings")
         import django
+
         django.setup()
 
         from django.test import Client
@@ -24,24 +46,67 @@ def main():
         user.save()
         token, _ = Token.objects.get_or_create(user=user)
 
-        wav_path = os.path.join(settings.PROJECT_ROOT, "data", "raw", "user01", "001.wav")
-        if not os.path.exists(wav_path):
-            raise FileNotFoundError(wav_path)
-        with open(wav_path, "rb") as f:
-            wav_bytes = f.read()
+        user01_raw_dir = os.path.join(settings.PROJECT_ROOT, "data", "raw", "user01")
+        if not os.path.isdir(user01_raw_dir):
+            raise FileNotFoundError(user01_raw_dir)
 
-        upload = SimpleUploadedFile("001.wav", wav_bytes, content_type="audio/wav")
+        raw_candidates = [
+            os.path.join(user01_raw_dir, f)
+            for f in os.listdir(user01_raw_dir)
+            if f.lower().endswith(".wav")
+        ]
+        if not raw_candidates:
+            raise FileNotFoundError(f"no wav files in {user01_raw_dir}")
+        raw_candidates.sort()
+        raw_main = raw_candidates[-1]
+
+        processed_dir = os.path.join(settings.PROJECT_ROOT, "data", "processed", "user01")
+        processed_main = os.path.join(processed_dir, os.path.basename(raw_main))
+
+        with open(raw_main, "rb") as f:
+            raw_bytes = f.read()
+
+        enroll_upload = SimpleUploadedFile(os.path.basename(raw_main), raw_bytes, content_type="audio/wav")
         enroll_resp = c.post(
             "/api/enroll/",
-            {"user_id": "api_user", "files": [upload]},
+            {"user_id": "api_user", "files": [enroll_upload]},
             HTTP_AUTHORIZATION="Token " + token.key,
         )
 
-        verify_upload = SimpleUploadedFile("001.wav", wav_bytes, content_type="audio/wav")
-        verify_resp = c.post(
+        default_thr = getattr(settings, "VOICE_VERIFY_THRESHOLD", 0.7)
+        thr_str = str(default_thr)
+
+        verify_same_resp = c.post(
             "/api/verify/",
-            {"file": verify_upload, "threshold": "0.7"},
+            {"file": SimpleUploadedFile(os.path.basename(raw_main), raw_bytes, content_type="audio/wav"), "threshold": thr_str},
         )
+
+        verify_processed_resp = None
+        if os.path.exists(processed_main):
+            with open(processed_main, "rb") as f:
+                processed_bytes = f.read()
+            verify_processed_resp = c.post(
+                "/api/verify/",
+                {
+                    "file": SimpleUploadedFile(
+                        os.path.basename(processed_main), processed_bytes, content_type="audio/wav"
+                    ),
+                    "threshold": thr_str,
+                },
+            )
+
+        impostor_path = find_impostor_wav(
+            os.path.join(settings.PROJECT_ROOT, "data", "raw"),
+            raw_main,
+        )
+        verify_impostor_resp = None
+        if impostor_path and os.path.exists(impostor_path):
+            with open(impostor_path, "rb") as f:
+                imp_bytes = f.read()
+            verify_impostor_resp = c.post(
+                "/api/verify/",
+                {"file": SimpleUploadedFile(os.path.basename(impostor_path), imp_bytes, content_type="audio/wav"), "threshold": thr_str},
+            )
 
         stats_resp = c.get(
             "/api/stats/",
@@ -57,10 +122,16 @@ def main():
         latest_template = VoiceTemplate.objects.filter(user=user).first()
 
         result = {
-            "enroll": {"status": enroll_resp.status_code, "body": enroll_resp.content.decode("utf-8")},
-            "verify": {"status": verify_resp.status_code, "body": verify_resp.content.decode("utf-8")},
-            "stats": {"status": stats_resp.status_code, "body": stats_resp.content.decode("utf-8")},
-            "dashboard": {"status": dash_resp.status_code, "body": dash_resp.content.decode("utf-8")},
+            "enroll": build_case(enroll_resp),
+            "verify_same_raw": build_case(verify_same_resp),
+            "verify_processed": build_case(verify_processed_resp)
+            if verify_processed_resp is not None
+            else {"skipped": True, "reason": "no processed wav found"},
+            "verify_impostor": build_case(verify_impostor_resp)
+            if verify_impostor_resp is not None
+            else {"skipped": True, "reason": "no impostor wav found"},
+            "stats": build_case(stats_resp),
+            "dashboard": build_case(dash_resp),
             "latest_verify_log": {
                 "id": latest_verify.id if latest_verify else None,
                 "predicted_user": latest_verify.predicted_user if latest_verify else None,

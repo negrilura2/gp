@@ -1,0 +1,34 @@
+# Byte-compiled / cache
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual env
+.venv/
+venv/
+env/
+
+# Data files (audio, features, templates)
+data/raw/
+data/processed/
+data/features/
+data/voiceprints/
+data/recordings/
+*.wav
+*.flac
+*.mp3
+*.ogg
+*.m4a
+*.npy
+
+# Django runtime files
+backend/db.sqlite3
+backend/logs/
+backend/api_verify_output.json
+*.pyc
+
+# OS / editor junk
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

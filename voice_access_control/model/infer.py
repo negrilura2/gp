@@ -39,7 +39,12 @@ def load_templates(path="data/voiceprints/user_templates.npy"):
 def cosine_score(a, b):
     a = a / (np.linalg.norm(a) + 1e-9)
     b = b / (np.linalg.norm(b) + 1e-9)
-    return float(np.dot(a, b))
+    s = float(np.dot(a, b))
+    if s > 1.0:
+        s = 1.0
+    elif s < -1.0:
+        s = -1.0
+    return s
 
 if __name__ == "__main__":
     import argparse

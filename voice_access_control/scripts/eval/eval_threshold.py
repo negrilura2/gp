@@ -137,3 +137,16 @@ if __name__ == "__main__":
     with open(out_json, "w") as f:
         json.dump({"auc": float(roc_auc), "eer": float(eer), "threshold": float(eer_thr)}, f, indent=2)
     print("Saved metrics to", out_json)
+
+    roc_points_json = os.path.join(args.out_dir, "roc_points.json")
+    with open(roc_points_json, "w") as f:
+        json.dump(
+            {
+                "fpr": [float(v) for v in fpr],
+                "tpr": [float(v) for v in tpr],
+                "thresholds": [float(v) for v in thresholds],
+            },
+            f,
+            indent=2,
+        )
+    print("Saved ROC points to", roc_points_json)
