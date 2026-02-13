@@ -11,7 +11,6 @@ import os
 from .ecapa_tdnn import LightECAPA
 from .infer import cosine_score
 import soundfile as sf
-import librosa
 from python_speech_features import mfcc, delta
 
 # -------- 统一模板路径（与 enroll.py 保持一致）--------
@@ -39,8 +38,7 @@ def wav_to_feat(wav_path):
         raise ValueError(f"音频文件为空: {wav_path}")
 
     if sr != 16000:
-        y = librosa.resample(y, orig_sr=sr, target_sr=16000)
-        sr = 16000
+        raise ValueError(f"采样率不是 16000Hz (实际 {sr}Hz): {wav_path}，请先预处理")
 
     m = mfcc(y, samplerate=sr, numcep=13, winlen=0.025, winstep=0.01, nfft=512)
     d1 = delta(m, 2)

@@ -112,20 +112,13 @@ if __name__ == "__main__":
     y, scores = compute_pairs_scores(embs, labels, max_pairs=args.max_pairs)
 
     print("计算 ROC 与 EER ...")
-    if len(np.unique(y)) < 2:
-        roc_auc = 0.0
-        eer = 0.0
-        eer_thr = 0.0
-        fpr = np.array([0.0, 1.0])
-        tpr = np.array([0.0, 1.0])
-    else:
-        fpr, tpr, thresholds = roc_curve(y, scores)
-        roc_auc = auc(fpr, tpr)
-        eer, eer_thr = eer_from_roc(fpr, tpr, thresholds)
+    fpr, tpr, thresholds = roc_curve(y, scores)
+    roc_auc = auc(fpr, tpr)
+    eer, eer_thr = eer_from_roc(fpr, tpr, thresholds)
     print(f"AUC={roc_auc:.4f}  EER={eer:.4f}, suggested threshold={eer_thr:.4f}")
 
     # 保存 ROC 图
-    plt.figure(figsize=(8,6))
+    plt.figure(figsize=(6,5))
     plt.plot(fpr, tpr, label=f"AUC={roc_auc:.4f}")
     plt.plot([0,1],[0,1],'k--', alpha=0.3)
     plt.xlabel("FPR")
@@ -134,7 +127,7 @@ if __name__ == "__main__":
     plt.legend()
     plt.grid(True)
     out_png = os.path.join(args.out_dir, "roc.png")
-    plt.savefig(out_png, dpi=200, bbox_inches="tight")
+    plt.savefig(out_png)
     plt.close()
     print("Saved ROC to", out_png)
 
