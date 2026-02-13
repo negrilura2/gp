@@ -1,3 +1,6 @@
 from django.contrib import admin
+from .models import VoiceTemplate, EnrollLog, VerifyLog
 
-# Register your models here.
+admin.site.register(VoiceTemplate)
+admin.site.register(EnrollLog)
+admin.site.register(VerifyLog)

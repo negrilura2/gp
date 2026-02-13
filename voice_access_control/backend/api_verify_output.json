@@ -1,0 +1,41 @@
+{
+  "enroll": {
+    "status": 200,
+    "body": "{\"status\":\"enrolled\",\"user\":\"api_user\",\"wav_count\":1}"
+  },
+  "verify": {
+    "status": 200,
+    "body": "{\"predicted_user\":\"api_user\",\"score\":1.0,\"result\":\"ACCEPT\",\"door_state\":\"OPEN\",\"user_info\":{\"id\":1,\"username\":\"api_user\",\"email\":\"\",\"is_staff\":true},\"threshold\":0.7}"
+  },
+  "stats": {
+    "status": 200,
+    "body": "{\"daily\":[{\"date\":\"2026-02-13\",\"total\":1,\"avg_score\":1.0,\"accept_rate\":1.0}],\"result_distribution\":{\"ACCEPT\":1,\"REJECT\":0,\"ACCEPT_RATE\":1.0},\"users\":{\"total\":1,\"enrolled\":1}}"
+  },
+  "dashboard": {
+    "status": 200,
+    "body": "{\"summary\":{\"users_total\":1,\"users_admin\":1,\"users_enrolled\":1,\"verify_total\":1,\"verify_accept\":1,\"verify_reject\":0,\"verify_accept_rate\":1.0,\"enroll_total\":1,\"enroll_success\":1,\"enroll_success_rate\":1.0},\"data_assets\":{\"raw_wav\":1,\"processed_wav\":1,\"feature_files\":1,\"voiceprints\":1,\"recordings\":2},\"trend\":{\"verify_daily\":[{\"date\":\"2026-02-13\",\"total\":1}],\"enroll_daily\":[{\"date\":\"2026-02-13\",\"total\":1}]},\"model\":{\"count\":1,\"latest_name\":\"ecapa_best.pth\",\"latest_mtime\":\"2026-02-13T13:32:19.610868\"}}"
+  },
+  "latest_verify_log": {
+    "id": 1,
+    "predicted_user": "api_user",
+    "result": "ACCEPT",
+    "door_state": "OPEN",
+    "score": 1.0
+  },
+  "latest_enroll_log": {
+    "id": 1,
+    "username": "api_user",
+    "wav_count": 1,
+    "success": true
+  },
+  "latest_voice_template": {
+    "id": 1,
+    "template_path": "D:\\traepg\\gp\\voice_access_control\\data\\voiceprints\\user_templates.npy",
+    "embedding_count": 1
+  },
+  "db": {
+    "engine": "django.db.backends.sqlite3",
+    "name": "D:\\traepg\\gp\\voice_access_control\\backend\\db.sqlite3"
+  },
+  "error": null
+}

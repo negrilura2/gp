@@ -13,6 +13,16 @@ load_dotenv(os.path.join(Path(__file__).resolve().parent.parent.parent, '.env'))
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+PROJECT_ROOT = BASE_DIR.parent
+DATA_DIR = PROJECT_ROOT / 'data'
+RAW_DIR = DATA_DIR / 'raw'
+PROCESSED_DIR = DATA_DIR / 'processed'
+FEATURES_DIR = DATA_DIR / 'features'
+ENROLL_DIR = DATA_DIR / 'enroll'
+RECORDINGS_DIR = DATA_DIR / 'recordings'
+VOICEPRINTS_DIR = DATA_DIR / 'voiceprints'
+MODELS_DIR = PROJECT_ROOT / 'models'
+REPORTS_DIR = PROJECT_ROOT / 'reports'
 
 
 # Quick-start development settings - unsuitable for production

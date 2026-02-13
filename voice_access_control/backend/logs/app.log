@@ -1,0 +1,10 @@
+[2026-02-13 16:44:57,274] INFO api 用户注册: api_user
+[2026-02-13 16:44:57,563] INFO api 用户登录: api_user
+[2026-02-13 16:44:57,611] ERROR api 声纹注册失败: api_user, [Errno 2] No such file or directory: 'models/ecapa_best.pth'
+[2026-02-13 16:44:57,614] ERROR django.request Internal Server Error: /api/enroll/
+[2026-02-13 16:53:08,235] INFO api 用户注册: api_user
+[2026-02-13 16:53:08,550] INFO api 用户登录: api_user
+[2026-02-13 16:53:08,706] INFO api 声纹注册成功: api_user, 1 条音频
+[2026-02-13 16:53:08,774] INFO api 声纹验证: api_user score=1.0000 => ACCEPT
+[2026-02-13 16:58:56,997] INFO api 声纹注册成功: api_user, 1 条音频
+[2026-02-13 16:58:57,052] INFO api 声纹验证: api_user score=1.0000 => ACCEPT

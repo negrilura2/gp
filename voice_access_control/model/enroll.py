@@ -11,13 +11,12 @@ import numpy as np
 import torch
 
 from .ecapa_tdnn import LightECAPA
-# use python_speech_features + soundfile for MFCC extraction
 import soundfile as sf
 from python_speech_features import mfcc, delta
 
-# configurable
-MODEL_PATH = "models/ecapa_best.pth"
-TEMPLATE_PATH = "data/voiceprints/user_templates.npy"
+ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+MODEL_PATH = os.path.join(ROOT, "models", "ecapa_best.pth")
+TEMPLATE_PATH = os.path.join(ROOT, "data", "voiceprints", "user_templates.npy")
 SAMPLE_RATE = 16000
 N_MFCC = 13
 

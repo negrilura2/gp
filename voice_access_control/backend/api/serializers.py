@@ -49,7 +49,7 @@ class VerifyLogSerializer(serializers.ModelSerializer):
     class Meta:
         model = VerifyLog
         fields = ['id', 'timestamp', 'wav_path', 'predicted_user', 'score',
-                  'result', 'threshold', 'client_ip']
+                  'result', 'door_state', 'threshold', 'client_ip']
 
 
 class EnrollLogSerializer(serializers.ModelSerializer):

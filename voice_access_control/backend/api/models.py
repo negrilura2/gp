@@ -41,6 +41,7 @@ class VerifyLog(models.Model):
     predicted_user = models.CharField(max_length=128)
     score = models.FloatField()
     result = models.CharField(max_length=16)  # ACCEPT / REJECT
+    door_state = models.CharField(max_length=16, default='CLOSED')
     threshold = models.FloatField(default=0.75)
     client_ip = models.GenericIPAddressField(null=True, blank=True)
 

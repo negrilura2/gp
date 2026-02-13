@@ -15,6 +15,8 @@ import os
 import sys
 import time
 import logging
+from datetime import datetime
+import soundfile as sf
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -23,6 +25,8 @@ from rest_framework.authtoken.models import Token
 
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
+from django.conf import settings
+from django.db import models
 from django.db.models import Count, Avg
 from django.db.models.functions import TruncDate
 
@@ -35,7 +39,7 @@ from .serializers import (
 logger = logging.getLogger('api')
 
 # ---- 项目根路径 & 模型导入 ----
-ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+ROOT = os.fspath(settings.PROJECT_ROOT)
 if ROOT not in sys.path:
     sys.path.insert(0, ROOT)
 
@@ -63,6 +67,48 @@ def validate_audio_file(f):
         raise ValueError(f"文件过大: {f.size / 1024 / 1024:.1f}MB，限制: {MAX_UPLOAD_SIZE / 1024 / 1024:.0f}MB")
     if f.size == 0:
         raise ValueError("文件为空")
+    try:
+        f.seek(0)
+        data, sr = sf.read(f)
+        f.seek(0)
+    except Exception:
+        raise ValueError("音频解析失败，请上传16kHz单声道wav或flac")
+    if data is None or len(data) == 0:
+        raise ValueError("音频文件为空")
+    if sr != 16000:
+        raise ValueError(f"采样率不是 16000Hz (实际 {sr}Hz)，请先预处理")
+
+
+def count_files(root, exts=None):
+    if not os.path.exists(root):
+        return 0
+    total = 0
+    for _, _, files in os.walk(root):
+        for name in files:
+            if exts is None or os.path.splitext(name)[1].lower() in exts:
+                total += 1
+    return total
+
+
+def get_latest_file_info(root, exts=None):
+    if not os.path.exists(root):
+        return {"name": None, "mtime": None}
+    latest_path = None
+    latest_mtime = -1
+    for base, _, files in os.walk(root):
+        for name in files:
+            if exts is None or os.path.splitext(name)[1].lower() in exts:
+                path = os.path.join(base, name)
+                mtime = os.path.getmtime(path)
+                if mtime > latest_mtime:
+                    latest_mtime = mtime
+                    latest_path = path
+    if latest_path is None:
+        return {"name": None, "mtime": None}
+    return {
+        "name": os.path.basename(latest_path),
+        "mtime": datetime.fromtimestamp(latest_mtime).isoformat(),
+    }
 
 
 # =========================================================
@@ -126,7 +172,9 @@ class EnrollView(APIView):
         - user_id (可选，默认当前用户名)
         - files: wav 文件列表
         """
-        user_id = request.data.get('user_id', request.user.username)
+        user_id = request.data.get('user_id', '').strip()
+        if not request.user.is_staff or not user_id:
+            user_id = request.user.username
         client_ip = get_client_ip(request)
         files = request.FILES.getlist('files')
 
@@ -142,7 +190,7 @@ class EnrollView(APIView):
 
         # 保存文件到磁盘
         saved_paths = []
-        user_dir = os.path.join(ROOT, 'data', 'enroll', user_id)
+        user_dir = os.path.join(os.fspath(settings.ENROLL_DIR), user_id)
         os.makedirs(user_dir, exist_ok=True)
 
         for f in files:
@@ -161,7 +209,7 @@ class EnrollView(APIView):
             vt, created = VoiceTemplate.objects.update_or_create(
                 user=request.user,
                 defaults={
-                    'template_path': os.path.join(ROOT, 'data', 'voiceprints', 'user_templates.npy'),
+                    'template_path': os.path.join(os.fspath(settings.VOICEPRINTS_DIR), 'user_templates.npy'),
                     'embedding_count': len(saved_paths),
                 }
             )
@@ -208,7 +256,12 @@ class VerifyView(APIView):
         - file: wav 文件
         - threshold (可选，默认 0.75)
         """
-        thr = float(request.data.get('threshold', 0.75))
+        try:
+            thr = float(request.data.get('threshold', 0.75))
+        except (TypeError, ValueError):
+            return Response({"error": "threshold 必须是数字"}, status=400)
+        if not (0 < thr < 1):
+            return Response({"error": "threshold 必须在 0~1 之间"}, status=400)
         f = request.FILES.get('file')
         client_ip = get_client_ip(request)
 
@@ -221,7 +274,7 @@ class VerifyView(APIView):
             return Response({"error": str(e)}, status=400)
 
         # 保存上传文件
-        upload_dir = os.path.join(ROOT, 'data', 'verify_uploads')
+        upload_dir = os.fspath(settings.RECORDINGS_DIR)
         os.makedirs(upload_dir, exist_ok=True)
         fname = f"{int(time.time() * 1000)}_{f.name}"
         path = os.path.join(upload_dir, fname)
@@ -245,12 +298,24 @@ class VerifyView(APIView):
             logger.error(f"验证异常: {e}")
             return Response({"error": str(e)}, status=500)
 
+        door_state = "OPEN" if result == "ACCEPT" else "CLOSED"
+        matched_user = User.objects.filter(username=str(best_spk)).first()
+        user_info = None
+        if matched_user and result == "ACCEPT":
+            user_info = {
+                "id": matched_user.id,
+                "username": matched_user.username,
+                "email": matched_user.email,
+                "is_staff": matched_user.is_staff,
+            }
+
         # 记录日志
         VerifyLog.objects.create(
             wav_path=path,
             predicted_user=str(best_spk),
             score=float(best_score),
             result=result,
+            door_state=door_state,
             threshold=thr,
             client_ip=client_ip,
         )
@@ -260,8 +325,25 @@ class VerifyView(APIView):
             "predicted_user": str(best_spk),
             "score": float(best_score),
             "result": result,
+            "door_state": door_state,
+            "user_info": user_info,
             "threshold": thr,
         })
+
+
+class VoiceprintStatusView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def get(self, request):
+        total_templates = VoiceTemplate.objects.count()
+        data = {
+            "has_any_voiceprint": total_templates > 0,
+            "total_templates": total_templates,
+            "total_users": User.objects.count(),
+        }
+        if request.user and request.user.is_authenticated:
+            data["has_my_voiceprint"] = VoiceTemplate.objects.filter(user=request.user).exists()
+        return Response(data)
 
 
 # =========================================================
@@ -321,7 +403,12 @@ class StatsView(APIView):
             VerifyLog.objects
             .annotate(date=TruncDate('timestamp'))
             .values('date')
-            .annotate(total=Count('id'), avg_score=Avg('score'))
+            .annotate(
+                total=Count('id'),
+                avg_score=Avg('score'),
+                accept_count=Count('id', filter=models.Q(result='ACCEPT')),
+                reject_count=Count('id', filter=models.Q(result='REJECT')),
+            )
             .order_by('date')
         )
         daily_data = [
@@ -329,6 +416,7 @@ class StatsView(APIView):
                 "date": str(d['date']),
                 "total": d['total'],
                 "avg_score": round(d['avg_score'], 4) if d['avg_score'] else 0,
+                "accept_rate": round(d['accept_count'] / d['total'], 4) if d['total'] else 0,
             }
             for d in daily
         ]
@@ -336,6 +424,8 @@ class StatsView(APIView):
         # 结果分布
         accept_count = VerifyLog.objects.filter(result='ACCEPT').count()
         reject_count = VerifyLog.objects.filter(result='REJECT').count()
+        total_count = accept_count + reject_count
+        accept_rate = round(accept_count / total_count, 4) if total_count else 0
 
         # 用户数
         total_users = User.objects.count()
@@ -346,10 +436,77 @@ class StatsView(APIView):
             "result_distribution": {
                 "ACCEPT": accept_count,
                 "REJECT": reject_count,
+                "ACCEPT_RATE": accept_rate,
             },
             "users": {
                 "total": total_users,
                 "enrolled": enrolled_users,
+            },
+        })
+
+
+class DashboardView(APIView):
+    permission_classes = [IsAdminUser]
+
+    def get(self, request):
+        total_users = User.objects.count()
+        admin_users = User.objects.filter(is_staff=True).count()
+        enrolled_users = VoiceTemplate.objects.values('user').distinct().count()
+
+        verify_total = VerifyLog.objects.count()
+        verify_accept = VerifyLog.objects.filter(result='ACCEPT').count()
+        verify_reject = VerifyLog.objects.filter(result='REJECT').count()
+        verify_rate = round(verify_accept / verify_total, 4) if verify_total else 0
+
+        enroll_total = EnrollLog.objects.count()
+        enroll_success = EnrollLog.objects.filter(success=True).count()
+        enroll_rate = round(enroll_success / enroll_total, 4) if enroll_total else 0
+
+        verify_daily = (
+            VerifyLog.objects
+            .annotate(date=TruncDate('timestamp'))
+            .values('date')
+            .annotate(total=Count('id'))
+            .order_by('date')
+        )
+        enroll_daily = (
+            EnrollLog.objects
+            .annotate(date=TruncDate('timestamp'))
+            .values('date')
+            .annotate(total=Count('id'))
+            .order_by('date')
+        )
+
+        model_info = get_latest_file_info(os.fspath(settings.MODELS_DIR), {'.pth', '.pt', '.onnx'})
+
+        return Response({
+            "summary": {
+                "users_total": total_users,
+                "users_admin": admin_users,
+                "users_enrolled": enrolled_users,
+                "verify_total": verify_total,
+                "verify_accept": verify_accept,
+                "verify_reject": verify_reject,
+                "verify_accept_rate": verify_rate,
+                "enroll_total": enroll_total,
+                "enroll_success": enroll_success,
+                "enroll_success_rate": enroll_rate,
+            },
+            "data_assets": {
+                "raw_wav": count_files(os.fspath(settings.RAW_DIR), {'.wav'}),
+                "processed_wav": count_files(os.fspath(settings.PROCESSED_DIR), {'.wav'}),
+                "feature_files": count_files(os.fspath(settings.FEATURES_DIR), {'.npy'}),
+                "voiceprints": count_files(os.fspath(settings.VOICEPRINTS_DIR), {'.npy'}),
+                "recordings": count_files(os.fspath(settings.RECORDINGS_DIR), {'.wav', '.flac', '.mp3', '.ogg', '.m4a'}),
+            },
+            "trend": {
+                "verify_daily": [{"date": str(d['date']), "total": d['total']} for d in verify_daily],
+                "enroll_daily": [{"date": str(d['date']), "total": d['total']} for d in enroll_daily],
+            },
+            "model": {
+                "count": count_files(os.fspath(settings.MODELS_DIR), {'.pth', '.pt', '.onnx'}),
+                "latest_name": model_info["name"],
+                "latest_mtime": model_info["mtime"],
             },
         })
 

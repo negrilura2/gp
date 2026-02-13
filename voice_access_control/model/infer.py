@@ -28,12 +28,12 @@ def extract_embeddings(model, feature_root, device):
         templates[spk] = np.mean(np.stack(embs, axis=0), axis=0)
     return templates
 
-def save_templates(templates, out_path="data/voiceprints/templates.npy"):
+def save_templates(templates, out_path="data/voiceprints/user_templates.npy"):
     os.makedirs(os.path.dirname(out_path), exist_ok=True)
     np.save(out_path, templates)
     print("Saved templates:", out_path)
 
-def load_templates(path="data/voiceprints/templates.npy"):
+def load_templates(path="data/voiceprints/user_templates.npy"):
     return np.load(path, allow_pickle=True).item()
 
 def cosine_score(a, b):

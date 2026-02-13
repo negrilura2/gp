@@ -13,8 +13,8 @@ from .infer import cosine_score
 import soundfile as sf
 from python_speech_features import mfcc, delta
 
-# -------- 统一模板路径（与 enroll.py 保持一致）--------
-TEMPLATE_PATH = "data/voiceprints/user_templates.npy"
+ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+TEMPLATE_PATH = os.path.join(ROOT, "data", "voiceprints", "user_templates.npy")
 
 
 def load_templates(path=None):

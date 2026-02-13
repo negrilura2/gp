@@ -4,7 +4,7 @@ from .views import (
     EnrollView, VerifyView,
     VerifyLogListView, EnrollLogListView,
     UserListView, UserDeleteView,
-    StatsView, CurrentUserView,
+    StatsView, DashboardView, CurrentUserView, VoiceprintStatusView,
 )
 
 urlpatterns = [
@@ -23,4 +23,6 @@ urlpatterns = [
     path('users/', UserListView.as_view(), name='user-list'),
     path('users/<int:pk>/', UserDeleteView.as_view(), name='user-delete'),
     path('stats/', StatsView.as_view(), name='stats'),
+    path('dashboard/', DashboardView.as_view(), name='dashboard'),
+    path('voiceprint-status/', VoiceprintStatusView.as_view(), name='voiceprint-status'),
 ]
