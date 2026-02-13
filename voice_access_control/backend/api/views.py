@@ -36,6 +36,7 @@ from .models import VoiceTemplate, VerifyLog, EnrollLog
 from .serializers import (
     UserRegisterSerializer, UserSerializer,
     VoiceTemplateSerializer, VerifyLogSerializer, EnrollLogSerializer,
+    ThresholdConfigSerializer, get_effective_threshold,
 )
 
 logger = logging.getLogger('api')
@@ -51,7 +52,7 @@ from .model_loader import get_model
 
 # ---- 文件上传限制 ----
 MAX_UPLOAD_SIZE = 10 * 1024 * 1024   # 10 MB
-ALLOWED_EXTENSIONS = {'.wav', '.mp3', '.flac', '.ogg', '.m4a'}
+ALLOWED_EXTENSIONS = {'.wav'}
 
 
 def get_client_ip(request):
@@ -71,14 +72,12 @@ def validate_audio_file(f):
         raise ValueError("文件为空")
     try:
         f.seek(0)
-        data, sr = sf.read(f)
+        data, _ = sf.read(f)
         f.seek(0)
     except Exception:
-        raise ValueError("音频解析失败，请上传16kHz单声道wav或flac")
+        raise ValueError("音频解析失败，请上传 WAV 文件")
     if data is None or len(data) == 0:
         raise ValueError("音频文件为空")
-    if sr != 16000:
-        raise ValueError(f"采样率不是 16000Hz (实际 {sr}Hz)，请先预处理")
 
 
 def count_files(root, exts=None):
@@ -437,6 +436,33 @@ class VerifyLogListView(generics.ListAPIView):
         return qs
 
 
+class MyVerifyLogListView(generics.ListAPIView):
+    serializer_class = VerifyLogSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        qs = VerifyLog.objects.filter(
+            models.Q(user=user) | models.Q(predicted_user=user.username)
+        )
+        return qs.order_by("-timestamp")[:100]
+
+
+class VerifyLogBulkDeleteView(APIView):
+    """管理员批量删除验证日志"""
+    permission_classes = [IsAdminUser]
+
+    def delete(self, request):
+        ids = request.data.get('ids') or []
+        if not isinstance(ids, list):
+            return Response({"error": "ids 必须是列表"}, status=status.HTTP_400_BAD_REQUEST)
+        ids = [int(i) for i in ids if str(i).isdigit()]
+        if not ids:
+            return Response({"deleted": 0})
+        deleted, _ = VerifyLog.objects.filter(id__in=ids).delete()
+        return Response({"deleted": deleted})
+
+
 class EnrollLogListView(generics.ListAPIView):
     """管理员查看注册日志列表"""
     serializer_class = EnrollLogSerializer
@@ -623,7 +649,7 @@ class DashboardView(APIView):
                 "enroll_total": enroll_total,
                 "enroll_success": enroll_success,
                 "enroll_success_rate": enroll_rate,
-                "threshold_default": settings.VOICE_VERIFY_THRESHOLD,
+                "threshold_default": get_effective_threshold(),
             },
             "data_assets": {
                 "raw_wav": count_files(os.fspath(settings.RAW_DIR), {'.wav'}),
@@ -656,7 +682,7 @@ class CurrentUserView(APIView):
             "username": user.username,
             "is_staff": user.is_staff,
             "has_voiceprint": has_voiceprint,
-            "date_joined": user.date_joined.isoformat(),
+            "date_joined": timezone.localtime(user.date_joined).strftime("%Y-%m-%d %H:%M:%S"),
         })
 
 
@@ -696,3 +722,18 @@ class RocView(APIView):
             "tpr": roc_data.get("tpr") if roc_data else None,
             "thresholds": roc_data.get("thresholds") if roc_data else None,
         })
+
+
+class ThresholdConfigView(APIView):
+    """管理员查看 / 修改当前声纹验证默认阈值"""
+    permission_classes = [IsAdminUser]
+
+    def get(self, request):
+        return Response({"threshold": get_effective_threshold()})
+
+    def post(self, request):
+        serializer = ThresholdConfigSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        value = serializer.validated_data["threshold"]
+        settings.VOICE_VERIFY_THRESHOLD = float(value)
+        return Response({"threshold": get_effective_threshold()})

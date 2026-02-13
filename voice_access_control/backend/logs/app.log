@@ -99,3 +99,730 @@ NameError: name 'timezone' is not defined
 [2026-02-14 01:36:00,032] INFO api 用户登录: api_user
 [2026-02-14 01:36:00,207] INFO api 声纹注册成功: api_user, 1 条音频
 [2026-02-14 01:36:00,280] INFO api 声纹验证: api_user score=1.0000 => ACCEPT
+[2026-02-14 02:02:08,071] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-02-14 02:12:45,552] WARNING django.request Unauthorized: /api/dashboard/
+[2026-02-14 02:12:45,552] WARNING django.request Unauthorized: /api/stats/
+[2026-02-14 02:12:45,552] WARNING django.request Unauthorized: /api/logs/
+[2026-02-14 02:12:45,552] WARNING django.server "GET /api/dashboard/ HTTP/1.1" 401 43
+[2026-02-14 02:12:45,555] WARNING django.server "GET /api/stats/?mode=echarts HTTP/1.1" 401 43
+[2026-02-14 02:12:45,555] WARNING django.server "GET /api/logs/?page=1 HTTP/1.1" 401 43
+[2026-02-14 02:12:49,667] WARNING django.request Unauthorized: /api/dashboard/
+[2026-02-14 02:12:49,670] WARNING django.request Unauthorized: /api/stats/
+[2026-02-14 02:12:49,670] WARNING django.server "GET /api/dashboard/ HTTP/1.1" 401 43
+[2026-02-14 02:12:49,671] WARNING django.request Unauthorized: /api/logs/
+[2026-02-14 02:12:49,672] WARNING django.server "GET /api/stats/?mode=echarts HTTP/1.1" 401 43
+[2026-02-14 02:12:49,673] WARNING django.server "GET /api/logs/?page=1 HTTP/1.1" 401 43
+[2026-02-14 02:12:50,603] WARNING django.request Unauthorized: /api/dashboard/
+[2026-02-14 02:12:50,603] WARNING django.request Unauthorized: /api/stats/
+[2026-02-14 02:12:50,604] WARNING django.request Unauthorized: /api/logs/
+[2026-02-14 02:12:50,606] WARNING django.server "GET /api/dashboard/ HTTP/1.1" 401 43
+[2026-02-14 02:12:50,606] WARNING django.server "GET /api/stats/?mode=echarts HTTP/1.1" 401 43
+[2026-02-14 02:12:50,606] WARNING django.server "GET /api/logs/?page=1 HTTP/1.1" 401 43
+[2026-02-14 02:12:57,821] WARNING django.request Unauthorized: /api/dashboard/
+[2026-02-14 02:12:57,822] WARNING django.server "GET /api/dashboard/ HTTP/1.1" 401 43
+[2026-02-14 02:12:57,824] WARNING django.request Unauthorized: /api/stats/
+[2026-02-14 02:12:57,825] WARNING django.request Unauthorized: /api/logs/
+[2026-02-14 02:12:57,826] WARNING django.server "GET /api/logs/?page=1 HTTP/1.1" 401 43
+[2026-02-14 02:12:57,826] WARNING django.server "GET /api/stats/?mode=echarts HTTP/1.1" 401 43
+[2026-02-14 02:13:25,617] INFO django.server "GET /admin/ HTTP/1.1" 302 0
+[2026-02-14 02:13:25,761] INFO django.server "GET /admin/login/?next=/admin/ HTTP/1.1" 200 4195
+[2026-02-14 02:13:25,819] INFO django.server "GET /static/admin/css/base.css HTTP/1.1" 304 0
+[2026-02-14 02:13:25,821] INFO django.server "GET /static/admin/css/dark_mode.css HTTP/1.1" 304 0
+[2026-02-14 02:13:25,823] INFO django.server "GET /static/admin/css/nav_sidebar.css HTTP/1.1" 304 0
+[2026-02-14 02:13:25,823] INFO django.server "GET /static/admin/css/responsive.css HTTP/1.1" 304 0
+[2026-02-14 02:13:25,825] INFO django.server "GET /static/admin/css/login.css HTTP/1.1" 304 0
+[2026-02-14 02:13:25,825] INFO django.server "GET /static/admin/js/theme.js HTTP/1.1" 304 0
+[2026-02-14 02:13:25,826] INFO django.server "GET /static/admin/js/nav_sidebar.js HTTP/1.1" 304 0
+[2026-02-14 02:13:26,126] WARNING django.request Not Found: /favicon.ico
+[2026-02-14 02:13:26,127] WARNING django.server "GET /favicon.ico HTTP/1.1" 404 2215
+[2026-02-14 02:13:45,985] INFO django.server "POST /admin/login/?next=/admin/ HTTP/1.1" 200 4327
+[2026-02-14 02:13:52,199] INFO django.server "POST /admin/login/?next=/admin/ HTTP/1.1" 200 4327
+[2026-02-14 02:13:56,450] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\backend\api\views.py changed, reloading.
+[2026-02-14 02:13:57,897] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-02-14 02:15:05,936] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 5820
+[2026-02-14 02:15:05,953] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 435
+[2026-02-14 02:15:05,986] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 604
+[2026-02-14 02:19:03,035] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\backend\api\views.py changed, reloading.
+[2026-02-14 02:19:04,431] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-02-14 02:20:23,923] WARNING django.request Unauthorized: /api/dashboard/
+[2026-02-14 02:20:23,923] WARNING django.request Unauthorized: /api/logs/
+[2026-02-14 02:20:23,923] WARNING django.request Unauthorized: /api/stats/
+[2026-02-14 02:20:23,925] WARNING django.server "GET /api/dashboard/ HTTP/1.1" 401 43
+[2026-02-14 02:20:23,925] WARNING django.server "GET /api/stats/?mode=echarts HTTP/1.1" 401 43
+[2026-02-14 02:20:23,925] WARNING django.server "GET /api/logs/?page=1 HTTP/1.1" 401 43
+[2026-02-14 02:28:05,522] INFO api 用户登录: admin
+[2026-02-14 02:28:05,522] INFO django.server "POST /api/login/ HTTP/1.1" 200 99
+[2026-02-14 02:28:05,565] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 5820
+[2026-02-14 02:28:05,581] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 435
+[2026-02-14 02:28:05,611] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 604
+[2026-02-14 02:28:10,795] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 5820
+[2026-02-14 02:28:10,809] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 435
+[2026-02-14 02:28:10,837] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 604
+[2026-02-14 02:28:13,805] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 5820
+[2026-02-14 02:28:13,813] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 435
+[2026-02-14 02:28:13,842] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 604
+[2026-02-14 02:28:14,507] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 5820
+[2026-02-14 02:28:14,514] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 435
+[2026-02-14 02:28:14,538] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 604
+[2026-02-14 02:28:14,859] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 5820
+[2026-02-14 02:28:14,866] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 435
+[2026-02-14 02:28:14,896] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 604
+[2026-02-14 02:28:15,050] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 5820
+[2026-02-14 02:28:15,060] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 435
+[2026-02-14 02:28:15,084] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 604
+[2026-02-14 02:28:15,431] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 5820
+[2026-02-14 02:28:15,441] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 435
+[2026-02-14 02:28:15,471] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 604
+[2026-02-14 02:28:15,621] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 5820
+[2026-02-14 02:28:15,631] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 435
+[2026-02-14 02:28:15,656] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 604
+[2026-02-14 02:28:22,582] INFO api 用户登录: admin
+[2026-02-14 02:28:22,583] INFO django.server "POST /api/login/ HTTP/1.1" 200 99
+[2026-02-14 02:28:22,625] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 5820
+[2026-02-14 02:28:22,634] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 435
+[2026-02-14 02:28:22,660] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 604
+[2026-02-14 02:28:24,741] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 5820
+[2026-02-14 02:28:24,752] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 435
+[2026-02-14 02:28:24,793] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 604
+[2026-02-14 02:28:25,520] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 5820
+[2026-02-14 02:28:25,526] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 435
+[2026-02-14 02:28:25,553] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 604
+[2026-02-14 02:28:25,953] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 5820
+[2026-02-14 02:28:25,963] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 435
+[2026-02-14 02:28:25,989] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 604
+[2026-02-14 02:28:26,243] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 5820
+[2026-02-14 02:28:26,248] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 435
+[2026-02-14 02:28:26,278] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 604
+[2026-02-14 02:28:26,388] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 5820
+[2026-02-14 02:28:26,395] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 435
+[2026-02-14 02:28:26,427] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 604
+[2026-02-14 02:28:27,664] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 5820
+[2026-02-14 02:28:27,674] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 435
+[2026-02-14 02:28:27,704] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 604
+[2026-02-14 02:28:57,543] INFO django.server "POST /admin/login/?next=/admin/ HTTP/1.1" 302 0
+[2026-02-14 02:28:57,619] INFO django.server "GET /admin/ HTTP/1.1" 200 7753
+[2026-02-14 02:28:57,656] INFO django.server "GET /static/admin/css/dashboard.css HTTP/1.1" 304 0
+[2026-02-14 02:28:57,674] INFO django.server "GET /static/admin/img/icon-addlink.svg HTTP/1.1" 304 0
+[2026-02-14 02:28:57,674] INFO django.server "GET /static/admin/img/icon-changelink.svg HTTP/1.1" 304 0
+[2026-02-14 02:29:00,475] INFO django.server "GET /admin/api/enrolllog/ HTTP/1.1" 200 11705
+[2026-02-14 02:29:00,532] INFO django.server "GET /static/admin/css/changelists.css HTTP/1.1" 304 0
+[2026-02-14 02:29:00,537] INFO django.server "GET /static/admin/js/jquery.init.js HTTP/1.1" 304 0
+[2026-02-14 02:29:00,540] INFO django.server "GET /static/admin/js/vendor/jquery/jquery.js HTTP/1.1" 304 0
+[2026-02-14 02:29:00,541] INFO django.server "GET /static/admin/js/urlify.js HTTP/1.1" 304 0
+[2026-02-14 02:29:00,547] INFO django.server "GET /static/admin/js/core.js HTTP/1.1" 304 0
+[2026-02-14 02:29:00,547] INFO django.server "GET /static/admin/js/prepopulate.js HTTP/1.1" 304 0
+[2026-02-14 02:29:00,548] INFO django.server "GET /static/admin/js/actions.js HTTP/1.1" 304 0
+[2026-02-14 02:29:00,548] INFO django.server "GET /static/admin/js/admin/RelatedObjectLookups.js HTTP/1.1" 304 0
+[2026-02-14 02:29:00,548] INFO django.server "GET /static/admin/js/vendor/xregexp/xregexp.js HTTP/1.1" 304 0
+[2026-02-14 02:29:00,565] INFO django.server "GET /admin/jsi18n/ HTTP/1.1" 200 8560
+[2026-02-14 02:29:00,569] INFO django.server "GET /static/admin/js/filters.js HTTP/1.1" 304 0
+[2026-02-14 02:29:00,594] INFO django.server "GET /static/admin/img/tooltag-add.svg HTTP/1.1" 304 0
+[2026-02-14 02:29:03,024] INFO django.server "GET /admin/api/verifylog/ HTTP/1.1" 200 14749
+[2026-02-14 02:29:03,066] INFO django.server "GET /admin/jsi18n/ HTTP/1.1" 200 8560
+[2026-02-14 02:29:03,754] INFO django.server "GET /admin/api/voicetemplate/ HTTP/1.1" 200 9843
+[2026-02-14 02:29:03,802] INFO django.server "GET /admin/jsi18n/ HTTP/1.1" 200 8560
+[2026-02-14 02:29:05,808] INFO django.server "GET /admin/api/voicetemplate/1/change/ HTTP/1.1" 200 12109
+[2026-02-14 02:29:05,851] INFO django.server "GET /static/admin/css/forms.css HTTP/1.1" 304 0
+[2026-02-14 02:29:05,852] INFO django.server "GET /static/admin/js/prepopulate_init.js HTTP/1.1" 304 0
+[2026-02-14 02:29:05,857] INFO django.server "GET /admin/jsi18n/ HTTP/1.1" 200 8560
+[2026-02-14 02:29:05,860] INFO django.server "GET /static/admin/css/widgets.css HTTP/1.1" 304 0
+[2026-02-14 02:29:05,878] INFO django.server "GET /static/admin/js/change_form.js HTTP/1.1" 304 0
+[2026-02-14 02:29:06,112] INFO django.server "GET /static/admin/img/icon-viewlink.svg HTTP/1.1" 200 581
+[2026-02-14 02:29:14,480] INFO django.server "GET /admin/api/verifylog/ HTTP/1.1" 200 14749
+[2026-02-14 02:29:14,526] INFO django.server "GET /admin/jsi18n/ HTTP/1.1" 200 8560
+[2026-02-14 02:29:16,862] INFO django.server "GET /admin/api/verifylog/22/change/ HTTP/1.1" 200 16156
+[2026-02-14 02:29:16,911] INFO django.server "GET /admin/jsi18n/ HTTP/1.1" 200 8560
+[2026-02-14 02:29:16,917] INFO django.server "GET /static/admin/img/icon-deletelink.svg HTTP/1.1" 200 392
+[2026-02-14 02:29:19,806] INFO django.server "GET /admin/api/enrolllog/ HTTP/1.1" 200 11705
+[2026-02-14 02:29:19,850] INFO django.server "GET /admin/jsi18n/ HTTP/1.1" 200 8560
+[2026-02-14 02:29:20,817] INFO django.server "GET /admin/auth/user/ HTTP/1.1" 200 12530
+[2026-02-14 02:29:20,865] INFO django.server "GET /static/admin/img/search.svg HTTP/1.1" 304 0
+[2026-02-14 02:29:20,866] INFO django.server "GET /static/admin/img/icon-yes.svg HTTP/1.1" 304 0
+[2026-02-14 02:29:20,870] INFO django.server "GET /admin/jsi18n/ HTTP/1.1" 200 8560
+[2026-02-14 02:29:20,886] INFO django.server "GET /static/admin/img/sorting-icons.svg HTTP/1.1" 304 0
+[2026-02-14 02:29:22,014] INFO django.server "GET /admin/auth/user/1/change/ HTTP/1.1" 200 22767
+[2026-02-14 02:29:22,056] INFO django.server "GET /static/admin/js/calendar.js HTTP/1.1" 304 0
+[2026-02-14 02:29:22,056] INFO django.server "GET /static/admin/js/SelectFilter2.js HTTP/1.1" 304 0
+[2026-02-14 02:29:22,057] INFO django.server "GET /static/admin/js/admin/DateTimeShortcuts.js HTTP/1.1" 304 0
+[2026-02-14 02:29:22,057] INFO django.server "GET /static/admin/js/SelectBox.js HTTP/1.1" 304 0
+[2026-02-14 02:29:22,062] INFO django.server "GET /admin/jsi18n/ HTTP/1.1" 200 8560
+[2026-02-14 02:29:22,183] INFO django.server "GET /static/admin/img/icon-unknown-alt.svg HTTP/1.1" 304 0
+[2026-02-14 02:29:22,183] INFO django.server "GET /static/admin/img/icon-calendar.svg HTTP/1.1" 304 0
+[2026-02-14 02:29:22,183] INFO django.server "GET /static/admin/img/icon-clock.svg HTTP/1.1" 304 0
+[2026-02-14 02:29:22,185] INFO django.server "GET /static/admin/img/selector-icons.svg HTTP/1.1" 304 0
+[2026-02-14 02:29:22,185] INFO django.server "GET /static/admin/img/icon-unknown.svg HTTP/1.1" 304 0
+[2026-02-14 02:29:49,837] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 5820
+[2026-02-14 02:29:49,845] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 435
+[2026-02-14 02:29:49,873] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 604
+[2026-02-14 02:30:17,565] INFO api 用户登录: admin
+[2026-02-14 02:30:17,566] INFO django.server "POST /api/login/ HTTP/1.1" 200 99
+[2026-02-14 02:30:17,611] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 5820
+[2026-02-14 02:30:17,622] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 435
+[2026-02-14 02:30:17,654] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 604
+[2026-02-14 02:34:47,288] INFO django.server "GET /admin/api/voicetemplate/ HTTP/1.1" 200 9843
+[2026-02-14 02:34:47,331] INFO django.server "GET /admin/jsi18n/ HTTP/1.1" 200 8560
+[2026-02-14 02:34:49,679] INFO django.server "GET /admin/api/voicetemplate/1/change/ HTTP/1.1" 200 12109
+[2026-02-14 02:34:49,724] INFO django.server "GET /admin/jsi18n/ HTTP/1.1" 200 8560
+[2026-02-14 02:41:12,490] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 5820
+[2026-02-14 02:41:12,501] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 435
+[2026-02-14 02:41:12,537] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 604
+[2026-02-14 02:41:22,291] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\backend\api\serializers.py changed, reloading.
+[2026-02-14 02:41:23,606] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-02-14 02:45:53,000] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6120
+[2026-02-14 02:45:53,025] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 435
+[2026-02-14 02:45:53,065] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 604
+[2026-02-14 02:46:19,996] INFO api 用户登录: admin
+[2026-02-14 02:46:19,998] INFO django.server "POST /api/login/ HTTP/1.1" 200 99
+[2026-02-14 02:46:20,057] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6120
+[2026-02-14 02:46:20,063] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 435
+[2026-02-14 02:46:20,091] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 604
+[2026-02-14 02:46:25,609] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6120
+[2026-02-14 02:46:25,615] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 435
+[2026-02-14 02:46:25,640] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 604
+[2026-02-14 02:47:09,971] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6120
+[2026-02-14 02:47:09,978] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 435
+[2026-02-14 02:47:10,003] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 604
+[2026-02-14 02:47:17,807] INFO api 用户登录: admin
+[2026-02-14 02:47:17,808] INFO django.server "POST /api/login/ HTTP/1.1" 200 99
+[2026-02-14 02:47:17,860] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6120
+[2026-02-14 02:47:17,868] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 435
+[2026-02-14 02:47:17,898] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 604
+[2026-02-14 02:47:20,408] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6120
+[2026-02-14 02:47:20,420] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 435
+[2026-02-14 02:47:20,457] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 604
+[2026-02-14 02:47:21,014] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6120
+[2026-02-14 02:47:21,020] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 435
+[2026-02-14 02:47:21,047] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 604
+[2026-02-14 02:47:25,322] INFO django.server "GET /admin/api/voicetemplate/1/change/ HTTP/1.1" 200 12109
+[2026-02-14 02:47:25,364] INFO django.server "GET /admin/jsi18n/ HTTP/1.1" 200 8560
+[2026-02-14 02:47:40,647] INFO django.server "GET /admin/auth/user/ HTTP/1.1" 200 12530
+[2026-02-14 02:47:40,694] INFO django.server "GET /admin/jsi18n/ HTTP/1.1" 200 8560
+[2026-02-14 02:47:42,331] INFO django.server "GET /admin/auth/user/1/change/ HTTP/1.1" 200 22767
+[2026-02-14 02:47:42,377] INFO django.server "GET /admin/jsi18n/ HTTP/1.1" 200 8560
+[2026-02-14 02:47:45,658] INFO django.server "GET /admin/auth/user/1/password/ HTTP/1.1" 200 8755
+[2026-02-14 02:48:01,839] INFO django.server "POST /admin/auth/user/1/password/ HTTP/1.1" 200 8883
+[2026-02-14 02:48:17,052] INFO django.server "POST /admin/auth/user/1/password/ HTTP/1.1" 302 0
+[2026-02-14 02:48:17,092] INFO django.server "GET /admin/auth/user/1/change/ HTTP/1.1" 200 22894
+[2026-02-14 02:48:17,130] INFO django.server "GET /admin/jsi18n/ HTTP/1.1" 200 8560
+[2026-02-14 02:48:34,348] INFO api 用户登录: api_user
+[2026-02-14 02:48:34,348] INFO django.server "POST /api/login/ HTTP/1.1" 200 102
+[2026-02-14 02:48:34,400] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6120
+[2026-02-14 02:48:34,413] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 435
+[2026-02-14 02:48:34,444] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 604
+[2026-02-14 02:48:38,080] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6120
+[2026-02-14 02:48:38,091] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 435
+[2026-02-14 02:48:38,126] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 604
+[2026-02-14 02:49:00,040] INFO django.server "GET /admin/auth/user/ HTTP/1.1" 200 12530
+[2026-02-14 02:49:00,083] INFO django.server "GET /admin/jsi18n/ HTTP/1.1" 200 8560
+[2026-02-14 02:49:01,579] INFO django.server "GET /admin/auth/user/1/change/ HTTP/1.1" 200 22767
+[2026-02-14 02:49:01,620] INFO django.server "GET /admin/jsi18n/ HTTP/1.1" 200 8560
+[2026-02-14 02:49:16,521] INFO django.server "GET /admin/auth/user/ HTTP/1.1" 200 12530
+[2026-02-14 02:49:16,560] INFO django.server "GET /admin/jsi18n/ HTTP/1.1" 200 8560
+[2026-02-14 02:49:18,181] INFO django.server "GET /admin/auth/user/add/ HTTP/1.1" 200 11704
+[2026-02-14 02:49:18,224] INFO django.server "GET /admin/jsi18n/ HTTP/1.1" 200 8560
+[2026-02-14 02:49:22,861] INFO django.server "GET /admin/auth/user/ HTTP/1.1" 200 12530
+[2026-02-14 02:49:33,732] INFO django.server "GET /api/register HTTP/1.1" 301 0
+[2026-02-14 02:49:33,813] WARNING django.request Method Not Allowed: /api/register/
+[2026-02-14 02:49:33,814] WARNING django.server "GET /api/register/ HTTP/1.1" 405 5635
+[2026-02-14 02:49:35,169] INFO django.server "GET /static/rest_framework/css/bootstrap-tweaks.css HTTP/1.1" 200 3426
+[2026-02-14 02:49:35,200] INFO django.server "GET /static/rest_framework/css/bootstrap.min.css HTTP/1.1" 200 121457
+[2026-02-14 02:49:35,204] INFO django.server "GET /static/rest_framework/js/csrf.js HTTP/1.1" 200 1793
+[2026-02-14 02:49:35,235] INFO django.server "GET /static/rest_framework/js/ajax-form.js HTTP/1.1" 200 3796
+[2026-02-14 02:49:35,238] INFO django.server "GET /static/rest_framework/css/prettify.css HTTP/1.1" 200 817
+[2026-02-14 02:49:35,245] INFO django.server "GET /static/rest_framework/css/default.css HTTP/1.1" 200 1152
+[2026-02-14 02:49:35,255] INFO django.server "GET /static/rest_framework/js/prettify-min.js HTTP/1.1" 200 13632
+[2026-02-14 02:49:35,258] INFO django.server "GET /static/rest_framework/js/load-ajax-form.js HTTP/1.1" 200 59
+[2026-02-14 02:49:35,266] INFO django.server "GET /static/rest_framework/img/grid.png HTTP/1.1" 200 1458
+[2026-02-14 02:49:35,266] INFO django.server "GET /static/rest_framework/js/default.js HTTP/1.1" 200 1268
+[2026-02-14 02:49:35,267] INFO django.server "GET /static/rest_framework/js/bootstrap.min.js HTTP/1.1" 200 39680
+[2026-02-14 02:49:35,306] INFO django.server "GET /static/rest_framework/js/jquery-3.7.1.min.js HTTP/1.1" 200 87533
+[2026-02-14 02:49:43,875] INFO django.server "GET /admin/auth/user/ HTTP/1.1" 200 12530
+[2026-02-14 02:50:12,513] INFO api 用户登录: admin
+[2026-02-14 02:50:12,515] INFO django.server "POST /api/login/ HTTP/1.1" 200 99
+[2026-02-14 02:50:12,648] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6120
+[2026-02-14 02:50:12,658] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 435
+[2026-02-14 02:50:12,688] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 604
+[2026-02-14 02:50:22,223] INFO django.server "GET /admin/auth/user/add/ HTTP/1.1" 200 11704
+[2026-02-14 02:50:22,277] INFO django.server "GET /admin/jsi18n/ HTTP/1.1" 200 8560
+[2026-02-14 02:50:22,288] INFO django.server "GET /static/admin/css/nav_sidebar.css HTTP/1.1" 200 2694
+[2026-02-14 02:50:22,288] INFO django.server "GET /static/admin/css/dark_mode.css HTTP/1.1" 200 2929
+[2026-02-14 02:50:22,288] INFO django.server "GET /static/admin/css/forms.css HTTP/1.1" 200 9090
+[2026-02-14 02:50:22,289] INFO django.server "GET /static/admin/css/base.css HTTP/1.1" 200 21310
+[2026-02-14 02:50:22,296] INFO django.server "GET /static/admin/css/responsive.css HTTP/1.1" 200 18559
+[2026-02-14 02:50:22,314] INFO django.server "GET /static/admin/js/jquery.init.js HTTP/1.1" 200 347
+[2026-02-14 02:50:22,324] INFO django.server "GET /static/admin/js/core.js HTTP/1.1" 200 5682
+[2026-02-14 02:50:22,325] INFO django.server "GET /static/admin/js/urlify.js HTTP/1.1" 200 7887
+[2026-02-14 02:50:22,329] INFO django.server "GET /static/admin/js/actions.js HTTP/1.1" 200 7872
+[2026-02-14 02:50:22,329] INFO django.server "GET /static/admin/js/admin/RelatedObjectLookups.js HTTP/1.1" 200 8943
+[2026-02-14 02:50:22,332] INFO django.server "GET /static/admin/css/widgets.css HTTP/1.1" 200 11921
+[2026-02-14 02:50:22,350] INFO django.server "GET /static/admin/js/prepopulate_init.js HTTP/1.1" 200 586
+[2026-02-14 02:50:22,351] INFO django.server "GET /static/admin/js/prepopulate.js HTTP/1.1" 200 1531
+[2026-02-14 02:50:22,364] INFO django.server "GET /static/admin/js/vendor/jquery/jquery.js HTTP/1.1" 200 292458
+[2026-02-14 02:50:22,396] INFO django.server "GET /static/admin/js/theme.js HTTP/1.1" 200 1943
+[2026-02-14 02:50:22,409] INFO django.server "GET /static/admin/js/vendor/xregexp/xregexp.js HTTP/1.1" 200 232381
+[2026-02-14 02:50:22,427] INFO django.server "GET /static/admin/js/nav_sidebar.js HTTP/1.1" 200 3063
+[2026-02-14 02:50:22,435] INFO django.server "GET /static/admin/img/icon-addlink.svg HTTP/1.1" 200 331
+[2026-02-14 02:50:22,437] INFO django.server "GET /static/admin/js/change_form.js HTTP/1.1" 200 606
+[2026-02-14 02:50:22,552] WARNING django.request Not Found: /favicon.ico
+[2026-02-14 02:50:22,553] WARNING django.server "GET /favicon.ico HTTP/1.1" 404 2215
+[2026-02-14 02:50:37,967] INFO django.server "POST /admin/auth/user/add/ HTTP/1.1" 200 11858
+[2026-02-14 02:50:38,009] INFO django.server "GET /admin/jsi18n/ HTTP/1.1" 200 8560
+[2026-02-14 02:50:48,185] INFO django.server "POST /admin/auth/user/add/ HTTP/1.1" 302 0
+[2026-02-14 02:50:48,230] INFO django.server "GET /admin/auth/user/3/change/ HTTP/1.1" 200 22965
+[2026-02-14 02:50:48,279] INFO django.server "GET /admin/jsi18n/ HTTP/1.1" 200 8560
+[2026-02-14 02:50:48,303] INFO django.server "GET /static/admin/js/calendar.js HTTP/1.1" 200 8466
+[2026-02-14 02:50:48,304] INFO django.server "GET /static/admin/js/SelectFilter2.js HTTP/1.1" 200 15292
+[2026-02-14 02:50:48,305] INFO django.server "GET /static/admin/js/admin/DateTimeShortcuts.js HTTP/1.1" 200 19319
+[2026-02-14 02:50:48,306] INFO django.server "GET /static/admin/js/SelectBox.js HTTP/1.1" 200 4530
+[2026-02-14 02:50:48,423] INFO django.server "GET /static/admin/img/search.svg HTTP/1.1" 200 458
+[2026-02-14 02:50:48,424] INFO django.server "GET /static/admin/img/icon-unknown-alt.svg HTTP/1.1" 200 655
+[2026-02-14 02:50:48,424] INFO django.server "GET /static/admin/img/icon-clock.svg HTTP/1.1" 200 677
+[2026-02-14 02:50:48,425] INFO django.server "GET /static/admin/img/icon-unknown.svg HTTP/1.1" 200 655
+[2026-02-14 02:50:48,425] INFO django.server "GET /static/admin/img/icon-calendar.svg HTTP/1.1" 200 1086
+[2026-02-14 02:50:48,427] INFO django.server "GET /static/admin/img/selector-icons.svg HTTP/1.1" 200 3291
+[2026-02-14 02:51:01,660] INFO api 用户登录: xxyhh
+[2026-02-14 02:51:01,661] INFO django.server "POST /api/login/ HTTP/1.1" 200 100
+[2026-02-14 02:51:01,712] WARNING django.request Forbidden: /api/stats/
+[2026-02-14 02:51:01,713] WARNING django.request Forbidden: /api/dashboard/
+[2026-02-14 02:51:01,714] WARNING django.server "GET /api/stats/?mode=echarts HTTP/1.1" 403 49
+[2026-02-14 02:51:01,715] WARNING django.request Forbidden: /api/logs/
+[2026-02-14 02:51:01,715] WARNING django.server "GET /api/dashboard/ HTTP/1.1" 403 49
+[2026-02-14 02:51:01,717] WARNING django.server "GET /api/logs/?page=1 HTTP/1.1" 403 49
+[2026-02-14 02:51:12,300] INFO api 用户登录: admin
+[2026-02-14 02:51:12,300] INFO django.server "POST /api/login/ HTTP/1.1" 200 99
+[2026-02-14 02:51:12,374] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6120
+[2026-02-14 02:51:12,382] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 435
+[2026-02-14 02:51:12,409] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 604
+[2026-02-14 02:51:16,167] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6120
+[2026-02-14 02:51:16,180] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 435
+[2026-02-14 02:51:16,223] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 604
+[2026-02-14 02:51:26,216] INFO api 用户登录: admin
+[2026-02-14 02:51:26,216] INFO django.server "POST /api/login/ HTTP/1.1" 200 99
+[2026-02-14 02:51:26,288] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6120
+[2026-02-14 02:51:26,304] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 435
+[2026-02-14 02:51:26,337] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 604
+[2026-02-14 02:51:37,277] INFO api 用户登录: admin
+[2026-02-14 02:51:37,278] INFO django.server "POST /api/login/ HTTP/1.1" 200 99
+[2026-02-14 02:51:37,351] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6120
+[2026-02-14 02:51:37,362] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 435
+[2026-02-14 02:51:37,393] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 604
+[2026-02-14 02:52:53,616] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6120
+[2026-02-14 02:52:53,627] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 435
+[2026-02-14 02:52:53,654] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 604
+[2026-02-14 02:53:24,334] INFO django.server "GET /api/logs/?page=1&result=ACCEPT HTTP/1.1" 200 4103
+[2026-02-14 02:53:55,031] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6120
+[2026-02-14 02:56:58,626] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\backend\api\views.py changed, reloading.
+[2026-02-14 02:57:00,169] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-02-14 02:57:12,301] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\backend\api\urls.py changed, reloading.
+[2026-02-14 02:57:13,340] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-02-14 02:57:24,153] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6120
+[2026-02-14 02:57:24,176] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 435
+[2026-02-14 02:57:24,201] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 604
+[2026-02-14 02:57:43,197] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6120
+[2026-02-14 02:57:43,203] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 435
+[2026-02-14 02:57:43,227] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 604
+[2026-02-14 02:59:23,727] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6120
+[2026-02-14 02:59:23,739] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 435
+[2026-02-14 02:59:23,773] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 604
+[2026-02-14 02:59:29,597] INFO django.server "GET /api/logs/?page=2 HTTP/1.1" 200 652
+[2026-02-14 02:59:36,621] INFO django.server "DELETE /api/logs/bulk-delete/ HTTP/1.1" 200 13
+[2026-02-14 02:59:36,639] WARNING django.request Not Found: /api/logs/
+[2026-02-14 02:59:36,640] WARNING django.server "GET /api/logs/?page=2 HTTP/1.1" 404 28
+[2026-02-14 02:59:39,988] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6084
+[2026-02-14 02:59:49,957] INFO django.server "DELETE /api/logs/bulk-delete/ HTTP/1.1" 200 13
+[2026-02-14 02:59:49,975] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 5464
+[2026-02-14 02:59:57,251] INFO django.server "DELETE /api/logs/bulk-delete/ HTTP/1.1" 200 13
+[2026-02-14 02:59:57,268] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 5150
+[2026-02-14 03:00:07,381] INFO django.server "DELETE /api/logs/bulk-delete/ HTTP/1.1" 200 13
+[2026-02-14 03:00:07,399] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 4251
+[2026-02-14 03:00:10,604] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 4251
+[2026-02-14 03:00:10,612] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 416
+[2026-02-14 03:00:10,641] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 603
+[2026-02-14 03:00:18,718] INFO django.server "DELETE /api/logs/bulk-delete/ HTTP/1.1" 200 13
+[2026-02-14 03:00:18,740] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 3071
+[2026-02-14 03:00:31,574] INFO django.server "DELETE /api/logs/bulk-delete/ HTTP/1.1" 200 13
+[2026-02-14 03:00:31,589] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 2467
+[2026-02-14 03:00:34,478] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 2467
+[2026-02-14 03:00:34,485] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 391
+[2026-02-14 03:00:34,530] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 568
+[2026-02-14 03:00:39,476] INFO django.server "GET /admin/api/verifylog/ HTTP/1.1" 200 11460
+[2026-02-14 03:00:40,806] INFO django.server "GET /static/admin/css/nav_sidebar.css HTTP/1.1" 200 2694
+[2026-02-14 03:00:40,811] INFO django.server "GET /static/admin/css/responsive.css HTTP/1.1" 200 18559
+[2026-02-14 03:00:40,817] INFO django.server "GET /static/admin/js/core.js HTTP/1.1" 200 5682
+[2026-02-14 03:00:40,818] INFO django.server "GET /static/admin/js/jquery.init.js HTTP/1.1" 200 347
+[2026-02-14 03:00:40,821] INFO django.server "GET /static/admin/css/changelists.css HTTP/1.1" 200 6566
+[2026-02-14 03:00:40,827] INFO django.server "GET /static/admin/js/admin/RelatedObjectLookups.js HTTP/1.1" 200 8943
+[2026-02-14 03:00:40,832] INFO django.server "GET /static/admin/js/actions.js HTTP/1.1" 200 7872
+[2026-02-14 03:00:40,833] INFO django.server "GET /static/admin/js/vendor/jquery/jquery.js HTTP/1.1" 200 292458
+[2026-02-14 03:00:40,840] INFO django.server "GET /admin/jsi18n/ HTTP/1.1" 200 8560
+[2026-02-14 03:00:40,840] INFO django.server "GET /static/admin/js/urlify.js HTTP/1.1" 200 7887
+[2026-02-14 03:00:40,842] INFO django.server "GET /static/admin/js/prepopulate.js HTTP/1.1" 200 1531
+[2026-02-14 03:00:40,844] INFO django.server "GET /static/admin/css/base.css HTTP/1.1" 200 21310
+[2026-02-14 03:00:40,851] INFO django.server "GET /static/admin/css/dark_mode.css HTTP/1.1" 200 2929
+[2026-02-14 03:00:40,851] INFO django.server "GET /static/admin/js/vendor/xregexp/xregexp.js HTTP/1.1" 200 232381
+[2026-02-14 03:00:40,858] INFO django.server "GET /static/admin/js/theme.js HTTP/1.1" 200 1943
+[2026-02-14 03:00:40,858] INFO django.server "GET /static/admin/js/nav_sidebar.js HTTP/1.1" 200 3063
+[2026-02-14 03:00:40,879] INFO django.server "GET /static/admin/img/icon-addlink.svg HTTP/1.1" 200 331
+[2026-02-14 03:00:40,892] INFO django.server "GET /static/admin/img/tooltag-add.svg HTTP/1.1" 200 331
+[2026-02-14 03:00:40,896] INFO django.server "GET /static/admin/js/filters.js HTTP/1.1" 200 978
+[2026-02-14 03:00:41,102] WARNING django.request Not Found: /favicon.ico
+[2026-02-14 03:00:41,103] WARNING django.server "GET /favicon.ico HTTP/1.1" 404 2215
+[2026-02-14 03:00:56,349] INFO django.server "GET /api/logs/?page=1&result=ACCEPT HTTP/1.1" 200 1501
+[2026-02-14 03:10:13,207] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 2467
+[2026-02-14 03:10:13,213] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 391
+[2026-02-14 03:10:13,244] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 568
+[2026-02-14 03:10:24,428] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 2467
+[2026-02-14 03:10:24,435] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 391
+[2026-02-14 03:10:24,459] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 568
+[2026-02-14 03:10:34,042] INFO api 用户登录: admin
+[2026-02-14 03:10:34,043] INFO django.server "POST /api/login/ HTTP/1.1" 200 99
+[2026-02-14 03:10:34,128] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 2467
+[2026-02-14 03:10:34,134] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 391
+[2026-02-14 03:10:34,160] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 568
+[2026-02-14 03:10:52,290] WARNING django.request Unauthorized: /api/login/
+[2026-02-14 03:10:52,291] WARNING django.server "POST /api/login/ HTTP/1.1" 401 36
+[2026-02-14 03:10:55,616] INFO django.server "GET /admin/api/verifylog/ HTTP/1.1" 200 11460
+[2026-02-14 03:10:55,661] INFO django.server "GET /admin/jsi18n/ HTTP/1.1" 200 8560
+[2026-02-14 03:10:57,738] INFO django.server "GET /admin/auth/user/ HTTP/1.1" 200 12913
+[2026-02-14 03:10:57,776] INFO django.server "GET /static/admin/img/search.svg HTTP/1.1" 200 458
+[2026-02-14 03:10:57,779] INFO django.server "GET /admin/jsi18n/ HTTP/1.1" 200 8560
+[2026-02-14 03:10:57,799] INFO django.server "GET /static/admin/img/icon-no.svg HTTP/1.1" 200 560
+[2026-02-14 03:10:57,813] INFO django.server "GET /static/admin/img/sorting-icons.svg HTTP/1.1" 200 1097
+[2026-02-14 03:10:59,505] INFO django.server "GET /admin/auth/user/3/change/ HTTP/1.1" 200 22747
+[2026-02-14 03:10:59,548] INFO django.server "GET /static/admin/css/forms.css HTTP/1.1" 200 9090
+[2026-02-14 03:10:59,551] INFO django.server "GET /static/admin/js/calendar.js HTTP/1.1" 200 8466
+[2026-02-14 03:10:59,556] INFO django.server "GET /static/admin/js/admin/DateTimeShortcuts.js HTTP/1.1" 200 19319
+[2026-02-14 03:10:59,556] INFO django.server "GET /admin/jsi18n/ HTTP/1.1" 200 8560
+[2026-02-14 03:10:59,558] INFO django.server "GET /static/admin/js/SelectBox.js HTTP/1.1" 200 4530
+[2026-02-14 03:10:59,558] INFO django.server "GET /static/admin/css/widgets.css HTTP/1.1" 200 11921
+[2026-02-14 03:10:59,559] INFO django.server "GET /static/admin/js/prepopulate_init.js HTTP/1.1" 200 586
+[2026-02-14 03:10:59,559] INFO django.server "GET /static/admin/js/SelectFilter2.js HTTP/1.1" 200 15292
+[2026-02-14 03:10:59,570] INFO django.server "GET /static/admin/js/change_form.js HTTP/1.1" 200 606
+[2026-02-14 03:10:59,653] INFO django.server "GET /static/admin/img/icon-unknown.svg HTTP/1.1" 200 655
+[2026-02-14 03:10:59,659] INFO django.server "GET /static/admin/img/selector-icons.svg HTTP/1.1" 200 3291
+[2026-02-14 03:10:59,660] INFO django.server "GET /static/admin/img/icon-unknown-alt.svg HTTP/1.1" 200 655
+[2026-02-14 03:10:59,664] INFO django.server "GET /static/admin/img/icon-clock.svg HTTP/1.1" 200 677
+[2026-02-14 03:10:59,665] INFO django.server "GET /static/admin/img/icon-calendar.svg HTTP/1.1" 200 1086
+[2026-02-14 03:11:02,211] INFO django.server "GET /admin/auth/user/3/password/ HTTP/1.1" 200 8740
+[2026-02-14 03:11:11,771] INFO django.server "POST /admin/auth/user/3/password/ HTTP/1.1" 302 0
+[2026-02-14 03:11:11,812] INFO django.server "GET /admin/auth/user/3/change/ HTTP/1.1" 200 22874
+[2026-02-14 03:11:11,868] INFO django.server "GET /admin/jsi18n/ HTTP/1.1" 200 8560
+[2026-02-14 03:11:19,959] INFO api 用户登录: xxyhh
+[2026-02-14 03:11:19,962] INFO django.server "POST /api/login/ HTTP/1.1" 200 100
+[2026-02-14 03:11:20,049] WARNING django.request Forbidden: /api/dashboard/
+[2026-02-14 03:11:20,052] WARNING django.server "GET /api/dashboard/ HTTP/1.1" 403 49
+[2026-02-14 03:11:20,052] WARNING django.request Forbidden: /api/stats/
+[2026-02-14 03:11:20,055] WARNING django.request Forbidden: /api/logs/
+[2026-02-14 03:11:20,055] WARNING django.server "GET /api/stats/?mode=echarts HTTP/1.1" 403 49
+[2026-02-14 03:11:20,056] WARNING django.server "GET /api/logs/?page=1 HTTP/1.1" 403 49
+[2026-02-14 03:11:26,635] WARNING django.request Forbidden: /api/dashboard/
+[2026-02-14 03:11:26,637] WARNING django.request Forbidden: /api/logs/
+[2026-02-14 03:11:26,637] WARNING django.request Forbidden: /api/stats/
+[2026-02-14 03:11:26,638] WARNING django.server "GET /api/dashboard/ HTTP/1.1" 403 49
+[2026-02-14 03:11:26,638] WARNING django.server "GET /api/logs/?page=1 HTTP/1.1" 403 49
+[2026-02-14 03:11:26,640] WARNING django.server "GET /api/stats/?mode=echarts HTTP/1.1" 403 49
+[2026-02-14 03:12:38,548] WARNING django.request Forbidden: /api/dashboard/
+[2026-02-14 03:12:38,550] WARNING django.request Forbidden: /api/stats/
+[2026-02-14 03:12:38,550] WARNING django.server "GET /api/dashboard/ HTTP/1.1" 403 49
+[2026-02-14 03:12:38,551] WARNING django.request Forbidden: /api/logs/
+[2026-02-14 03:12:38,554] WARNING django.server "GET /api/stats/?mode=echarts HTTP/1.1" 403 49
+[2026-02-14 03:12:38,554] WARNING django.server "GET /api/logs/?page=1 HTTP/1.1" 403 49
+[2026-02-14 03:13:30,166] WARNING django.request Forbidden: /api/dashboard/
+[2026-02-14 03:13:30,168] WARNING django.request Forbidden: /api/stats/
+[2026-02-14 03:13:30,174] WARNING django.server "GET /api/dashboard/ HTTP/1.1" 403 49
+[2026-02-14 03:13:30,175] WARNING django.server "GET /api/stats/?mode=echarts HTTP/1.1" 403 49
+[2026-02-14 03:13:30,177] WARNING django.request Forbidden: /api/logs/
+[2026-02-14 03:13:30,178] WARNING django.server "GET /api/logs/?page=1 HTTP/1.1" 403 49
+[2026-02-14 03:19:18,048] WARNING django.request Forbidden: /api/dashboard/
+[2026-02-14 03:19:18,051] WARNING django.request Forbidden: /api/stats/
+[2026-02-14 03:19:18,051] WARNING django.server "GET /api/dashboard/ HTTP/1.1" 403 49
+[2026-02-14 03:19:18,052] WARNING django.server "GET /api/stats/?mode=echarts HTTP/1.1" 403 49
+[2026-02-14 03:19:18,052] WARNING django.request Forbidden: /api/logs/
+[2026-02-14 03:19:18,053] WARNING django.server "GET /api/logs/?page=1 HTTP/1.1" 403 49
+[2026-02-14 03:20:38,393] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-02-14 03:21:31,409] INFO api 用户登录: admin
+[2026-02-14 03:21:31,411] INFO django.server "POST /api/login/ HTTP/1.1" 200 99
+[2026-02-14 03:21:31,574] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 2467
+[2026-02-14 03:21:31,587] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 391
+[2026-02-14 03:21:31,627] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 568
+[2026-02-14 03:21:40,122] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 2467
+[2026-02-14 03:21:40,132] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 391
+[2026-02-14 03:21:40,159] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 568
+[2026-02-14 03:22:09,442] INFO api 用户登录: xxyhh
+[2026-02-14 03:22:09,443] INFO django.server "POST /api/login/ HTTP/1.1" 200 100
+[2026-02-14 03:22:43,396] INFO api 声纹验证: api_user score=-0.3703 => REJECT
+[2026-02-14 03:22:43,398] INFO django.server "POST /api/verify/ HTTP/1.1" 200 131
+[2026-02-14 03:22:58,849] INFO api 声纹验证: api_user score=0.6911 => REJECT
+[2026-02-14 03:22:58,849] INFO django.server "POST /api/verify/ HTTP/1.1" 200 129
+[2026-02-14 03:23:04,943] INFO api 声纹验证: api_user score=1.0000 => ACCEPT
+[2026-02-14 03:23:04,943] INFO django.server "POST /api/verify/ HTTP/1.1" 200 165
+[2026-02-14 03:23:14,455] INFO api 声纹验证: api_user score=0.7653 => ACCEPT
+[2026-02-14 03:23:14,456] INFO django.server "POST /api/verify/ HTTP/1.1" 200 180
+[2026-02-14 03:23:29,896] WARNING django.request Forbidden: /api/dashboard/
+[2026-02-14 03:23:29,897] WARNING django.request Forbidden: /api/stats/
+[2026-02-14 03:23:29,897] WARNING django.request Forbidden: /api/logs/
+[2026-02-14 03:23:29,899] WARNING django.server "GET /api/dashboard/ HTTP/1.1" 403 49
+[2026-02-14 03:23:29,900] WARNING django.server "GET /api/stats/?mode=echarts HTTP/1.1" 403 49
+[2026-02-14 03:23:29,900] WARNING django.server "GET /api/logs/?page=1 HTTP/1.1" 403 49
+[2026-02-14 03:23:31,844] WARNING django.request Forbidden: /api/dashboard/
+[2026-02-14 03:23:31,844] WARNING django.request Forbidden: /api/stats/
+[2026-02-14 03:23:31,846] WARNING django.server "GET /api/dashboard/ HTTP/1.1" 403 49
+[2026-02-14 03:23:31,847] WARNING django.request Forbidden: /api/logs/
+[2026-02-14 03:23:31,847] WARNING django.server "GET /api/stats/?mode=echarts HTTP/1.1" 403 49
+[2026-02-14 03:23:31,848] WARNING django.server "GET /api/logs/?page=1 HTTP/1.1" 403 49
+[2026-02-14 03:23:41,316] INFO api 用户登录: admin
+[2026-02-14 03:23:41,317] INFO django.server "POST /api/login/ HTTP/1.1" 200 99
+[2026-02-14 03:23:41,473] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 3761
+[2026-02-14 03:23:41,477] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 397
+[2026-02-14 03:23:41,506] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 571
+[2026-02-14 03:26:41,970] INFO api 用户登录: admin
+[2026-02-14 03:26:41,971] INFO django.server "POST /api/login/ HTTP/1.1" 200 99
+[2026-02-14 03:26:42,136] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 3761
+[2026-02-14 03:26:42,152] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 397
+[2026-02-14 03:26:42,179] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 571
+[2026-02-14 03:28:46,449] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 3761
+[2026-02-14 03:28:46,451] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 397
+[2026-02-14 03:28:46,480] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 571
+[2026-02-14 03:29:25,191] WARNING django.request Unauthorized: /api/dashboard/
+[2026-02-14 03:29:25,192] WARNING django.server "GET /api/dashboard/ HTTP/1.1" 401 43
+[2026-02-14 03:29:25,207] WARNING django.request Unauthorized: /api/stats/
+[2026-02-14 03:29:25,209] WARNING django.server "GET /api/stats/?mode=echarts HTTP/1.1" 401 43
+[2026-02-14 03:29:25,230] WARNING django.request Unauthorized: /api/logs/
+[2026-02-14 03:29:25,231] WARNING django.server "GET /api/logs/?page=1 HTTP/1.1" 401 43
+[2026-02-14 03:30:11,976] WARNING django.request Unauthorized: /api/dashboard/
+[2026-02-14 03:30:11,976] WARNING django.server "GET /api/dashboard/ HTTP/1.1" 401 43
+[2026-02-14 03:30:11,978] WARNING django.request Unauthorized: /api/stats/
+[2026-02-14 03:30:11,980] WARNING django.server "GET /api/stats/?mode=echarts HTTP/1.1" 401 43
+[2026-02-14 03:30:11,980] WARNING django.request Unauthorized: /api/logs/
+[2026-02-14 03:30:11,982] WARNING django.server "GET /api/logs/?page=1 HTTP/1.1" 401 43
+[2026-02-14 03:34:25,164] INFO api 声纹验证: api_user score=0.7096 => ACCEPT
+[2026-02-14 03:34:25,165] INFO django.server "POST /api/verify/ HTTP/1.1" 200 180
+[2026-02-14 03:34:45,009] INFO api 用户登录: admin
+[2026-02-14 03:34:45,010] INFO django.server "POST /api/login/ HTTP/1.1" 200 99
+[2026-02-14 03:34:45,200] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 4057
+[2026-02-14 03:34:45,203] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 397
+[2026-02-14 03:34:45,230] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 571
+[2026-02-14 03:38:03,051] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 4057
+[2026-02-14 03:38:03,057] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 397
+[2026-02-14 03:38:03,086] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 571
+[2026-02-14 03:38:14,374] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\backend\api\serializers.py changed, reloading.
+[2026-02-14 03:38:15,365] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-02-14 03:39:09,341] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\backend\api\views.py changed, reloading.
+[2026-02-14 03:39:10,102] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-02-14 03:39:18,999] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\backend\api\views.py changed, reloading.
+[2026-02-14 03:39:19,937] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-02-14 03:44:56,657] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-02-14 03:46:19,661] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\backend\api\serializers.py changed, reloading.
+[2026-02-14 03:46:20,302] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-02-14 03:47:17,084] WARNING django.request Unauthorized: /api/dashboard/
+[2026-02-14 03:47:17,084] WARNING django.request Unauthorized: /api/logs/
+[2026-02-14 03:47:17,085] WARNING django.request Unauthorized: /api/stats/
+[2026-02-14 03:47:17,086] WARNING django.server "GET /api/logs/?page=1 HTTP/1.1" 401 43
+[2026-02-14 03:47:17,091] WARNING django.server "GET /api/stats/?mode=echarts HTTP/1.1" 401 43
+[2026-02-14 03:47:17,091] WARNING django.server "GET /api/dashboard/ HTTP/1.1" 401 43
+[2026-02-14 03:47:28,296] INFO api 声纹验证: api_user score=0.6138 => REJECT
+[2026-02-14 03:47:28,297] INFO django.server "POST /api/verify/ HTTP/1.1" 200 129
+[2026-02-14 03:47:34,890] INFO api 声纹验证: api_user score=0.6343 => REJECT
+[2026-02-14 03:47:34,891] INFO django.server "POST /api/verify/ HTTP/1.1" 200 129
+[2026-02-14 03:47:39,010] INFO api 声纹验证: api_user score=0.7137 => ACCEPT
+[2026-02-14 03:47:39,011] INFO django.server "POST /api/verify/ HTTP/1.1" 200 180
+[2026-02-14 03:47:49,292] INFO api 用户登录: admin
+[2026-02-14 03:47:49,293] INFO django.server "POST /api/login/ HTTP/1.1" 200 99
+[2026-02-14 03:47:49,451] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 5129
+[2026-02-14 03:47:49,457] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 396
+[2026-02-14 03:47:49,484] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 571
+[2026-02-14 03:48:16,674] INFO django.server "POST /api/threshold/ HTTP/1.1" 200 18
+[2026-02-14 03:48:22,928] INFO api 声纹验证: api_user score=0.8066 => ACCEPT
+[2026-02-14 03:48:22,929] INFO django.server "POST /api/verify/ HTTP/1.1" 200 180
+[2026-02-14 04:12:34,807] WARNING django.request Unauthorized: /api/dashboard/
+[2026-02-14 04:12:34,809] WARNING django.request Unauthorized: /api/stats/
+[2026-02-14 04:12:34,812] WARNING django.server "GET /api/dashboard/ HTTP/1.1" 401 43
+[2026-02-14 04:12:34,814] WARNING django.request Unauthorized: /api/logs/
+[2026-02-14 04:12:34,814] WARNING django.server "GET /api/stats/?mode=echarts HTTP/1.1" 401 43
+[2026-02-14 04:12:34,824] WARNING django.server "GET /api/logs/?page=1 HTTP/1.1" 401 43
+[2026-02-14 04:12:41,203] WARNING django.request Unauthorized: /api/dashboard/
+[2026-02-14 04:12:41,205] WARNING django.request Unauthorized: /api/stats/
+[2026-02-14 04:12:41,206] WARNING django.server "GET /api/dashboard/ HTTP/1.1" 401 43
+[2026-02-14 04:12:41,218] WARNING django.request Unauthorized: /api/logs/
+[2026-02-14 04:12:41,222] WARNING django.server "GET /api/stats/?mode=echarts HTTP/1.1" 401 43
+[2026-02-14 04:12:41,224] WARNING django.server "GET /api/logs/?page=1 HTTP/1.1" 401 43
+[2026-02-14 04:12:49,626] INFO api 声纹验证: api_user score=0.6138 => ACCEPT
+[2026-02-14 04:12:49,627] INFO django.server "POST /api/verify/ HTTP/1.1" 200 181
+[2026-02-14 04:13:01,023] WARNING django.request Unauthorized: /api/dashboard/
+[2026-02-14 04:13:01,025] WARNING django.request Unauthorized: /api/stats/
+[2026-02-14 04:13:01,031] WARNING django.request Unauthorized: /api/logs/
+[2026-02-14 04:13:01,031] WARNING django.server "GET /api/dashboard/ HTTP/1.1" 401 43
+[2026-02-14 04:13:01,032] WARNING django.server "GET /api/stats/?mode=echarts HTTP/1.1" 401 43
+[2026-02-14 04:13:01,034] WARNING django.server "GET /api/logs/?page=1 HTTP/1.1" 401 43
+[2026-02-14 04:13:13,918] INFO api 用户登录: admin
+[2026-02-14 04:13:13,920] INFO django.server "POST /api/login/ HTTP/1.1" 200 99
+[2026-02-14 04:13:14,061] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 5746
+[2026-02-14 04:13:14,066] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 398
+[2026-02-14 04:13:14,100] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 573
+[2026-02-14 04:13:21,021] INFO django.server "POST /api/threshold/ HTTP/1.1" 200 17
+[2026-02-14 04:13:25,168] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 5746
+[2026-02-14 04:13:25,173] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 398
+[2026-02-14 04:13:25,195] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 572
+[2026-02-14 04:13:53,094] INFO api 声纹验证: api_user score=0.4484 => REJECT
+[2026-02-14 04:13:53,095] INFO django.server "POST /api/verify/ HTTP/1.1" 200 130
+[2026-02-14 04:14:43,034] INFO api 用户登录: admin
+[2026-02-14 04:14:43,034] INFO django.server "POST /api/login/ HTTP/1.1" 200 99
+[2026-02-14 04:14:43,179] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6079
+[2026-02-14 04:14:43,186] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 398
+[2026-02-14 04:14:43,218] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 572
+[2026-02-14 04:17:53,044] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6079
+[2026-02-14 04:17:53,047] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 398
+[2026-02-14 04:17:53,074] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 572
+[2026-02-14 04:18:48,507] WARNING django.request Unauthorized: /api/dashboard/
+[2026-02-14 04:18:48,509] WARNING django.request Unauthorized: /api/stats/
+[2026-02-14 04:18:48,510] WARNING django.server "GET /api/dashboard/ HTTP/1.1" 401 43
+[2026-02-14 04:18:48,513] WARNING django.request Unauthorized: /api/logs/
+[2026-02-14 04:18:48,513] WARNING django.server "GET /api/stats/?mode=echarts HTTP/1.1" 401 43
+[2026-02-14 04:18:48,514] WARNING django.server "GET /api/logs/?page=1 HTTP/1.1" 401 43
+[2026-02-14 04:19:18,487] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\backend\api\views.py changed, reloading.
+[2026-02-14 04:19:20,185] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-02-14 04:19:32,504] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\backend\api\urls.py changed, reloading.
+[2026-02-14 04:19:33,691] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-02-14 04:20:30,361] WARNING django.request Unauthorized: /api/dashboard/
+[2026-02-14 04:20:30,361] WARNING django.request Unauthorized: /api/logs/
+[2026-02-14 04:20:30,361] WARNING django.request Unauthorized: /api/stats/
+[2026-02-14 04:20:30,366] WARNING django.server "GET /api/dashboard/ HTTP/1.1" 401 43
+[2026-02-14 04:20:30,366] WARNING django.server "GET /api/logs/?page=1 HTTP/1.1" 401 43
+[2026-02-14 04:20:30,369] WARNING django.server "GET /api/stats/?mode=echarts HTTP/1.1" 401 43
+[2026-02-14 04:27:27,822] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-02-14 04:27:54,892] WARNING django.request Unauthorized: /api/dashboard/
+[2026-02-14 04:27:54,892] WARNING django.request Unauthorized: /api/logs/
+[2026-02-14 04:27:54,892] WARNING django.request Unauthorized: /api/stats/
+[2026-02-14 04:27:54,893] WARNING django.server "GET /api/dashboard/ HTTP/1.1" 401 43
+[2026-02-14 04:27:54,894] WARNING django.server "GET /api/logs/?page=1 HTTP/1.1" 401 43
+[2026-02-14 04:27:54,894] WARNING django.server "GET /api/stats/?mode=echarts HTTP/1.1" 401 43
+[2026-02-14 04:28:00,915] WARNING django.request Unauthorized: /api/threshold/
+[2026-02-14 04:28:00,917] WARNING django.server "POST /api/threshold/ HTTP/1.1" 401 43
+[2026-02-14 04:28:59,127] INFO api 声纹验证: api_user score=0.0992 => REJECT
+[2026-02-14 04:28:59,130] INFO django.server "POST /api/verify/ HTTP/1.1" 200 130
+[2026-02-14 04:29:25,089] INFO api 用户登录: xxyhh
+[2026-02-14 04:29:25,089] INFO django.server "POST /api/login/ HTTP/1.1" 200 100
+[2026-02-14 04:29:25,155] INFO django.server "GET /api/me/ HTTP/1.1" 200 121
+[2026-02-14 04:29:25,163] INFO django.server "GET /api/my-logs/ HTTP/1.1" 200 1380
+[2026-02-14 04:29:48,818] WARNING django.request Unauthorized: /api/me/
+[2026-02-14 04:29:48,820] WARNING django.request Unauthorized: /api/my-logs/
+[2026-02-14 04:29:48,824] WARNING django.server "GET /api/me/ HTTP/1.1" 401 43
+[2026-02-14 04:29:48,828] WARNING django.server "GET /api/my-logs/ HTTP/1.1" 401 43
+[2026-02-14 04:30:02,255] INFO api 用户登录: xxyhh
+[2026-02-14 04:30:02,256] INFO django.server "POST /api/login/ HTTP/1.1" 200 100
+[2026-02-14 04:30:02,316] INFO django.server "GET /api/me/ HTTP/1.1" 200 121
+[2026-02-14 04:30:02,322] INFO django.server "GET /api/my-logs/ HTTP/1.1" 200 1380
+[2026-02-14 04:30:22,397] INFO django.server "GET /admin/auth/user/ HTTP/1.1" 200 12913
+[2026-02-14 04:30:23,672] INFO django.server "GET /static/admin/css/base.css HTTP/1.1" 200 21310
+[2026-02-14 04:30:23,677] INFO django.server "GET /static/admin/css/responsive.css HTTP/1.1" 200 18559
+[2026-02-14 04:30:23,683] INFO django.server "GET /static/admin/js/core.js HTTP/1.1" 200 5682
+[2026-02-14 04:30:23,692] INFO django.server "GET /static/admin/css/nav_sidebar.css HTTP/1.1" 200 2694
+[2026-02-14 04:30:23,697] INFO django.server "GET /admin/jsi18n/ HTTP/1.1" 200 8560
+[2026-02-14 04:30:23,700] INFO django.server "GET /static/admin/js/vendor/jquery/jquery.js HTTP/1.1" 200 292458
+[2026-02-14 04:30:23,701] INFO django.server "GET /static/admin/js/admin/RelatedObjectLookups.js HTTP/1.1" 200 8943
+[2026-02-14 04:30:23,705] INFO django.server "GET /static/admin/js/actions.js HTTP/1.1" 200 7872
+[2026-02-14 04:30:23,708] INFO django.server "GET /static/admin/js/prepopulate.js HTTP/1.1" 200 1531
+[2026-02-14 04:30:23,708] INFO django.server "GET /static/admin/js/urlify.js HTTP/1.1" 200 7887
+[2026-02-14 04:30:23,715] INFO django.server "GET /static/admin/img/search.svg HTTP/1.1" 200 458
+[2026-02-14 04:30:23,722] INFO django.server "GET /static/admin/css/changelists.css HTTP/1.1" 200 6566
+[2026-02-14 04:30:23,723] INFO django.server "GET /static/admin/img/icon-no.svg HTTP/1.1" 200 560
+[2026-02-14 04:30:23,741] INFO django.server "GET /static/admin/js/jquery.init.js HTTP/1.1" 200 347
+[2026-02-14 04:30:23,742] INFO django.server "GET /static/admin/js/vendor/xregexp/xregexp.js HTTP/1.1" 200 232381
+[2026-02-14 04:30:23,745] INFO django.server "GET /static/admin/css/dark_mode.css HTTP/1.1" 200 2929
+[2026-02-14 04:30:23,750] INFO django.server "GET /static/admin/js/theme.js HTTP/1.1" 200 1943
+[2026-02-14 04:30:23,755] INFO django.server "GET /static/admin/js/nav_sidebar.js HTTP/1.1" 200 3063
+[2026-02-14 04:30:23,773] INFO django.server "GET /static/admin/js/filters.js HTTP/1.1" 200 978
+[2026-02-14 04:30:23,794] INFO django.server "GET /static/admin/img/icon-addlink.svg HTTP/1.1" 200 331
+[2026-02-14 04:30:23,806] INFO django.server "GET /static/admin/img/sorting-icons.svg HTTP/1.1" 200 1097
+[2026-02-14 04:30:23,806] INFO django.server "GET /static/admin/img/tooltag-add.svg HTTP/1.1" 200 331
+[2026-02-14 04:30:24,065] WARNING django.request Not Found: /favicon.ico
+[2026-02-14 04:30:24,065] WARNING django.server "GET /favicon.ico HTTP/1.1" 404 2215
+[2026-02-14 04:30:26,709] INFO django.server "GET /admin/auth/user/3/change/ HTTP/1.1" 200 22747
+[2026-02-14 04:30:26,752] INFO django.server "GET /static/admin/js/SelectBox.js HTTP/1.1" 200 4530
+[2026-02-14 04:30:26,752] INFO django.server "GET /static/admin/js/SelectFilter2.js HTTP/1.1" 200 15292
+[2026-02-14 04:30:26,755] INFO django.server "GET /static/admin/js/admin/DateTimeShortcuts.js HTTP/1.1" 200 19319
+[2026-02-14 04:30:26,755] INFO django.server "GET /static/admin/css/forms.css HTTP/1.1" 200 9090
+[2026-02-14 04:30:26,755] INFO django.server "GET /static/admin/js/calendar.js HTTP/1.1" 200 8466
+[2026-02-14 04:30:26,757] INFO django.server "GET /admin/jsi18n/ HTTP/1.1" 200 8560
+[2026-02-14 04:30:26,760] INFO django.server "GET /static/admin/js/prepopulate_init.js HTTP/1.1" 200 586
+[2026-02-14 04:30:26,765] INFO django.server "GET /static/admin/css/widgets.css HTTP/1.1" 200 11921
+[2026-02-14 04:30:26,767] INFO django.server "GET /static/admin/js/change_form.js HTTP/1.1" 200 606
+[2026-02-14 04:30:26,862] INFO django.server "GET /static/admin/img/icon-unknown.svg HTTP/1.1" 200 655
+[2026-02-14 04:30:26,862] INFO django.server "GET /static/admin/img/icon-calendar.svg HTTP/1.1" 200 1086
+[2026-02-14 04:30:26,862] INFO django.server "GET /static/admin/img/selector-icons.svg HTTP/1.1" 200 3291
+[2026-02-14 04:30:26,862] INFO django.server "GET /static/admin/img/icon-clock.svg HTTP/1.1" 200 677
+[2026-02-14 04:30:26,864] INFO django.server "GET /static/admin/img/icon-unknown-alt.svg HTTP/1.1" 200 655
+[2026-02-14 04:33:23,372] INFO django.server "GET /api/me/ HTTP/1.1" 200 121
+[2026-02-14 04:33:23,380] INFO django.server "GET /api/my-logs/ HTTP/1.1" 200 1380
+[2026-02-14 04:33:46,833] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\backend\api\views.py changed, reloading.
+[2026-02-14 04:33:48,189] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-02-14 04:40:20,743] WARNING django.request Unauthorized: /api/me/
+[2026-02-14 04:40:20,743] WARNING django.request Unauthorized: /api/my-logs/
+[2026-02-14 04:40:20,744] WARNING django.server "GET /api/my-logs/ HTTP/1.1" 401 43
+[2026-02-14 04:40:20,745] WARNING django.server "GET /api/me/ HTTP/1.1" 401 43
+[2026-02-14 04:40:35,495] INFO api 声纹验证: api_user score=0.8664 => ACCEPT
+[2026-02-14 04:40:35,497] INFO django.server "POST /api/verify/ HTTP/1.1" 200 180
+[2026-02-14 04:40:42,729] INFO api 声纹验证: api_user score=0.7360 => ACCEPT
+[2026-02-14 04:40:42,730] INFO django.server "POST /api/verify/ HTTP/1.1" 200 180
+[2026-02-14 04:40:48,017] INFO api 声纹验证: api_user score=0.7394 => ACCEPT
+[2026-02-14 04:40:48,018] INFO django.server "POST /api/verify/ HTTP/1.1" 200 180
+[2026-02-14 04:40:51,889] INFO api 声纹验证: api_user score=0.3212 => REJECT
+[2026-02-14 04:40:51,891] INFO django.server "POST /api/verify/ HTTP/1.1" 200 130
+[2026-02-14 04:41:12,912] INFO api 用户登录: xxyhh
+[2026-02-14 04:41:12,913] INFO django.server "POST /api/login/ HTTP/1.1" 200 100
+[2026-02-14 04:41:12,980] INFO django.server "GET /api/me/ HTTP/1.1" 200 108
+[2026-02-14 04:41:12,987] INFO django.server "GET /api/my-logs/ HTTP/1.1" 200 1380
+[2026-02-14 04:41:45,524] INFO api 声纹注册成功: xxyhh, 4 条音频
+[2026-02-14 04:41:45,526] INFO django.server "POST /api/enroll/ HTTP/1.1" 200 50
+[2026-02-14 04:41:45,545] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-14 04:41:45,553] INFO django.server "GET /api/my-logs/ HTTP/1.1" 200 1380
+[2026-02-14 04:41:57,090] INFO api 声纹验证: xxyhh score=0.8219 => ACCEPT
+[2026-02-14 04:41:57,091] INFO django.server "POST /api/verify/ HTTP/1.1" 200 175
+[2026-02-14 04:42:19,222] INFO api 用户登录: admin
+[2026-02-14 04:42:19,222] INFO django.server "POST /api/login/ HTTP/1.1" 200 99
+[2026-02-14 04:42:19,369] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6451
+[2026-02-14 04:42:19,379] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 390
+[2026-02-14 04:42:19,418] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 572
+[2026-02-14 04:43:50,349] INFO api 用户登录: xxyhh
+[2026-02-14 04:43:50,349] INFO django.server "POST /api/login/ HTTP/1.1" 200 100
+[2026-02-14 04:43:50,405] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-14 04:43:50,411] INFO django.server "GET /api/my-logs/ HTTP/1.1" 200 1690
+[2026-02-14 04:46:25,792] INFO api 用户登录: admin
+[2026-02-14 04:46:25,794] INFO django.server "POST /api/login/ HTTP/1.1" 200 99
+[2026-02-14 04:46:25,956] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6451
+[2026-02-14 04:46:25,959] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 390
+[2026-02-14 04:46:25,998] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 572
+[2026-02-14 04:48:16,343] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\backend\api\views.py changed, reloading.
+[2026-02-14 04:48:17,715] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-02-14 04:52:07,821] INFO api 声纹验证: xxyhh score=0.8720 => ACCEPT
+[2026-02-14 04:52:07,823] INFO django.server "POST /api/verify/ HTTP/1.1" 200 175
+[2026-02-14 04:52:41,347] INFO api 用户登录: xxyhh
+[2026-02-14 04:52:41,348] INFO django.server "POST /api/login/ HTTP/1.1" 200 100
+[2026-02-14 04:52:41,413] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-14 04:52:41,417] INFO django.server "GET /api/my-logs/ HTTP/1.1" 200 2000
+[2026-02-14 04:53:13,465] INFO api 用户登录: admin
+[2026-02-14 04:53:13,466] INFO django.server "POST /api/login/ HTTP/1.1" 200 99
+[2026-02-14 04:53:13,610] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6453
+[2026-02-14 04:53:13,622] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 399
+[2026-02-14 04:53:13,657] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 575
+[2026-02-14 04:53:22,979] INFO django.server "GET /api/logs/?page=1&result=ACCEPT HTTP/1.1" 200 4997
+[2026-02-14 05:04:38,346] INFO api 用户登录: xxyhh
+[2026-02-14 05:04:38,348] INFO django.server "POST /api/login/ HTTP/1.1" 200 100
+[2026-02-14 05:04:38,405] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-14 05:04:38,411] INFO django.server "GET /api/my-logs/ HTTP/1.1" 200 2000
+[2026-02-14 05:15:35,374] INFO api 声纹验证: xxyhh score=0.9021 => ACCEPT
+[2026-02-14 05:15:35,375] INFO django.server "POST /api/verify/ HTTP/1.1" 200 175
+[2026-02-14 05:15:51,106] INFO api 声纹验证: xxyhh score=0.8471 => ACCEPT
+[2026-02-14 05:15:51,107] INFO django.server "POST /api/verify/ HTTP/1.1" 200 174
+[2026-02-14 05:16:11,058] INFO api 声纹验证: xxyhh score=0.8571 => ACCEPT
+[2026-02-14 05:16:11,058] INFO django.server "POST /api/verify/ HTTP/1.1" 200 175
+[2026-02-14 05:16:22,336] INFO api 声纹验证: xxyhh score=0.0693 => REJECT
+[2026-02-14 05:16:22,338] INFO django.server "POST /api/verify/ HTTP/1.1" 200 127
+[2026-02-14 05:24:52,431] INFO api 声纹验证: xxyhh score=0.2758 => REJECT
+[2026-02-14 05:24:52,431] INFO django.server "POST /api/verify/ HTTP/1.1" 200 126
+[2026-02-14 05:26:25,658] INFO api 用户登录: xxyhh
+[2026-02-14 05:26:25,659] INFO django.server "POST /api/login/ HTTP/1.1" 200 100
+[2026-02-14 05:26:25,723] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-14 05:26:25,729] INFO django.server "GET /api/my-logs/ HTTP/1.1" 200 3545
+[2026-02-14 05:31:30,593] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-14 05:31:30,599] INFO django.server "GET /api/my-logs/ HTTP/1.1" 200 3545
