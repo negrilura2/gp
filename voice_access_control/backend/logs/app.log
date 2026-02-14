@@ -826,3 +826,119 @@ NameError: name 'timezone' is not defined
 [2026-02-14 05:26:25,729] INFO django.server "GET /api/my-logs/ HTTP/1.1" 200 3545
 [2026-02-14 05:31:30,593] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
 [2026-02-14 05:31:30,599] INFO django.server "GET /api/my-logs/ HTTP/1.1" 200 3545
+[2026-02-14 06:03:02,342] WARNING django.request Unauthorized: /api/dashboard/
+[2026-02-14 06:03:02,342] WARNING django.request Unauthorized: /api/stats/
+[2026-02-14 06:03:02,343] WARNING django.request Unauthorized: /api/logs/
+[2026-02-14 06:03:02,346] WARNING django.server "GET /api/dashboard/ HTTP/1.1" 401 43
+[2026-02-14 06:03:02,347] WARNING django.server "GET /api/logs/?page=1 HTTP/1.1" 401 43
+[2026-02-14 06:03:02,351] WARNING django.server "GET /api/stats/?mode=echarts HTTP/1.1" 401 43
+[2026-02-14 06:03:09,787] INFO api 用户登录: admin
+[2026-02-14 06:03:09,788] INFO django.server "POST /api/login/ HTTP/1.1" 200 99
+[2026-02-14 06:03:09,889] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6355
+[2026-02-14 06:03:09,894] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 399
+[2026-02-14 06:03:09,920] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 575
+[2026-02-14 06:03:17,795] INFO django.server "GET /api/logs/?page=2 HTTP/1.1" 200 3593
+[2026-02-14 06:03:31,538] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6355
+[2026-02-14 20:29:24,440] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-02-14 20:35:20,229] INFO api 用户登录: xxyhh
+[2026-02-14 20:35:20,231] INFO django.server "POST /api/login/ HTTP/1.1" 200 100
+[2026-02-14 20:35:20,299] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-14 20:35:20,304] INFO django.server "GET /api/my-logs/ HTTP/1.1" 200 3545
+[2026-02-14 20:55:38,605] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-14 20:55:38,611] INFO django.server "GET /api/my-logs/ HTTP/1.1" 200 3545
+[2026-02-14 20:56:20,419] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-14 20:56:20,425] INFO django.server "GET /api/my-logs/ HTTP/1.1" 200 3545
+[2026-02-14 20:59:28,650] WARNING django.request Unauthorized: /api/me/
+[2026-02-14 20:59:28,650] WARNING django.request Unauthorized: /api/my-logs/
+[2026-02-14 20:59:28,652] WARNING django.server "GET /api/me/ HTTP/1.1" 401 43
+[2026-02-14 20:59:28,652] WARNING django.server "GET /api/my-logs/ HTTP/1.1" 401 43
+[2026-02-14 21:00:21,209] INFO api 用户登录: xxyhh
+[2026-02-14 21:00:21,210] INFO django.server "POST /api/login/ HTTP/1.1" 200 100
+[2026-02-14 21:00:21,259] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-14 21:00:21,263] INFO django.server "GET /api/my-logs/ HTTP/1.1" 200 3545
+[2026-02-14 21:10:51,101] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-14 21:10:51,112] INFO django.server "GET /api/my-logs/ HTTP/1.1" 200 3545
+[2026-02-14 21:19:20,711] INFO django.server "GET /admin/auth/user/3/change/ HTTP/1.1" 200 22747
+[2026-02-14 21:19:20,797] INFO django.server "GET /admin/jsi18n/ HTTP/1.1" 200 8560
+[2026-02-14 21:19:21,963] INFO django.server "GET /static/admin/css/nav_sidebar.css HTTP/1.1" 200 2694
+[2026-02-14 21:19:21,963] INFO django.server "GET /static/admin/css/base.css HTTP/1.1" 200 21310
+[2026-02-14 21:19:21,973] INFO django.server "GET /static/admin/css/forms.css HTTP/1.1" 200 9090
+[2026-02-14 21:19:21,984] INFO django.server "GET /static/admin/css/responsive.css HTTP/1.1" 200 18559
+[2026-02-14 21:19:21,985] INFO django.server "GET /static/admin/js/jquery.init.js HTTP/1.1" 200 347
+[2026-02-14 21:19:21,993] INFO django.server "GET /static/admin/js/calendar.js HTTP/1.1" 200 8466
+[2026-02-14 21:19:21,995] INFO django.server "GET /static/admin/css/dark_mode.css HTTP/1.1" 200 2929
+[2026-02-14 21:19:22,000] INFO django.server "GET /static/admin/css/widgets.css HTTP/1.1" 200 11921
+[2026-02-14 21:19:22,004] INFO django.server "GET /static/admin/js/admin/DateTimeShortcuts.js HTTP/1.1" 200 19319
+[2026-02-14 21:19:22,016] INFO django.server "GET /static/admin/js/core.js HTTP/1.1" 200 5682
+[2026-02-14 21:19:22,024] INFO django.server "GET /static/admin/js/SelectBox.js HTTP/1.1" 200 4530
+[2026-02-14 21:19:22,028] INFO django.server "GET /static/admin/js/admin/RelatedObjectLookups.js HTTP/1.1" 200 8943
+[2026-02-14 21:19:22,033] INFO django.server "GET /static/admin/js/actions.js HTTP/1.1" 200 7872
+[2026-02-14 21:19:22,035] INFO django.server "GET /static/admin/js/SelectFilter2.js HTTP/1.1" 200 15292
+[2026-02-14 21:19:22,041] INFO django.server "GET /static/admin/js/urlify.js HTTP/1.1" 200 7887
+[2026-02-14 21:19:22,047] INFO django.server "GET /static/admin/js/prepopulate.js HTTP/1.1" 200 1531
+[2026-02-14 21:19:22,049] INFO django.server "GET /static/admin/img/icon-addlink.svg HTTP/1.1" 200 331
+[2026-02-14 21:19:22,055] INFO django.server "GET /static/admin/js/prepopulate_init.js HTTP/1.1" 200 586
+[2026-02-14 21:19:22,079] INFO django.server "GET /static/admin/js/vendor/jquery/jquery.js HTTP/1.1" 200 292458
+[2026-02-14 21:19:22,102] INFO django.server "GET /static/admin/js/theme.js HTTP/1.1" 200 1943
+[2026-02-14 21:19:22,105] INFO django.server "GET /static/admin/js/vendor/xregexp/xregexp.js HTTP/1.1" 200 232381
+[2026-02-14 21:19:22,124] INFO django.server "GET /static/admin/js/change_form.js HTTP/1.1" 200 606
+[2026-02-14 21:19:22,127] INFO django.server "GET /static/admin/js/nav_sidebar.js HTTP/1.1" 200 3063
+[2026-02-14 21:19:22,379] INFO django.server "GET /static/admin/img/icon-unknown.svg HTTP/1.1" 200 655
+[2026-02-14 21:19:22,381] INFO django.server "GET /static/admin/img/search.svg HTTP/1.1" 200 458
+[2026-02-14 21:19:22,381] INFO django.server "GET /static/admin/img/icon-unknown-alt.svg HTTP/1.1" 200 655
+[2026-02-14 21:19:22,383] INFO django.server "GET /static/admin/img/selector-icons.svg HTTP/1.1" 200 3291
+[2026-02-14 21:19:22,383] INFO django.server "GET /static/admin/img/icon-calendar.svg HTTP/1.1" 200 1086
+[2026-02-14 21:19:22,383] INFO django.server "GET /static/admin/img/icon-clock.svg HTTP/1.1" 200 677
+[2026-02-14 21:19:22,581] WARNING django.request Not Found: /favicon.ico
+[2026-02-14 21:19:22,581] WARNING django.server "GET /favicon.ico HTTP/1.1" 404 2215
+[2026-02-14 21:20:06,137] INFO api 用户登录: xxyhh
+[2026-02-14 21:20:06,138] INFO django.server "POST /api/login/ HTTP/1.1" 200 100
+[2026-02-14 21:20:06,194] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-14 21:20:06,201] INFO django.server "GET /api/my-logs/ HTTP/1.1" 200 3545
+[2026-02-14 21:24:23,385] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-14 21:24:23,394] INFO django.server "GET /api/my-logs/ HTTP/1.1" 200 3545
+[2026-02-14 21:30:01,951] WARNING django.request Unauthorized: /api/me/
+[2026-02-14 21:30:01,954] WARNING django.request Unauthorized: /api/my-logs/
+[2026-02-14 21:30:01,954] WARNING django.server "GET /api/me/ HTTP/1.1" 401 43
+[2026-02-14 21:30:01,956] WARNING django.server "GET /api/my-logs/ HTTP/1.1" 401 43
+[2026-02-14 21:30:09,994] INFO api 用户登录: xxyhh
+[2026-02-14 21:30:09,994] INFO django.server "POST /api/login/ HTTP/1.1" 200 100
+[2026-02-14 21:30:10,039] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-14 21:30:10,063] INFO django.server "GET /api/my-logs/ HTTP/1.1" 200 3545
+[2026-02-14 21:35:17,162] INFO api 用户登录: xxyhh
+[2026-02-14 21:35:17,162] INFO django.server "POST /api/login/ HTTP/1.1" 200 100
+[2026-02-14 21:35:17,233] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-14 21:35:17,245] INFO django.server "GET /api/my-logs/ HTTP/1.1" 200 3545
+[2026-02-14 21:40:47,409] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-14 21:40:47,418] INFO django.server "GET /api/my-logs/ HTTP/1.1" 200 3545
+[2026-02-14 21:44:07,040] INFO api 用户登录: xxyhh
+[2026-02-14 21:44:07,041] INFO django.server "POST /api/login/ HTTP/1.1" 200 100
+[2026-02-14 21:44:07,095] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-14 21:44:07,105] INFO django.server "GET /api/my-logs/ HTTP/1.1" 200 3545
+[2026-02-14 21:47:15,604] INFO api 用户登录: xxyhh
+[2026-02-14 21:47:15,604] INFO django.server "POST /api/login/ HTTP/1.1" 200 100
+[2026-02-14 21:47:15,682] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-14 21:47:15,696] INFO django.server "GET /api/my-logs/ HTTP/1.1" 200 3545
+[2026-02-14 21:48:13,167] WARNING django.request Unauthorized: /api/me/
+[2026-02-14 21:48:13,169] WARNING django.request Unauthorized: /api/my-logs/
+[2026-02-14 21:48:13,169] WARNING django.server "GET /api/me/ HTTP/1.1" 401 43
+[2026-02-14 21:48:13,170] WARNING django.server "GET /api/my-logs/ HTTP/1.1" 401 43
+[2026-02-14 21:48:22,288] INFO api 用户登录: xxyhh
+[2026-02-14 21:48:22,288] INFO django.server "POST /api/login/ HTTP/1.1" 200 100
+[2026-02-14 21:48:22,330] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-14 21:48:22,337] INFO django.server "GET /api/my-logs/ HTTP/1.1" 200 3545
+[2026-02-14 21:50:31,859] INFO api 用户登录: admin
+[2026-02-14 21:50:31,861] INFO django.server "POST /api/login/ HTTP/1.1" 200 99
+[2026-02-14 21:50:31,966] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6355
+[2026-02-14 21:50:31,980] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 399
+[2026-02-14 21:50:32,018] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 575
+[2026-02-14 21:58:30,396] INFO api 用户登录: xxyhh
+[2026-02-14 21:58:30,397] INFO django.server "POST /api/login/ HTTP/1.1" 200 100
+[2026-02-14 21:58:30,449] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-14 21:58:30,462] INFO django.server "GET /api/my-logs/ HTTP/1.1" 200 3545
+[2026-02-14 22:09:43,877] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-14 22:09:43,885] INFO django.server "GET /api/my-logs/ HTTP/1.1" 200 3545
+[2026-02-14 22:15:33,618] WARNING django.request Unauthorized: /api/me/
+[2026-02-14 22:15:33,620] WARNING django.request Unauthorized: /api/my-logs/
+[2026-02-14 22:15:33,620] WARNING django.server "GET /api/me/ HTTP/1.1" 401 43
+[2026-02-14 22:15:33,620] WARNING django.server "GET /api/my-logs/ HTTP/1.1" 401 43

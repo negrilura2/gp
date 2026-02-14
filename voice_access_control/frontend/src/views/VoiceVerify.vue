@@ -7,6 +7,10 @@
           <div class="record-section">
             <div class="record-header">实时录音识别</div>
             <div class="record-main">
+              <div class="wave-header">
+                <span class="wave-title">声波图</span>
+                <span class="wave-subtitle">播放时走过区域会高亮</span>
+              </div>
               <canvas ref="waveCanvasRef" class="wave-canvas"></canvas>
               <div class="record-actions">
                 <el-button
@@ -19,16 +23,25 @@
                   type="info"
                   plain
                   :disabled="!file && !audioUrl"
-                  @click="handleClearRecording"
+                  @click="confirmClearRecording"
                 >
-                  清除录音/文件
+                  清空全部录音/上传
                 </el-button>
                 <span class="record-hint">
                   建议在安静环境下录制 2~3 秒语音
                 </span>
               </div>
               <div v-if="audioUrl" class="playback">
-                <audio :src="audioUrl" controls />
+                <audio
+                  ref="audioRef"
+                  :src="audioUrl"
+                  controls
+                  @play="handleAudioPlay"
+                  @pause="handleAudioPause"
+                  @ended="handleAudioEnded"
+                  @timeupdate="handleAudioTimeUpdate"
+                  @loadedmetadata="handleAudioLoaded"
+                />
               </div>
             </div>
           </div>
@@ -36,6 +49,7 @@
           <el-form label-width="80px">
             <el-form-item label="音频文件">
               <input
+                ref="fileInputRef"
                 type="file"
                 accept=".wav"
                 @change="onFileChange"
@@ -75,7 +89,7 @@
 
 <script setup>
 import { onMounted, onUnmounted, ref, computed } from "vue";
-import { ElMessage } from "element-plus";
+import { ElMessage, ElMessageBox } from "element-plus";
 import { verifyVoice } from "../api";
 
 const file = ref(null);
@@ -84,6 +98,10 @@ const result = ref(null);
 const recording = ref(false);
 const waveCanvasRef = ref(null);
 const audioUrl = ref("");
+const audioRef = ref(null);
+const fileInputRef = ref(null);
+const staticWaveValues = ref([]);
+const playProgress = ref(0);
 
 let mediaStream = null;
 let mediaRecorder = null;
@@ -92,19 +110,59 @@ let audioContext = null;
 let analyser = null;
 let animationId = null;
 let lastRenderedBuffer = null;
+let staticCanvas = null;
+let playAnimationId = null;
+let lastStaticValues = null;
 const WAVE_HISTORY_POINTS = 2048;
 let waveHistory = [];
 
-function onFileChange(e) {
+function getCanvasMetrics() {
+  const canvas = waveCanvasRef.value;
+  if (!canvas) return null;
+  const width = canvas.clientWidth;
+  const height = canvas.clientHeight || 120;
+  const ratio = window.devicePixelRatio || 1;
+  return { canvas, width, height, ratio };
+}
+
+function setupHiDpiCanvas(canvas, width, height, ratio) {
+  canvas.width = width * ratio;
+  canvas.height = height * ratio;
+  const ctx = canvas.getContext("2d");
+  ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+  return ctx;
+}
+
+function ensureCanvasReady() {
+  const metrics = getCanvasMetrics();
+  if (!metrics) return null;
+  const { canvas, width, height, ratio } = metrics;
+  const ctx = setupHiDpiCanvas(canvas, width, height, ratio);
+  return { canvas, ctx, width, height, ratio };
+}
+
+async function onFileChange(e) {
   const f = e.target.files && e.target.files[0];
   file.value = f || null;
   result.value = null;
+  if (audioRef.value) {
+    audioRef.value.pause();
+    audioRef.value.currentTime = 0;
+  }
   if (audioUrl.value) {
     URL.revokeObjectURL(audioUrl.value);
     audioUrl.value = "";
   }
+  staticWaveValues.value = [];
+  playProgress.value = 0;
   if (f) {
     audioUrl.value = URL.createObjectURL(f);
+    await loadWaveFromFile(f);
+  } else {
+    clearWaveCanvas();
+  }
+  if (e.target) {
+    e.target.value = "";
   }
 }
 
@@ -138,17 +196,16 @@ const resultSubtitle = computed(() => {
 });
 
 function drawWave() {
-  if (!analyser || !waveCanvasRef.value) return;
-  const canvas = waveCanvasRef.value;
-  const ctx = canvas.getContext("2d");
+  if (!analyser) return;
+  const metrics = ensureCanvasReady();
+  if (!metrics) return;
+  const { canvas, ctx, width, height } = metrics;
   const bufferLength = analyser.fftSize;
   const dataArray = new Uint8Array(bufferLength);
 
   function draw() {
     animationId = requestAnimationFrame(draw);
     analyser.getByteTimeDomainData(dataArray);
-    const width = canvas.width;
-    const height = canvas.height;
     let sumSquares = 0;
     for (let i = 0; i < bufferLength; i++) {
       const x = (dataArray[i] - 128) / 128.0;
@@ -188,6 +245,147 @@ function drawWave() {
   draw();
 }
 
+function ensureStaticCanvas() {
+  if (!staticCanvas) {
+    staticCanvas = document.createElement("canvas");
+  }
+  return staticCanvas;
+}
+
+function buildWaveValuesFromBuffer(buffer) {
+  const metrics = getCanvasMetrics();
+  if (!metrics) return [];
+  const { width } = metrics;
+  const data = buffer.getChannelData(0);
+  const samplesPerPoint = Math.max(1, Math.floor(data.length / width));
+  const values = [];
+  for (let x = 0; x < width; x++) {
+    const start = x * samplesPerPoint;
+    if (start >= data.length) break;
+    let sumSquares = 0;
+    let count = 0;
+    for (let i = 0; i < samplesPerPoint && start + i < data.length; i++) {
+      const v = data[start + i];
+      sumSquares += v * v;
+      count++;
+    }
+    if (!count) break;
+    let rms = Math.sqrt(sumSquares / count);
+    rms = Math.min(1, rms * 8);
+    values.push(rms);
+  }
+  return values;
+}
+
+function drawWavePath(ctx, values, width, height, color, lineWidth) {
+  if (!values.length) return;
+  const centerY = height / 2;
+  ctx.beginPath();
+  const denom = values.length > 1 ? values.length - 1 : values.length;
+  for (let i = 0; i < values.length; i++) {
+    const x = (i / (denom || 1)) * width;
+    const y = centerY - values[i] * centerY * 0.9;
+    if (i === 0) {
+      ctx.moveTo(x, y);
+    } else {
+      ctx.lineTo(x, y);
+    }
+  }
+  ctx.strokeStyle = color;
+  ctx.lineWidth = lineWidth;
+  ctx.stroke();
+}
+
+function renderBaseWave(values) {
+  const metrics = getCanvasMetrics();
+  if (!metrics) return;
+  const { width, height, ratio } = metrics;
+  const base = ensureStaticCanvas();
+  const ctx = setupHiDpiCanvas(base, width, height, ratio);
+
+  ctx.clearRect(0, 0, width, height);
+  ctx.fillStyle = "#000000";
+  ctx.fillRect(0, 0, width, height);
+  drawWavePath(ctx, values, width, height, "#67E8A9", 1.5);
+}
+
+function renderStaticWave(values, progress = 0) {
+  const metrics = ensureCanvasReady();
+  if (!metrics) return;
+  const { ctx, width, height } = metrics;
+  if (
+    values.length &&
+    (!staticCanvas ||
+      staticCanvas.width !== width ||
+      staticCanvas.height !== height ||
+      lastStaticValues !== values)
+  ) {
+    renderBaseWave(values);
+    lastStaticValues = values;
+  }
+
+  ctx.clearRect(0, 0, width, height);
+  if (staticCanvas) {
+    ctx.drawImage(staticCanvas, 0, 0);
+  }
+
+  const clamped = Math.max(0, Math.min(1, progress));
+  const lineX = clamped * width;
+  if (values.length && lineX > 0) {
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(0, 0, lineX, height);
+    ctx.clip();
+    ctx.shadowColor = "rgba(255, 193, 77, 0.5)";
+    ctx.shadowBlur = 6;
+    drawWavePath(ctx, values, width, height, "#FFC14D", 2);
+    ctx.restore();
+  }
+  ctx.save();
+  ctx.strokeStyle = "rgba(245, 108, 108, 0.65)";
+  ctx.lineWidth = 1;
+  ctx.shadowColor = "rgba(245, 108, 108, 0.6)";
+  ctx.shadowBlur = 4;
+  ctx.beginPath();
+  ctx.moveTo(lineX, 0);
+  ctx.lineTo(lineX, height);
+  ctx.stroke();
+  ctx.restore();
+}
+
+async function decodeToTargetBuffer(arrayBuffer) {
+  const AudioContextCtor = window.AudioContext || window.webkitAudioContext;
+  const ctx = new AudioContextCtor();
+  const decoded = await ctx.decodeAudioData(arrayBuffer.slice(0));
+  const targetSampleRate = 16000;
+  const OfflineContextCtor =
+    window.OfflineAudioContext || window.webkitOfflineAudioContext;
+  const offlineCtx = new OfflineContextCtor(
+    decoded.numberOfChannels,
+    Math.ceil((decoded.length * targetSampleRate) / decoded.sampleRate),
+    targetSampleRate
+  );
+  const bufferSource = offlineCtx.createBufferSource();
+  bufferSource.buffer = decoded;
+  bufferSource.connect(offlineCtx.destination);
+  bufferSource.start(0);
+  return offlineCtx.startRendering();
+}
+
+async function loadWaveFromFile(f) {
+  try {
+    const arrayBuffer = await f.arrayBuffer();
+    const renderedBuffer = await decodeToTargetBuffer(arrayBuffer);
+    lastRenderedBuffer = renderedBuffer;
+    const values = buildWaveValuesFromBuffer(renderedBuffer);
+    staticWaveValues.value = values;
+    renderBaseWave(values);
+    renderStaticWave(values, 0);
+  } catch (e) {
+    ElMessage.error("解析音频文件失败");
+  }
+}
+
 async function startRecording() {
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
     ElMessage.error("当前浏览器不支持录音，请使用现代浏览器");
@@ -208,6 +406,16 @@ async function startRecording() {
   source.connect(analyser);
   waveHistory = [];
   lastRenderedBuffer = null;
+  staticWaveValues.value = [];
+  playProgress.value = 0;
+  if (playAnimationId) {
+    cancelAnimationFrame(playAnimationId);
+    playAnimationId = null;
+  }
+  if (audioRef.value) {
+    audioRef.value.pause();
+    audioRef.value.currentTime = 0;
+  }
   drawWave();
 
   const mimeType =
@@ -252,24 +460,12 @@ function stopRecording() {
 async function handleRecordedBlob(blob) {
   try {
     const arrayBuffer = await blob.arrayBuffer();
-    const AudioContextCtor = window.AudioContext || window.webkitAudioContext;
-    const ctx = new AudioContextCtor();
-    const decoded = await ctx.decodeAudioData(arrayBuffer.slice(0));
-    const targetSampleRate = 16000;
-    const OfflineContextCtor =
-      window.OfflineAudioContext || window.webkitOfflineAudioContext;
-    const offlineCtx = new OfflineContextCtor(
-      decoded.numberOfChannels,
-      Math.ceil((decoded.length * targetSampleRate) / decoded.sampleRate),
-      targetSampleRate
-    );
-    const bufferSource = offlineCtx.createBufferSource();
-    bufferSource.buffer = decoded;
-    bufferSource.connect(offlineCtx.destination);
-    bufferSource.start(0);
-    const renderedBuffer = await offlineCtx.startRendering();
+    const renderedBuffer = await decodeToTargetBuffer(arrayBuffer);
     lastRenderedBuffer = renderedBuffer;
-    drawStaticWaveFromBuffer(renderedBuffer);
+    const values = buildWaveValuesFromBuffer(renderedBuffer);
+    staticWaveValues.value = values;
+    renderBaseWave(values);
+    renderStaticWave(values, 0);
     const wavBlob = audioBufferToWavBlob(renderedBuffer);
     file.value = new File([wavBlob], "recorded.wav", { type: "audio/wav" });
     if (audioUrl.value) {
@@ -281,55 +477,6 @@ async function handleRecordedBlob(blob) {
   } catch (e) {
     ElMessage.error("处理录音数据失败，请重试或改用文件上传");
   }
-}
-
-function drawStaticWaveFromBuffer(buffer) {
-  if (!waveCanvasRef.value || !buffer) return;
-  const canvas = waveCanvasRef.value;
-  const ctx = canvas.getContext("2d");
-  const width = canvas.width;
-  const height = canvas.height;
-  const data = buffer.getChannelData(0);
-  const centerY = height / 2;
-
-  ctx.clearRect(0, 0, width, height);
-  ctx.fillStyle = "#000000";
-  ctx.fillRect(0, 0, width, height);
-  ctx.lineWidth = 1.5;
-  ctx.strokeStyle = "#67E8A9";
-
-  const samplesPerPoint = Math.max(1, Math.floor(data.length / width));
-  const values = [];
-  for (let x = 0; x < width; x++) {
-    const start = x * samplesPerPoint;
-    if (start >= data.length) break;
-    let sumSquares = 0;
-    let count = 0;
-    for (let i = 0; i < samplesPerPoint && start + i < data.length; i++) {
-      const v = data[start + i];
-      sumSquares += v * v;
-      count++;
-    }
-    if (!count) break;
-    let rms = Math.sqrt(sumSquares / count);
-    rms = Math.min(1, rms * 8);
-    values.push(rms);
-  }
-
-  if (!values.length) return;
-
-  ctx.beginPath();
-  const denom = values.length > 1 ? values.length - 1 : values.length;
-  for (let i = 0; i < values.length; i++) {
-    const x = (i / (denom || 1)) * width;
-    const y = centerY - values[i] * centerY * 0.9;
-    if (i === 0) {
-      ctx.moveTo(x, y);
-    } else {
-      ctx.lineTo(x, y);
-    }
-  }
-  ctx.stroke();
 }
 
 function audioBufferToWavBlob(buffer) {
@@ -406,11 +553,9 @@ function toggleRecording() {
 }
 
 function clearWaveCanvas() {
-  if (!waveCanvasRef.value) return;
-  const canvas = waveCanvasRef.value;
-  const ctx = canvas.getContext("2d");
-  const width = canvas.width;
-  const height = canvas.height;
+  const metrics = ensureCanvasReady();
+  if (!metrics) return;
+  const { ctx, width, height } = metrics;
   ctx.clearRect(0, 0, width, height);
   ctx.fillStyle = "#000000";
   ctx.fillRect(0, 0, width, height);
@@ -422,11 +567,96 @@ function handleClearRecording() {
   result.value = null;
   waveHistory = [];
   lastRenderedBuffer = null;
+  staticWaveValues.value = [];
+  playProgress.value = 0;
+  if (playAnimationId) {
+    cancelAnimationFrame(playAnimationId);
+    playAnimationId = null;
+  }
+  if (audioRef.value) {
+    audioRef.value.pause();
+    audioRef.value.currentTime = 0;
+  }
   if (audioUrl.value) {
     URL.revokeObjectURL(audioUrl.value);
     audioUrl.value = "";
   }
+  if (fileInputRef.value) {
+    fileInputRef.value.value = "";
+  }
   clearWaveCanvas();
+}
+
+async function confirmClearRecording() {
+  try {
+    await ElMessageBox.confirm("确认清空全部录音/上传？", "提示", {
+      confirmButtonText: "确定",
+      cancelButtonText: "取消",
+      type: "warning"
+    });
+    handleClearRecording();
+  } catch (e) {
+    return;
+  }
+}
+
+function syncProgressFromAudio() {
+  if (!audioRef.value || !staticWaveValues.value.length) return;
+  const duration = audioRef.value.duration || 0;
+  const progress = duration ? audioRef.value.currentTime / duration : 0;
+  playProgress.value = progress;
+  renderStaticWave(staticWaveValues.value, progress);
+}
+
+function startPlayLoop() {
+  if (playAnimationId) {
+    cancelAnimationFrame(playAnimationId);
+  }
+  const step = () => {
+    if (!audioRef.value || audioRef.value.paused) {
+      playAnimationId = null;
+      return;
+    }
+    syncProgressFromAudio();
+    playAnimationId = requestAnimationFrame(step);
+  };
+  playAnimationId = requestAnimationFrame(step);
+}
+
+function stopPlayLoop() {
+  if (playAnimationId) {
+    cancelAnimationFrame(playAnimationId);
+    playAnimationId = null;
+  }
+}
+
+function handleAudioPlay() {
+  startPlayLoop();
+}
+
+function handleAudioPause() {
+  stopPlayLoop();
+  if (staticWaveValues.value.length) {
+    renderStaticWave(staticWaveValues.value, playProgress.value);
+  }
+}
+
+function handleAudioEnded() {
+  stopPlayLoop();
+  playProgress.value = 1;
+  if (staticWaveValues.value.length) {
+    renderStaticWave(staticWaveValues.value, 1);
+  }
+}
+
+function handleAudioLoaded() {
+  if (staticWaveValues.value.length) {
+    renderStaticWave(staticWaveValues.value, 0);
+  }
+}
+
+function handleAudioTimeUpdate() {
+  syncProgressFromAudio();
 }
 
 async function handleVerify() {
@@ -451,15 +681,14 @@ async function handleVerify() {
 }
 
 onMounted(() => {
-  if (waveCanvasRef.value) {
-    const canvas = waveCanvasRef.value;
-    canvas.width = canvas.clientWidth;
-    canvas.height = canvas.clientHeight || 120;
-  }
+  ensureCanvasReady();
 });
 
 onUnmounted(() => {
   stopRecording();
+  if (playAnimationId) {
+    cancelAnimationFrame(playAnimationId);
+  }
   if (audioUrl.value) {
     URL.revokeObjectURL(audioUrl.value);
   }
@@ -515,12 +744,31 @@ onUnmounted(() => {
   padding: 12px;
 }
 
+.wave-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.wave-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #303133;
+}
+
+.wave-subtitle {
+  font-size: 12px;
+  color: #909399;
+}
+
 .wave-canvas {
   width: 100%;
   height: 120px;
   display: block;
-  background: #f5f7fa;
+  background: #000000;
   border-radius: 4px;
+  border: 1px solid #1f2d3d;
 }
 
 .record-actions {
