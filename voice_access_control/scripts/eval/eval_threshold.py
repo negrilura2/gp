@@ -12,6 +12,8 @@ import sys
 import json
 import numpy as np
 import torch
+import matplotlib
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from sklearn.metrics import roc_curve, auc
 
@@ -114,9 +116,29 @@ if __name__ == "__main__":
     y, scores = compute_pairs_scores(embs, labels, max_pairs=args.max_pairs)
 
     print("计算 ROC 与 EER ...")
-    fpr, tpr, thresholds = roc_curve(y, scores)
-    roc_auc = auc(fpr, tpr)
-    eer, eer_thr = eer_from_roc(fpr, tpr, thresholds)
+    unique_labels = np.unique(y)
+    if len(unique_labels) < 2 or len(scores) == 0:
+        print("评估数据不足，无法计算 ROC/EER，已输出空指标")
+        out_json = os.path.join(args.out_dir, "eer_threshold.json")
+        with open(out_json, "w") as f:
+            json.dump({"auc": None, "eer": None, "threshold": None}, f, indent=2)
+        roc_points_json = os.path.join(args.out_dir, "roc_points.json")
+        with open(roc_points_json, "w") as f:
+            json.dump({"fpr": [], "tpr": [], "thresholds": []}, f, indent=2)
+        sys.exit(0)
+    try:
+        fpr, tpr, thresholds = roc_curve(y, scores)
+        roc_auc = auc(fpr, tpr)
+        eer, eer_thr = eer_from_roc(fpr, tpr, thresholds)
+    except ValueError as exc:
+        print(f"ROC 计算失败：{exc}")
+        out_json = os.path.join(args.out_dir, "eer_threshold.json")
+        with open(out_json, "w") as f:
+            json.dump({"auc": None, "eer": None, "threshold": None}, f, indent=2)
+        roc_points_json = os.path.join(args.out_dir, "roc_points.json")
+        with open(roc_points_json, "w") as f:
+            json.dump({"fpr": [], "tpr": [], "thresholds": []}, f, indent=2)
+        sys.exit(0)
     print(f"AUC={roc_auc:.4f}  EER={eer:.4f}, suggested threshold={eer_thr:.4f}")
 
     # 保存 ROC 图

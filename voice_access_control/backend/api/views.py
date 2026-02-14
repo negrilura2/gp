@@ -9,15 +9,24 @@ API Views — 声纹门禁系统
 - GET  /api/logs/      — 验证日志（管理员）
 - GET  /api/stats/     — 统计数据（管理员，ECharts 用）
 - GET  /api/users/     — 用户列表（管理员）
+- POST /api/users/     — 创建用户（管理员）
+- GET  /api/users/<id>/  — 用户详情（管理员）
+- PATCH /api/users/<id>/ — 更新用户（管理员）
 - DELETE /api/users/<id>/  — 删除用户（管理员）
+- POST /api/users/<id>/reset-password/ — 重置密码（管理员）
+- DELETE /api/users/<id>/voiceprint/ — 清理声纹（管理员）
 """
 import os
 import sys
 import time
 import logging
 import json
+import shutil
+import subprocess
 from datetime import datetime, timedelta
+import math
 import soundfile as sf
+import numpy as np
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -26,17 +35,22 @@ from rest_framework.authtoken.models import Token
 
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
+from django.contrib.auth.hashers import make_password, check_password
 from django.conf import settings
 from django.db import models
 from django.db.models import Count, Avg, Max, Min
 from django.db.models.functions import TruncDate
 from django.utils import timezone
 
-from .models import VoiceTemplate, VerifyLog, EnrollLog
+from .models import VoiceTemplate, VerifyLog, EnrollLog, AdminSecret, AdminAccessLog
 from .serializers import (
     UserRegisterSerializer, UserSerializer,
     VoiceTemplateSerializer, VerifyLogSerializer, EnrollLogSerializer,
     ThresholdConfigSerializer, get_effective_threshold,
+    AdminUserCreateSerializer, AdminUserUpdateSerializer, AdminPasswordResetSerializer,
+    AdminSecretSetSerializer, AdminSecretVerifySerializer,
+    AdminListUserSerializer, AdminAccessLogSerializer,
+    AdminStaffCreateSerializer, AdminStaffUpdateSerializer,
 )
 
 logger = logging.getLogger('api')
@@ -48,7 +62,7 @@ if ROOT not in sys.path:
 
 from model.enroll import enroll as model_enroll
 from model.verify_demo import verify as model_verify
-from .model_loader import get_model
+from .model_loader import get_model, get_model_path, set_model_path
 
 # ---- 文件上传限制 ----
 MAX_UPLOAD_SIZE = 10 * 1024 * 1024   # 10 MB
@@ -110,6 +124,16 @@ def get_latest_file_info(root, exts=None):
         "name": os.path.basename(latest_path),
         "mtime": datetime.fromtimestamp(latest_mtime).isoformat(),
     }
+
+
+def sanitize_json_value(value):
+    if isinstance(value, float):
+        return value if math.isfinite(value) else None
+    if isinstance(value, dict):
+        return {k: sanitize_json_value(v) for k, v in value.items()}
+    if isinstance(value, list):
+        return [sanitize_json_value(v) for v in value]
+    return value
 
 
 # =========================================================
@@ -384,6 +408,225 @@ class IsAdminUser(permissions.BasePermission):
         return request.user and request.user.is_staff
 
 
+class AdminSecretStatusView(APIView):
+    permission_classes = [IsAdminUser]
+
+    def get(self, request):
+        secret = AdminSecret.objects.first()
+        return Response({
+            "configured": bool(secret),
+            "updated_at": secret.updated_at.isoformat() if secret else None
+        })
+
+
+class AdminSecretSetView(APIView):
+    permission_classes = [IsAdminUser]
+
+    def post(self, request):
+        if not request.user.is_superuser:
+            return Response({"error": "仅允许超级管理员设置高层密码"}, status=status.HTTP_403_FORBIDDEN)
+        serializer = AdminSecretSetSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        current_password = serializer.validated_data["current_password"]
+        secret_password = serializer.validated_data["secret_password"]
+        if not request.user.check_password(current_password):
+            AdminAccessLog.objects.create(
+                action="ADMIN_SECRET_SET",
+                user=request.user,
+                success=False,
+                client_ip=get_client_ip(request),
+            )
+            return Response({"error": "管理员密码错误"}, status=status.HTTP_403_FORBIDDEN)
+        secret = AdminSecret.objects.first()
+        if secret:
+            secret.password_hash = make_password(secret_password)
+            secret.updated_by = request.user
+            secret.save(update_fields=["password_hash", "updated_by", "updated_at"])
+        else:
+            secret = AdminSecret.objects.create(
+                password_hash=make_password(secret_password),
+                updated_by=request.user,
+            )
+        AdminSecret.objects.exclude(id=secret.id).delete()
+        AdminAccessLog.objects.create(
+            action="ADMIN_SECRET_SET",
+            user=request.user,
+            success=True,
+            client_ip=get_client_ip(request),
+        )
+        return Response({
+            "configured": True,
+            "updated_at": secret.updated_at.isoformat()
+        })
+
+
+class AdminListView(APIView):
+    permission_classes = [IsAdminUser]
+
+    def post(self, request):
+        serializer = AdminSecretVerifySerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        secret_password = serializer.validated_data["secret_password"]
+        secret = AdminSecret.objects.first()
+        if not secret:
+            AdminAccessLog.objects.create(
+                action="ADMIN_LIST_ACCESS",
+                user=request.user,
+                success=False,
+                client_ip=get_client_ip(request),
+            )
+            return Response({"error": "未设置高层密码"}, status=status.HTTP_400_BAD_REQUEST)
+        if not check_password(secret_password, secret.password_hash):
+            AdminAccessLog.objects.create(
+                action="ADMIN_LIST_ACCESS",
+                user=request.user,
+                success=False,
+                client_ip=get_client_ip(request),
+            )
+            return Response({"error": "高层密码错误"}, status=status.HTTP_403_FORBIDDEN)
+        AdminAccessLog.objects.create(
+            action="ADMIN_LIST_ACCESS",
+            user=request.user,
+            success=True,
+            client_ip=get_client_ip(request),
+        )
+        qs = User.objects.filter(is_staff=True).order_by("-last_login", "username")
+        data = AdminListUserSerializer(qs, many=True).data
+        return Response({"count": len(data), "results": data})
+
+
+class AdminStaffListView(generics.ListCreateAPIView):
+    permission_classes = [IsAdminUser]
+    queryset = User.objects.all().order_by("-date_joined")
+
+    def get_serializer_class(self):
+        if self.request.method == "POST":
+            return AdminStaffCreateSerializer
+        return AdminListUserSerializer
+
+    def get_queryset(self):
+        qs = super().get_queryset().filter(is_staff=True)
+        keyword = self.request.query_params.get("q", "").strip()
+        if keyword:
+            qs = qs.filter(
+                models.Q(username__icontains=keyword)
+                | models.Q(email__icontains=keyword)
+                | models.Q(profile__full_name__icontains=keyword)
+                | models.Q(profile__phone__icontains=keyword)
+                | models.Q(profile__department__icontains=keyword)
+            )
+        is_active = self.request.query_params.get("is_active")
+        if is_active in ("true", "false"):
+            qs = qs.filter(is_active=is_active == "true")
+        return qs
+
+
+class AdminStaffDetailView(generics.RetrieveUpdateAPIView):
+    permission_classes = [IsAdminUser]
+    queryset = User.objects.filter(is_staff=True)
+
+    def get_serializer_class(self):
+        if self.request.method in ("PUT", "PATCH"):
+            return AdminStaffUpdateSerializer
+        return AdminListUserSerializer
+
+    def update(self, request, *args, **kwargs):
+        kwargs["partial"] = True
+        return super().update(request, *args, **kwargs)
+
+
+class AdminStaffBulkStatusView(APIView):
+    permission_classes = [IsAdminUser]
+
+    def post(self, request):
+        ids = request.data.get("ids") or []
+        is_active = request.data.get("is_active")
+        if not isinstance(ids, list) or not ids:
+            return Response({"error": "缺少管理员ID"}, status=status.HTTP_400_BAD_REQUEST)
+        if is_active not in (True, False):
+            return Response({"error": "缺少状态参数"}, status=status.HTTP_400_BAD_REQUEST)
+        qs = User.objects.filter(is_staff=True, id__in=ids)
+        updated = qs.update(is_active=is_active)
+        return Response({"updated": updated})
+
+
+class AdminStaffBulkResetPasswordView(APIView):
+    permission_classes = [IsAdminUser]
+
+    def post(self, request):
+        ids = request.data.get("ids") or []
+        password = request.data.get("password")
+        if not isinstance(ids, list) or not ids:
+            return Response({"error": "缺少管理员ID"}, status=status.HTTP_400_BAD_REQUEST)
+        if not password:
+            return Response({"error": "缺少新密码"}, status=status.HTTP_400_BAD_REQUEST)
+        qs = User.objects.filter(is_staff=True, id__in=ids)
+        updated = 0
+        for user in qs:
+            user.set_password(password)
+            user.save(update_fields=["password"])
+            updated += 1
+        return Response({"updated": updated})
+
+
+class AdminAccessLogListView(generics.ListAPIView):
+    serializer_class = AdminAccessLogSerializer
+    permission_classes = [IsAdminUser]
+
+    def get_queryset(self):
+        return AdminAccessLog.objects.filter(action="ADMIN_LIST_ACCESS")
+
+
+class ModelListView(APIView):
+    permission_classes = [IsAdminUser]
+
+    def get(self, request):
+        models_dir = os.fspath(settings.MODELS_DIR)
+        items = []
+        if os.path.isdir(models_dir):
+            for name in sorted(os.listdir(models_dir)):
+                if not name.endswith(".pth"):
+                    continue
+                path = os.path.join(models_dir, name)
+                try:
+                    stat = os.stat(path)
+                    items.append({
+                        "name": name,
+                        "path": path,
+                        "size": stat.st_size,
+                        "updated_at": datetime.fromtimestamp(stat.st_mtime, tz=timezone.utc).isoformat()
+                    })
+                except OSError:
+                    continue
+        current_path = get_model_path()
+        current_name = os.path.basename(current_path) if current_path else ""
+        return Response({
+            "current": current_name,
+            "models": items
+        })
+
+
+class ModelSwitchView(APIView):
+    permission_classes = [IsAdminUser]
+
+    def post(self, request):
+        name = request.data.get("name")
+        if not name:
+            return Response({"error": "缺少模型名称"}, status=status.HTTP_400_BAD_REQUEST)
+        models_dir = os.fspath(settings.MODELS_DIR)
+        path = os.path.join(models_dir, name)
+        if not os.path.isfile(path):
+            return Response({"error": "模型不存在"}, status=status.HTTP_404_NOT_FOUND)
+        set_model_path(path)
+        try:
+            get_model(path)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response({
+            "current": os.path.basename(path)
+        })
+
+
 class VerifyLogListView(generics.ListAPIView):
     """管理员查看验证日志列表（分页）"""
     serializer_class = VerifyLogSerializer
@@ -470,18 +713,124 @@ class EnrollLogListView(generics.ListAPIView):
     queryset = EnrollLog.objects.all()
 
 
-class UserListView(generics.ListAPIView):
+class UserListView(generics.ListCreateAPIView):
     """管理员查看用户列表"""
-    serializer_class = UserSerializer
     permission_classes = [IsAdminUser]
     queryset = User.objects.all().order_by('-date_joined')
 
+    def get_serializer_class(self):
+        if self.request.method == "POST":
+            return AdminUserCreateSerializer
+        return UserSerializer
 
-class UserDeleteView(generics.DestroyAPIView):
-    """管理员删除用户"""
-    serializer_class = UserSerializer
+    def get_queryset(self):
+        qs = super().get_queryset().filter(is_staff=False)
+        keyword = self.request.query_params.get('q', '').strip()
+        if keyword:
+            qs = qs.filter(
+                models.Q(username__icontains=keyword)
+                | models.Q(email__icontains=keyword)
+                | models.Q(profile__full_name__icontains=keyword)
+                | models.Q(profile__phone__icontains=keyword)
+                | models.Q(profile__department__icontains=keyword)
+            )
+
+        is_active = self.request.query_params.get('is_active')
+        if is_active in ("true", "false"):
+            qs = qs.filter(is_active=is_active == "true")
+
+        has_voiceprint = self.request.query_params.get('has_voiceprint')
+        if has_voiceprint in ("true", "false"):
+            user_ids = VoiceTemplate.objects.values_list("user_id", flat=True).distinct()
+            if has_voiceprint == "true":
+                qs = qs.filter(id__in=user_ids)
+            else:
+                qs = qs.exclude(id__in=user_ids)
+        return qs
+
+
+class UserDetailView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAdminUser]
     queryset = User.objects.all()
+
+    def get_serializer_class(self):
+        if self.request.method in ("PUT", "PATCH"):
+            return AdminUserUpdateSerializer
+        return UserSerializer
+
+    def update(self, request, *args, **kwargs):
+        kwargs["partial"] = True
+        return super().update(request, *args, **kwargs)
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        username = instance.username
+        result = remove_user_voiceprint(username)
+        if result.get("error"):
+            return Response(result, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        self.perform_destroy(instance)
+        return Response(result, status=status.HTTP_200_OK)
+
+
+class UserResetPasswordView(APIView):
+    permission_classes = [IsAdminUser]
+
+    def post(self, request, pk):
+        serializer = AdminPasswordResetSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        password = serializer.validated_data["password"]
+        user = User.objects.filter(pk=pk).first()
+        if not user:
+            return Response({"error": "用户不存在"}, status=status.HTTP_404_NOT_FOUND)
+        user.set_password(password)
+        user.save(update_fields=["password"])
+        return Response({"status": "ok", "user_id": user.id})
+
+
+class UserVoiceprintResetView(APIView):
+    permission_classes = [IsAdminUser]
+
+    def delete(self, request, pk):
+        user = User.objects.filter(pk=pk).first()
+        if not user:
+            return Response({"error": "用户不存在"}, status=status.HTTP_404_NOT_FOUND)
+        result = remove_user_voiceprint(user.username)
+        if result.get("error"):
+            return Response(result, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response(result, status=status.HTTP_200_OK)
+
+
+def remove_user_voiceprint(username):
+    template_path = os.path.join(os.fspath(settings.VOICEPRINTS_DIR), 'user_templates.npy')
+    result = {
+        "username": username,
+        "template_cleared": False,
+        "enroll_files_deleted": False,
+        "template_path": template_path,
+        "error": None,
+    }
+    try:
+        if os.path.exists(template_path):
+            templates = np.load(template_path, allow_pickle=True).item()
+            if username in templates:
+                del templates[username]
+                np.save(template_path, templates)
+                result["template_cleared"] = True
+    except Exception as e:
+        result["error"] = str(e)
+        logger.error(f"清理声纹模板失败: {username} {e}")
+        return result
+
+    try:
+        VoiceTemplate.objects.filter(user__username=username).delete()
+        enroll_dir = os.path.join(os.fspath(settings.ENROLL_DIR), username)
+        if os.path.exists(enroll_dir):
+            shutil.rmtree(enroll_dir)
+            result["enroll_files_deleted"] = True
+    except Exception as e:
+        result["error"] = str(e)
+        logger.error(f"清理注册文件失败: {username} {e}")
+    return result
 
 
 class StatsView(APIView):
@@ -686,6 +1035,71 @@ class CurrentUserView(APIView):
         })
 
 
+class RocEvaluateView(APIView):
+    permission_classes = [IsAdminUser]
+
+    def post(self, request):
+        model_name = request.data.get("name")
+        models_dir = os.fspath(settings.MODELS_DIR)
+        model_path = None
+        if model_name:
+            candidate = os.path.join(models_dir, model_name)
+            if os.path.isfile(candidate):
+                model_path = candidate
+            else:
+                return Response({"error": "模型不存在"}, status=status.HTTP_404_NOT_FOUND)
+        else:
+            model_path = get_model_path()
+        if not model_path or not os.path.isfile(model_path):
+            latest_path = None
+            latest_mtime = -1
+            for base, _, files in os.walk(models_dir):
+                for name in files:
+                    if not name.endswith((".pth", ".pt", ".onnx")):
+                        continue
+                    path = os.path.join(base, name)
+                    try:
+                        mtime = os.path.getmtime(path)
+                    except OSError:
+                        continue
+                    if mtime > latest_mtime:
+                        latest_mtime = mtime
+                        latest_path = path
+            model_path = latest_path
+        if not model_path or not os.path.isfile(model_path):
+            return Response({"error": "模型文件不存在"}, status=status.HTTP_404_NOT_FOUND)
+        feature_dir = os.fspath(settings.FEATURES_DIR)
+        if count_files(feature_dir, {".npy"}) == 0:
+            return Response({"error": "特征文件为空，无法评估"}, status=status.HTTP_400_BAD_REQUEST)
+        cmd = [
+            sys.executable,
+            "-m",
+            "scripts.eval.eval_threshold",
+            "--model",
+            model_path,
+            "--feature_dir",
+            feature_dir,
+            "--out_dir",
+            os.fspath(settings.REPORTS_DIR),
+            "--max_pairs",
+            "20000",
+        ]
+        try:
+            result = subprocess.run(
+                cmd,
+                cwd=os.fspath(settings.PROJECT_ROOT),
+                env={**os.environ, "MPLBACKEND": "Agg"},
+                capture_output=True,
+                text=True,
+                check=True,
+            )
+        except subprocess.CalledProcessError as e:
+            msg = (e.stderr or e.stdout or "评估失败").strip()
+            return Response({"error": msg}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        output = (result.stdout or "").strip()
+        return Response({"status": "ok", "output": output, "model": os.path.basename(model_path)})
+
+
 class RocView(APIView):
     """离线 ROC / EER 结果 — 供前端可视化"""
     permission_classes = [IsAdminUser]
@@ -712,7 +1126,7 @@ class RocView(APIView):
         if thr_eer is not None and thr_default is not None:
             threshold_diff = float(thr_default) - float(thr_eer)
 
-        return Response({
+        payload = {
             "auc": metrics.get("auc"),
             "eer": metrics.get("eer"),
             "threshold": thr_eer,
@@ -721,7 +1135,8 @@ class RocView(APIView):
             "fpr": roc_data.get("fpr") if roc_data else None,
             "tpr": roc_data.get("tpr") if roc_data else None,
             "thresholds": roc_data.get("thresholds") if roc_data else None,
-        })
+        }
+        return Response(sanitize_json_value(payload))
 
 
 class ThresholdConfigView(APIView):

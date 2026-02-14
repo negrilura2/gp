@@ -976,14 +976,30 @@ function handleAudioTimeUpdate() {
 
 <style scoped>
 .me-wrapper {
-  height: 100%;
+  min-height: 100vh;
+  padding: 24px;
+  box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: center;
+  background: #f5f7fb;
+  background-image: radial-gradient(
+      1200px circle at 0% 0%,
+      rgba(64, 158, 255, 0.12),
+      transparent 45%
+    ),
+    radial-gradient(
+      1200px circle at 100% 0%,
+      rgba(103, 232, 169, 0.12),
+      transparent 45%
+    );
 }
 
 .me-card {
   width: 900px;
+  border: 1px solid rgba(64, 158, 255, 0.15);
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.08);
+  backdrop-filter: blur(6px);
 }
 
 .me-title {

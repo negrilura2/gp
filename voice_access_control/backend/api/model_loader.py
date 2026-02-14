@@ -20,6 +20,7 @@ _device = None
 _lock = threading.Lock()
 
 DEFAULT_MODEL_PATH = os.path.join(ROOT, "models", "ecapa_best.pth")
+_model_path = DEFAULT_MODEL_PATH
 
 
 def get_model(model_path=None):
@@ -29,7 +30,7 @@ def get_model(model_path=None):
     返回：
         (model, device)
     """
-    global _model, _device
+    global _model, _device, _model_path
 
     if _model is not None:
         return _model, _device
@@ -39,7 +40,8 @@ def get_model(model_path=None):
         if _model is not None:
             return _model, _device
 
-        model_path = model_path or DEFAULT_MODEL_PATH
+        model_path = model_path or _model_path or DEFAULT_MODEL_PATH
+        _model_path = model_path
         _device = "cuda" if torch.cuda.is_available() else "cpu"
 
         print(f"[ModelLoader] 加载模型: {model_path} -> {_device}")
@@ -50,3 +52,14 @@ def get_model(model_path=None):
         print(f"[ModelLoader] 模型加载完成 ✅")
 
         return _model, _device
+
+
+def get_model_path():
+    return _model_path or DEFAULT_MODEL_PATH
+
+
+def set_model_path(model_path):
+    global _model, _device, _model_path
+    _model = None
+    _device = None
+    _model_path = model_path

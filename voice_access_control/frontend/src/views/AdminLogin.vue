@@ -82,11 +82,24 @@ onMounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #f2f3f5;
+  background: #f5f7fb;
+  background-image: radial-gradient(
+      1200px circle at 0% 0%,
+      rgba(64, 158, 255, 0.12),
+      transparent 45%
+    ),
+    radial-gradient(
+      1200px circle at 100% 0%,
+      rgba(103, 232, 169, 0.12),
+      transparent 45%
+    );
 }
 
 .login-card {
   width: 360px;
+  border: 1px solid rgba(64, 158, 255, 0.15);
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.08);
+  backdrop-filter: blur(6px);
 }
 
 .login-title {
