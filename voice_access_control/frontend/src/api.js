@@ -133,6 +133,10 @@ export function evaluateRocMetrics(name) {
   return api.post("/roc/evaluate/", name ? { name } : {});
 }
 
+export function fetchRocEvaluateStatus() {
+  return api.get("/roc/evaluate/status/");
+}
+
 export function fetchModels() {
   return api.get("/models/");
 }

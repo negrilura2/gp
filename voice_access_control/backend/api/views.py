@@ -23,6 +23,7 @@ import logging
 import json
 import shutil
 import subprocess
+import threading
 from datetime import datetime, timedelta
 import math
 import soundfile as sf
@@ -134,6 +135,76 @@ def sanitize_json_value(value):
     if isinstance(value, list):
         return [sanitize_json_value(v) for v in value]
     return value
+
+
+EVAL_STATUS_FILE = os.path.join(os.fspath(settings.REPORTS_DIR), "roc_status.json")
+EVAL_STATUS_LOCK = threading.Lock()
+EVAL_THREAD = None
+
+
+def _read_eval_status():
+    if not os.path.exists(EVAL_STATUS_FILE):
+        return {"status": "idle"}
+    try:
+        with open(EVAL_STATUS_FILE, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        if isinstance(data, dict):
+            return data
+    except Exception:
+        pass
+    return {"status": "idle"}
+
+
+def _write_eval_status(payload):
+    os.makedirs(os.fspath(settings.REPORTS_DIR), exist_ok=True)
+    with open(EVAL_STATUS_FILE, "w", encoding="utf-8") as f:
+        json.dump(payload, f, ensure_ascii=False)
+
+
+def _set_eval_status(status_value, **kwargs):
+    payload = {"status": status_value, "updated_at": timezone.now().isoformat()}
+    payload.update(kwargs)
+    _write_eval_status(payload)
+    return payload
+
+
+def _start_eval_thread(model_path):
+    global EVAL_THREAD
+
+    def _run():
+        model_name = os.path.basename(model_path)
+        _set_eval_status("running", model=model_name, started_at=timezone.now().isoformat())
+        feature_dir = os.fspath(settings.FEATURES_DIR)
+        cmd = [
+            sys.executable,
+            "-m",
+            "scripts.eval.eval_threshold",
+            "--model",
+            model_path,
+            "--feature_dir",
+            feature_dir,
+            "--out_dir",
+            os.fspath(settings.REPORTS_DIR),
+            "--max_pairs",
+            "20000",
+        ]
+        try:
+            result = subprocess.run(
+                cmd,
+                cwd=os.fspath(settings.PROJECT_ROOT),
+                env={**os.environ, "MPLBACKEND": "Agg"},
+                capture_output=True,
+                text=True,
+                check=True,
+            )
+            output = (result.stdout or "").strip()
+            _set_eval_status("ok", model=model_name, output=output, finished_at=timezone.now().isoformat())
+        except subprocess.CalledProcessError as e:
+            msg = (e.stderr or e.stdout or "评估失败").strip()
+            _set_eval_status("failed", model=model_name, error=msg, finished_at=timezone.now().isoformat())
+
+    EVAL_THREAD = threading.Thread(target=_run, daemon=True)
+    EVAL_THREAD.start()
 
 
 # =========================================================
@@ -1067,37 +1138,25 @@ class RocEvaluateView(APIView):
                         latest_path = path
             model_path = latest_path
         if not model_path or not os.path.isfile(model_path):
-            return Response({"error": "模型文件不存在"}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"status": "failed", "error": "模型文件不存在"})
         feature_dir = os.fspath(settings.FEATURES_DIR)
         if count_files(feature_dir, {".npy"}) == 0:
-            return Response({"error": "特征文件为空，无法评估"}, status=status.HTTP_400_BAD_REQUEST)
-        cmd = [
-            sys.executable,
-            "-m",
-            "scripts.eval.eval_threshold",
-            "--model",
-            model_path,
-            "--feature_dir",
-            feature_dir,
-            "--out_dir",
-            os.fspath(settings.REPORTS_DIR),
-            "--max_pairs",
-            "20000",
-        ]
-        try:
-            result = subprocess.run(
-                cmd,
-                cwd=os.fspath(settings.PROJECT_ROOT),
-                env={**os.environ, "MPLBACKEND": "Agg"},
-                capture_output=True,
-                text=True,
-                check=True,
-            )
-        except subprocess.CalledProcessError as e:
-            msg = (e.stderr or e.stdout or "评估失败").strip()
-            return Response({"error": msg}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        output = (result.stdout or "").strip()
-        return Response({"status": "ok", "output": output, "model": os.path.basename(model_path)})
+            return Response({"status": "failed", "error": "特征文件为空，无法评估"})
+        with EVAL_STATUS_LOCK:
+            status_payload = _read_eval_status()
+            if status_payload.get("status") == "running":
+                if EVAL_THREAD is not None and EVAL_THREAD.is_alive():
+                    return Response(status_payload)
+                _set_eval_status("failed", error="评估进程异常终止")
+            _start_eval_thread(model_path)
+            return Response({"status": "running", "model": os.path.basename(model_path)})
+
+
+class RocEvaluateStatusView(APIView):
+    permission_classes = [IsAdminUser]
+
+    def get(self, request):
+        return Response(_read_eval_status())
 
 
 class RocView(APIView):

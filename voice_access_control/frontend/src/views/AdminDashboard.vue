@@ -442,44 +442,63 @@
                   </el-card>
                 </el-col>
                 <el-col :span="12">
-                  <el-card shadow="never" class="panel-card">
-                    <template #header>
-                      <div class="model-header">
-                        <div>
-                          <div class="settings-title">模型切换</div>
-                          <div class="card-subtitle">切换后立即用于新的验证请求</div>
+                  <div class="model-right-stack">
+                    <el-card shadow="never" class="panel-card">
+                      <template #header>
+                        <div class="model-header">
+                          <div>
+                            <div class="settings-title">模型切换</div>
+                            <div class="card-subtitle">切换后立即用于新的验证请求</div>
+                          </div>
+                          <el-button :loading="modelSwitching" @click="loadModelList">刷新</el-button>
                         </div>
-                        <el-button :loading="modelSwitching" @click="loadModelList">刷新</el-button>
+                      </template>
+                      <div class="model-switch">
+                        <div class="metric-row">
+                          <span class="metric-label">当前模型</span>
+                          <span class="metric-value">{{ modelCurrent || "--" }}</span>
+                        </div>
+                        <el-select
+                          v-model="modelTarget"
+                          placeholder="选择模型"
+                          style="width: 100%"
+                        >
+                          <el-option
+                            v-for="item in modelList"
+                            :key="item.name"
+                            :label="item.name"
+                            :value="item.name"
+                          />
+                        </el-select>
+                        <el-button
+                          type="primary"
+                          style="margin-top: 12px"
+                          :loading="modelSwitching"
+                          :disabled="!modelTarget"
+                          @click="handleModelSwitch"
+                        >
+                          切换模型
+                        </el-button>
                       </div>
-                    </template>
-                    <div class="model-switch">
-                      <div class="metric-row">
-                        <span class="metric-label">当前模型</span>
-                        <span class="metric-value">{{ modelCurrent || "--" }}</span>
-                      </div>
-                      <el-select
-                        v-model="modelTarget"
-                        placeholder="选择模型"
-                        style="width: 100%"
-                      >
-                        <el-option
-                          v-for="item in modelList"
-                          :key="item.name"
-                          :label="item.name"
-                          :value="item.name"
-                        />
-                      </el-select>
-                      <el-button
-                        type="primary"
-                        style="margin-top: 12px"
-                        :loading="modelSwitching"
-                        :disabled="!modelTarget"
-                        @click="handleModelSwitch"
-                      >
-                        切换模型
-                      </el-button>
-                    </div>
-                  </el-card>
+                    </el-card>
+                    <transition name="eval-expand">
+                      <el-card v-if="activeEval" shadow="never" class="panel-card eval-detail-card">
+                        <template #header>
+                          <div class="model-header">
+                            <div>
+                              <div class="settings-title">{{ activeEval.title }}</div>
+                              <div class="card-subtitle">{{ activeEval.subtitle }}</div>
+                            </div>
+                            <el-button text @click="activeEvalKey = ''">收起</el-button>
+                          </div>
+                        </template>
+                        <div class="eval-detail-body">
+                          <div class="eval-detail-text">{{ activeEval.detail }}</div>
+                          <div class="eval-detail-chart">{{ activeEval.placeholder }}</div>
+                        </div>
+                      </el-card>
+                    </transition>
+                  </div>
                 </el-col>
               </el-row>
               <el-row :gutter="16" style="margin-top: 16px">
@@ -494,25 +513,16 @@
                       </div>
                     </template>
                     <div class="eval-grid">
-                      <div class="eval-panel">
-                        <div class="eval-title">DET 曲线</div>
-                        <div class="eval-subtitle">低误识区表现</div>
-                        <div class="eval-placeholder">待接入</div>
-                      </div>
-                      <div class="eval-panel">
-                        <div class="eval-title">minDCF</div>
-                        <div class="eval-subtitle">工程决策指标</div>
-                        <div class="eval-placeholder">待接入</div>
-                      </div>
-                      <div class="eval-panel">
-                        <div class="eval-title">评分分布</div>
-                        <div class="eval-subtitle">同人 / 异人分布</div>
-                        <div class="eval-placeholder">待接入</div>
-                      </div>
-                      <div class="eval-panel">
-                        <div class="eval-title">校准指标</div>
-                        <div class="eval-subtitle">ECE / 可靠性曲线</div>
-                        <div class="eval-placeholder">待接入</div>
+                      <div
+                        v-for="item in evalItems"
+                        :key="item.key"
+                        class="eval-panel"
+                        :class="{ 'is-active': activeEvalKey === item.key }"
+                        @click="handleEvalCardClick(item.key)"
+                      >
+                        <div class="eval-title">{{ item.title }}</div>
+                        <div class="eval-subtitle">{{ item.subtitle }}</div>
+                        <div class="eval-placeholder">{{ item.placeholder }}</div>
                       </div>
                     </div>
                   </el-card>
@@ -1006,6 +1016,7 @@ import {
   bulkResetAdminPassword,
   fetchRocMetrics,
   evaluateRocMetrics,
+  fetchRocEvaluateStatus,
   fetchModels,
   switchModel,
   setAuthToken
@@ -1108,12 +1119,14 @@ const modelMetrics = ref({
 const modelMetricsError = ref("");
 const modelMetricsLoading = ref(false);
 const modelEvaluating = ref(false);
+const modelEvaluatingStatus = ref("");
 const modelList = ref([]);
 const modelCurrent = ref("");
 const modelTarget = ref("");
 const modelSwitching = ref(false);
 const rocChartRef = ref(null);
 let rocChart;
+let evalPollingTimer = null;
 
 const threshold = ref(0.7);
 const thresholdDraft = ref(0.7);
@@ -1151,6 +1164,40 @@ const userDialogTitle = computed(() =>
 );
 const adminDialogTitle = computed(() =>
   adminDialogMode.value === "create" ? "新建管理员" : "编辑管理员"
+);
+const evalItems = [
+  {
+    key: "det",
+    title: "DET 曲线",
+    subtitle: "低误识区表现",
+    detail: "在低误识区域更直观反映模型区分能力，常用于安全场景。",
+    placeholder: "图表待接入"
+  },
+  {
+    key: "mindcf",
+    title: "minDCF",
+    subtitle: "工程决策指标",
+    detail: "结合先验概率与误识/漏识成本，辅助阈值与上线决策。",
+    placeholder: "曲线与数值待接入"
+  },
+  {
+    key: "score",
+    title: "评分分布",
+    subtitle: "同人 / 异人分布",
+    detail: "展示同人/异人评分分布与重叠区，判断可分性。",
+    placeholder: "分布图待接入"
+  },
+  {
+    key: "calib",
+    title: "校准指标",
+    subtitle: "ECE / 可靠性曲线",
+    detail: "衡量分数概率校准程度，便于阈值稳定性评估。",
+    placeholder: "校准曲线待接入"
+  }
+];
+const activeEvalKey = ref("");
+const activeEval = computed(
+  () => evalItems.find((item) => item.key === activeEvalKey.value) || null
 );
 const rocDerived = computed(() => {
   const thresholds = modelMetrics.value.thresholds || [];
@@ -1195,6 +1242,44 @@ function initCharts() {
   if (rocChartRef.value && !rocChart) {
     rocChart = echarts.init(rocChartRef.value);
   }
+}
+
+function stopEvalPolling() {
+  if (evalPollingTimer) {
+    clearInterval(evalPollingTimer);
+    evalPollingTimer = null;
+  }
+}
+
+async function pollEvalStatus() {
+  try {
+    const res = await fetchRocEvaluateStatus();
+    const statusValue = res.data?.status || "idle";
+    modelEvaluatingStatus.value = statusValue;
+    if (statusValue === "ok") {
+      stopEvalPolling();
+      modelEvaluating.value = false;
+      await loadModelMetrics();
+      ElMessage.success("评估完成");
+    } else if (statusValue === "failed") {
+      stopEvalPolling();
+      modelEvaluating.value = false;
+      const msg = res.data?.error || "评估失败";
+      modelMetricsError.value = msg;
+      ElMessage.error(msg);
+    }
+  } catch (e) {
+    stopEvalPolling();
+    modelEvaluating.value = false;
+    const msg = e.response?.data?.error || "评估状态获取失败";
+    modelMetricsError.value = msg;
+    ElMessage.error(msg);
+  }
+}
+
+function startEvalPolling() {
+  stopEvalPolling();
+  evalPollingTimer = setInterval(pollEvalStatus, 1500);
 }
 
 function formatDateTime(value) {
@@ -2020,21 +2105,49 @@ async function loadModelMetrics() {
 
 async function handleModelEvaluate() {
   modelEvaluating.value = true;
+  modelMetricsError.value = "";
   try {
     if (!modelCurrent.value) {
       await loadModelList();
     }
     const name = modelCurrent.value || modelTarget.value || "";
-    await evaluateRocMetrics(name);
+    const res = await evaluateRocMetrics(name);
+    const statusValue = res.data?.status || "idle";
+    modelEvaluatingStatus.value = statusValue;
+    if (statusValue === "running") {
+      startEvalPolling();
+      return;
+    }
+    if (statusValue === "failed") {
+      const msg = res.data?.error || "评估失败";
+      modelMetricsError.value = msg;
+      ElMessage.error(msg);
+      modelEvaluating.value = false;
+      return;
+    }
     await loadModelMetrics();
+    modelEvaluating.value = false;
     ElMessage.success("评估完成");
   } catch (e) {
     const msg = e.response?.data?.error || "评估失败";
     modelMetricsError.value = msg;
     ElMessage.error(msg);
   } finally {
-    modelEvaluating.value = false;
+    if (!evalPollingTimer) {
+      modelEvaluating.value = false;
+    }
   }
+}
+
+function handleEvalCardClick(key) {
+  if (activeEvalKey.value === key) {
+    activeEvalKey.value = "";
+    return;
+  }
+  activeEvalKey.value = key;
+  nextTick(() => {
+    handleResize();
+  });
 }
 
 async function loadModelList() {
@@ -2196,11 +2309,20 @@ onMounted(() => {
   loadModelList();
   loadModelMetrics();
   updateLogLayout();
+  fetchRocEvaluateStatus()
+    .then((res) => {
+      if (res.data?.status === "running") {
+        modelEvaluating.value = true;
+        startEvalPolling();
+      }
+    })
+    .catch(() => {});
   window.addEventListener("resize", handleResize);
 });
 
 onUnmounted(() => {
   window.removeEventListener("resize", handleResize);
+  stopEvalPolling();
   if (lineChart) {
     lineChart.dispose();
     lineChart = null;
@@ -2421,6 +2543,12 @@ onUnmounted(() => {
   gap: 12px;
 }
 
+.model-right-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
 .metric-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -2508,6 +2636,20 @@ onUnmounted(() => {
   flex-direction: column;
   gap: 6px;
   min-height: 120px;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  border: 1px solid rgba(15, 23, 42, 0.04);
+}
+
+.eval-panel:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.12);
+  border-color: rgba(64, 158, 255, 0.18);
+}
+
+.eval-panel.is-active {
+  border-color: rgba(64, 158, 255, 0.32);
+  box-shadow: 0 12px 28px rgba(64, 158, 255, 0.18);
 }
 
 .eval-title {
@@ -2525,6 +2667,32 @@ onUnmounted(() => {
   margin-top: auto;
   font-size: 12px;
   color: #6b7280;
+}
+
+.eval-detail-card {
+  overflow: hidden;
+}
+
+.eval-detail-body {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+.eval-detail-text {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.eval-detail-chart {
+  min-height: 220px;
+  border-radius: 12px;
+  background: rgba(15, 23, 42, 0.04);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #9ca3af;
+  font-size: 13px;
 }
 
 .model-switch {
@@ -2546,6 +2714,18 @@ onUnmounted(() => {
   .eval-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+}
+
+.eval-expand-enter-active,
+.eval-expand-leave-active {
+  transition: all 0.25s ease;
+}
+
+.eval-expand-enter-from,
+.eval-expand-leave-to {
+  opacity: 0;
+  transform: translateY(-8px) scale(0.98);
+  max-height: 0;
 }
 
 .model-empty {

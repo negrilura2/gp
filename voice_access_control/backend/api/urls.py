@@ -28,6 +28,7 @@ from .views import (
     VoiceprintStatusView,
     RocView,
     RocEvaluateView,
+    RocEvaluateStatusView,
     ThresholdConfigView,
 )
 
@@ -66,4 +67,5 @@ urlpatterns = [
     path('voiceprint-status/', VoiceprintStatusView.as_view(), name='voiceprint-status'),
     path('roc/', RocView.as_view(), name='roc'),
     path('roc/evaluate/', RocEvaluateView.as_view(), name='roc-evaluate'),
+    path('roc/evaluate/status/', RocEvaluateStatusView.as_view(), name='roc-evaluate-status'),
 ]

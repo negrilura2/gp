@@ -3279,3 +3279,286 @@ ValueError: Out of range float values are not JSON compliant
 [2026-02-15 03:15:53,871] INFO django.server "GET /api/roc/ HTTP/1.1" 200 115750
 [2026-02-15 03:16:39,762] INFO django.server "POST /api/roc/evaluate/ HTTP/1.1" 200 508
 [2026-02-15 03:16:44,120] INFO django.server "GET /api/roc/ HTTP/1.1" 200 115750
+[2026-02-15 03:21:55,721] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6375
+[2026-02-15 03:22:04,567] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6375
+[2026-02-15 03:22:04,709] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6375
+[2026-02-15 03:22:04,751] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6375
+[2026-02-15 03:22:04,881] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6375
+[2026-02-15 03:22:04,922] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6375
+[2026-02-15 03:22:04,981] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6375
+[2026-02-15 03:22:05,109] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6375
+[2026-02-15 03:22:05,466] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6375
+[2026-02-15 03:22:05,509] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6375
+[2026-02-15 03:22:05,716] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6375
+[2026-02-15 03:22:17,417] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6375
+[2026-02-15 03:22:19,875] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6375
+[2026-02-15 03:22:26,079] INFO django.server "GET /api/admin-access-logs/ HTTP/1.1" 200 840
+[2026-02-15 03:22:32,400] INFO django.server "GET /api/admin-access-logs/ HTTP/1.1" 200 840
+[2026-02-15 03:22:33,679] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6375
+[2026-02-15 03:26:21,415] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-15 03:26:21,416] INFO django.server "GET /api/users/?page=1&is_staff=false HTTP/1.1" 200 251
+[2026-02-15 03:26:21,436] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6375
+[2026-02-15 03:26:21,453] INFO django.server "GET /api/admin-access-logs/ HTTP/1.1" 200 840
+[2026-02-15 03:26:21,457] INFO django.server "GET /api/models/ HTTP/1.1" 200 198
+[2026-02-15 03:26:21,477] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 399
+[2026-02-15 03:26:21,477] INFO django.server "GET /api/roc/ HTTP/1.1" 200 115750
+[2026-02-15 03:26:21,492] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6375
+[2026-02-15 03:26:21,525] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 575
+[2026-02-15 03:26:47,078] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6375
+[2026-02-15 03:27:11,057] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\backend\api\views.py changed, reloading.
+[2026-02-15 03:27:12,035] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-02-15 03:28:45,796] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6375
+[2026-02-15 03:28:48,447] WARNING django.request Unauthorized: /api/dashboard/
+[2026-02-15 03:28:48,448] WARNING django.request Unauthorized: /api/stats/
+[2026-02-15 03:28:48,453] WARNING django.request Unauthorized: /api/logs/
+[2026-02-15 03:28:48,462] WARNING django.server "GET /api/stats/?mode=echarts HTTP/1.1" 401 43
+[2026-02-15 03:28:48,464] WARNING django.request Unauthorized: /api/me/
+[2026-02-15 03:28:48,465] WARNING django.server "GET /api/logs/?page=1 HTTP/1.1" 401 43
+[2026-02-15 03:28:48,466] WARNING django.server "GET /api/dashboard/ HTTP/1.1" 401 43
+[2026-02-15 03:28:48,474] WARNING django.request Unauthorized: /api/users/
+[2026-02-15 03:28:48,478] WARNING django.request Unauthorized: /api/admin-access-logs/
+[2026-02-15 03:28:48,478] WARNING django.server "GET /api/me/ HTTP/1.1" 401 43
+[2026-02-15 03:28:48,482] WARNING django.request Unauthorized: /api/models/
+[2026-02-15 03:28:48,483] WARNING django.server "GET /api/users/?page=1&is_staff=false HTTP/1.1" 401 43
+[2026-02-15 03:28:48,486] WARNING django.request Unauthorized: /api/roc/
+[2026-02-15 03:28:48,486] WARNING django.server "GET /api/admin-access-logs/ HTTP/1.1" 401 43
+[2026-02-15 03:28:48,487] WARNING django.server "GET /api/models/ HTTP/1.1" 401 43
+[2026-02-15 03:28:48,487] WARNING django.server "GET /api/roc/ HTTP/1.1" 401 43
+[2026-02-15 03:28:48,521] WARNING django.request Unauthorized: /api/logs/
+[2026-02-15 03:28:48,521] WARNING django.server "GET /api/logs/?page=1 HTTP/1.1" 401 43
+[2026-02-15 03:28:54,836] WARNING django.request Unauthorized: /api/login/
+[2026-02-15 03:28:54,838] WARNING django.server "POST /api/login/ HTTP/1.1" 401 36
+[2026-02-15 03:28:59,349] INFO api 用户登录: admin
+[2026-02-15 03:28:59,351] INFO django.server "POST /api/login/ HTTP/1.1" 200 99
+[2026-02-15 03:28:59,509] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-15 03:28:59,526] INFO django.server "GET /api/users/?page=1&is_staff=false HTTP/1.1" 200 251
+[2026-02-15 03:28:59,528] INFO django.server "GET /api/admin-access-logs/ HTTP/1.1" 200 840
+[2026-02-15 03:28:59,539] INFO django.server "GET /api/models/ HTTP/1.1" 200 198
+[2026-02-15 03:28:59,546] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6375
+[2026-02-15 03:28:59,546] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 399
+[2026-02-15 03:28:59,568] INFO django.server "GET /api/roc/ HTTP/1.1" 200 115750
+[2026-02-15 03:28:59,583] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6375
+[2026-02-15 03:28:59,618] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 575
+[2026-02-15 03:29:01,121] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6375
+[2026-02-15 03:29:02,155] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6375
+[2026-02-15 03:29:03,811] INFO django.server "GET /api/models/ HTTP/1.1" 200 198
+[2026-02-15 03:29:03,823] INFO django.server "GET /api/roc/ HTTP/1.1" 200 115750
+[2026-02-15 03:29:15,989] INFO django.server "GET /api/admin-access-logs/ HTTP/1.1" 200 840
+[2026-02-15 03:29:16,784] INFO django.server "GET /api/models/ HTTP/1.1" 200 198
+[2026-02-15 03:29:16,796] INFO django.server "GET /api/roc/ HTTP/1.1" 200 115750
+[2026-02-15 03:30:00,841] INFO django.server "POST /api/roc/evaluate/ HTTP/1.1" 200 508
+[2026-02-15 03:30:25,838] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-02-15 03:30:48,225] WARNING django.request Unauthorized: /api/dashboard/
+[2026-02-15 03:30:48,225] WARNING django.request Unauthorized: /api/logs/
+[2026-02-15 03:30:48,225] WARNING django.request Unauthorized: /api/stats/
+[2026-02-15 03:30:48,226] WARNING django.request Unauthorized: /api/me/
+[2026-02-15 03:30:48,226] WARNING django.request Unauthorized: /api/users/
+[2026-02-15 03:30:48,226] WARNING django.request Unauthorized: /api/admin-access-logs/
+[2026-02-15 03:30:48,226] WARNING django.server "GET /api/dashboard/ HTTP/1.1" 401 43
+[2026-02-15 03:30:48,228] WARNING django.server "GET /api/logs/?page=1 HTTP/1.1" 401 43
+[2026-02-15 03:30:48,228] WARNING django.server "GET /api/me/ HTTP/1.1" 401 43
+[2026-02-15 03:30:48,228] WARNING django.server "GET /api/stats/?mode=echarts HTTP/1.1" 401 43
+[2026-02-15 03:30:48,228] WARNING django.server "GET /api/users/?page=1&is_staff=false HTTP/1.1" 401 43
+[2026-02-15 03:30:48,230] WARNING django.server "GET /api/admin-access-logs/ HTTP/1.1" 401 43
+[2026-02-15 03:30:48,234] WARNING django.request Unauthorized: /api/models/
+[2026-02-15 03:30:48,236] WARNING django.request Unauthorized: /api/roc/
+[2026-02-15 03:30:48,237] WARNING django.server "GET /api/models/ HTTP/1.1" 401 43
+[2026-02-15 03:30:48,237] WARNING django.server "GET /api/roc/ HTTP/1.1" 401 43
+[2026-02-15 03:30:48,267] WARNING django.request Unauthorized: /api/logs/
+[2026-02-15 03:30:48,267] WARNING django.server "GET /api/logs/?page=1 HTTP/1.1" 401 43
+[2026-02-15 03:30:56,405] INFO api 用户登录: admin
+[2026-02-15 03:30:56,407] INFO django.server "POST /api/login/ HTTP/1.1" 200 99
+[2026-02-15 03:30:56,548] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-15 03:30:56,573] INFO django.server "GET /api/users/?page=1&is_staff=false HTTP/1.1" 200 251
+[2026-02-15 03:30:56,597] INFO django.server "GET /api/models/ HTTP/1.1" 200 198
+[2026-02-15 03:30:56,597] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6375
+[2026-02-15 03:30:56,600] INFO django.server "GET /api/admin-access-logs/ HTTP/1.1" 200 840
+[2026-02-15 03:30:56,622] INFO django.server "GET /api/roc/ HTTP/1.1" 200 115750
+[2026-02-15 03:30:56,625] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 399
+[2026-02-15 03:30:56,641] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6375
+[2026-02-15 03:30:56,671] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 575
+[2026-02-15 03:30:57,744] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6375
+[2026-02-15 03:30:58,897] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6375
+[2026-02-15 03:31:04,186] INFO django.server "POST /api/admin-list/ HTTP/1.1" 200 414
+[2026-02-15 03:31:04,204] INFO django.server "GET /api/admin-access-logs/ HTTP/1.1" 200 998
+[2026-02-15 03:31:04,242] INFO django.server "GET /api/admins/ HTTP/1.1" 200 442
+[2026-02-15 03:31:06,743] INFO django.server "GET /api/admin-access-logs/ HTTP/1.1" 200 998
+[2026-02-15 03:31:09,474] INFO django.server "GET /api/models/ HTTP/1.1" 200 198
+[2026-02-15 03:31:09,489] INFO django.server "GET /api/roc/ HTTP/1.1" 200 115750
+[2026-02-15 03:31:30,746] INFO django.server "POST /api/roc/evaluate/ HTTP/1.1" 200 508
+[2026-02-15 03:33:16,098] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6375
+[2026-02-15 03:36:07,656] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6375
+[2026-02-15 03:39:33,394] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\backend\api\views.py changed, reloading.
+[2026-02-15 03:39:34,432] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-02-15 03:40:04,760] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\backend\api\views.py changed, reloading.
+[2026-02-15 03:40:05,816] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-02-15 03:40:21,036] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\backend\api\urls.py changed, reloading.
+[2026-02-15 03:40:21,901] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-02-15 03:40:36,382] WARNING django.request Unauthorized: /api/users/
+[2026-02-15 03:40:36,382] WARNING django.request Unauthorized: /api/stats/
+[2026-02-15 03:40:36,382] WARNING django.request Unauthorized: /api/dashboard/
+[2026-02-15 03:40:36,383] WARNING django.request Unauthorized: /api/logs/
+[2026-02-15 03:40:36,384] WARNING django.request Unauthorized: /api/admin-access-logs/
+[2026-02-15 03:40:36,385] WARNING django.request Unauthorized: /api/me/
+[2026-02-15 03:40:36,385] WARNING django.server "GET /api/stats/?mode=echarts HTTP/1.1" 401 43
+[2026-02-15 03:40:36,385] WARNING django.server "GET /api/users/?page=1&is_staff=false HTTP/1.1" 401 43
+[2026-02-15 03:40:36,386] WARNING django.server "GET /api/logs/?page=1 HTTP/1.1" 401 43
+[2026-02-15 03:40:36,386] WARNING django.server "GET /api/dashboard/ HTTP/1.1" 401 43
+[2026-02-15 03:40:36,386] WARNING django.server "GET /api/admin-access-logs/ HTTP/1.1" 401 43
+[2026-02-15 03:40:36,388] WARNING django.server "GET /api/me/ HTTP/1.1" 401 43
+[2026-02-15 03:40:36,395] WARNING django.request Unauthorized: /api/models/
+[2026-02-15 03:40:36,396] WARNING django.request Unauthorized: /api/roc/
+[2026-02-15 03:40:36,396] WARNING django.server "GET /api/models/ HTTP/1.1" 401 43
+[2026-02-15 03:40:36,398] WARNING django.server "GET /api/roc/ HTTP/1.1" 401 43
+[2026-02-15 03:40:36,421] WARNING django.request Unauthorized: /api/logs/
+[2026-02-15 03:40:36,421] WARNING django.server "GET /api/logs/?page=1 HTTP/1.1" 401 43
+[2026-02-15 03:41:12,747] WARNING django.request Unauthorized: /api/dashboard/
+[2026-02-15 03:41:12,751] WARNING django.request Unauthorized: /api/stats/
+[2026-02-15 03:41:12,751] WARNING django.server "GET /api/dashboard/ HTTP/1.1" 401 43
+[2026-02-15 03:41:12,754] WARNING django.request Unauthorized: /api/logs/
+[2026-02-15 03:41:12,755] WARNING django.server "GET /api/stats/?mode=echarts HTTP/1.1" 401 43
+[2026-02-15 03:41:12,760] WARNING django.request Unauthorized: /api/me/
+[2026-02-15 03:41:12,762] WARNING django.server "GET /api/logs/?page=1 HTTP/1.1" 401 43
+[2026-02-15 03:41:12,763] WARNING django.request Unauthorized: /api/users/
+[2026-02-15 03:41:12,765] WARNING django.server "GET /api/me/ HTTP/1.1" 401 43
+[2026-02-15 03:41:12,767] WARNING django.request Unauthorized: /api/admin-access-logs/
+[2026-02-15 03:41:12,768] WARNING django.server "GET /api/users/?page=1&is_staff=false HTTP/1.1" 401 43
+[2026-02-15 03:41:12,770] WARNING django.request Unauthorized: /api/models/
+[2026-02-15 03:41:12,771] WARNING django.server "GET /api/admin-access-logs/ HTTP/1.1" 401 43
+[2026-02-15 03:41:12,776] WARNING django.request Unauthorized: /api/roc/
+[2026-02-15 03:41:12,776] WARNING django.server "GET /api/models/ HTTP/1.1" 401 43
+[2026-02-15 03:41:12,779] WARNING django.request Unauthorized: /api/roc/evaluate/status/
+[2026-02-15 03:41:12,779] WARNING django.server "GET /api/roc/ HTTP/1.1" 401 43
+[2026-02-15 03:41:12,780] WARNING django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 401 43
+[2026-02-15 03:41:12,798] WARNING django.request Unauthorized: /api/logs/
+[2026-02-15 03:41:12,798] WARNING django.server "GET /api/logs/?page=1 HTTP/1.1" 401 43
+[2026-02-15 03:41:44,865] WARNING django.request Unauthorized: /api/logs/
+[2026-02-15 03:41:44,865] WARNING django.server "GET /api/logs/?page=1 HTTP/1.1" 401 43
+[2026-02-15 03:47:36,870] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-02-15 03:50:57,962] WARNING django.request Unauthorized: /api/dashboard/
+[2026-02-15 03:50:57,962] WARNING django.request Unauthorized: /api/stats/
+[2026-02-15 03:50:57,969] WARNING django.request Unauthorized: /api/logs/
+[2026-02-15 03:50:57,970] WARNING django.request Unauthorized: /api/me/
+[2026-02-15 03:50:57,972] WARNING django.request Unauthorized: /api/users/
+[2026-02-15 03:50:57,974] WARNING django.server "GET /api/logs/?page=1 HTTP/1.1" 401 43
+[2026-02-15 03:50:57,976] WARNING django.request Unauthorized: /api/admin-access-logs/
+[2026-02-15 03:50:57,977] WARNING django.server "GET /api/dashboard/ HTTP/1.1" 401 43
+[2026-02-15 03:50:57,977] WARNING django.server "GET /api/stats/?mode=echarts HTTP/1.1" 401 43
+[2026-02-15 03:50:57,983] WARNING django.request Unauthorized: /api/models/
+[2026-02-15 03:50:57,989] WARNING django.request Unauthorized: /api/roc/
+[2026-02-15 03:50:57,990] WARNING django.server "GET /api/me/ HTTP/1.1" 401 43
+[2026-02-15 03:50:57,993] WARNING django.request Unauthorized: /api/roc/evaluate/status/
+[2026-02-15 03:50:57,993] WARNING django.server "GET /api/users/?page=1&is_staff=false HTTP/1.1" 401 43
+[2026-02-15 03:50:57,995] WARNING django.server "GET /api/admin-access-logs/ HTTP/1.1" 401 43
+[2026-02-15 03:50:57,996] WARNING django.server "GET /api/models/ HTTP/1.1" 401 43
+[2026-02-15 03:50:57,996] WARNING django.server "GET /api/roc/ HTTP/1.1" 401 43
+[2026-02-15 03:50:58,000] WARNING django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 401 43
+[2026-02-15 03:50:58,055] WARNING django.request Unauthorized: /api/logs/
+[2026-02-15 03:50:58,055] WARNING django.server "GET /api/logs/?page=1 HTTP/1.1" 401 43
+[2026-02-15 03:51:10,448] INFO api 用户登录: admin
+[2026-02-15 03:51:10,448] INFO django.server "POST /api/login/ HTTP/1.1" 200 99
+[2026-02-15 03:51:10,601] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-15 03:51:10,620] INFO django.server "GET /api/users/?page=1&is_staff=false HTTP/1.1" 200 251
+[2026-02-15 03:51:10,638] INFO django.server "GET /api/models/ HTTP/1.1" 200 198
+[2026-02-15 03:51:10,646] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6375
+[2026-02-15 03:51:10,647] INFO django.server "GET /api/admin-access-logs/ HTTP/1.1" 200 998
+[2026-02-15 03:51:10,652] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 399
+[2026-02-15 03:51:10,659] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 17
+[2026-02-15 03:51:10,682] INFO django.server "GET /api/roc/ HTTP/1.1" 200 115750
+[2026-02-15 03:51:10,687] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6375
+[2026-02-15 03:51:10,716] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 575
+[2026-02-15 03:51:12,148] INFO django.server "GET /api/models/ HTTP/1.1" 200 198
+[2026-02-15 03:51:12,159] INFO django.server "GET /api/roc/ HTTP/1.1" 200 115750
+[2026-02-15 03:51:27,259] INFO django.server "POST /api/roc/evaluate/ HTTP/1.1" 200 45
+[2026-02-15 03:51:28,781] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 141
+[2026-02-15 03:51:30,272] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 141
+[2026-02-15 03:51:31,770] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 141
+[2026-02-15 03:51:33,272] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 141
+[2026-02-15 03:51:34,771] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 141
+[2026-02-15 03:51:36,271] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 141
+[2026-02-15 03:51:37,772] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 141
+[2026-02-15 03:51:39,276] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 141
+[2026-02-15 03:51:40,782] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 141
+[2026-02-15 03:51:42,280] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 141
+[2026-02-15 03:51:43,775] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 141
+[2026-02-15 03:51:45,274] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 141
+[2026-02-15 03:51:46,771] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 141
+[2026-02-15 03:51:48,272] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 141
+[2026-02-15 03:51:49,781] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 605
+[2026-02-15 03:51:49,832] INFO django.server "GET /api/roc/ HTTP/1.1" 200 115750
+[2026-02-15 03:53:42,901] WARNING django.request Unauthorized: /api/dashboard/
+[2026-02-15 03:53:42,904] WARNING django.request Unauthorized: /api/stats/
+[2026-02-15 03:53:42,905] WARNING django.server "GET /api/dashboard/ HTTP/1.1" 401 43
+[2026-02-15 03:53:42,909] WARNING django.request Unauthorized: /api/logs/
+[2026-02-15 03:53:42,910] WARNING django.server "GET /api/stats/?mode=echarts HTTP/1.1" 401 43
+[2026-02-15 03:53:42,913] WARNING django.request Unauthorized: /api/me/
+[2026-02-15 03:53:42,915] WARNING django.server "GET /api/logs/?page=1 HTTP/1.1" 401 43
+[2026-02-15 03:53:42,916] WARNING django.server "GET /api/me/ HTTP/1.1" 401 43
+[2026-02-15 03:53:42,918] WARNING django.request Unauthorized: /api/users/
+[2026-02-15 03:53:42,921] WARNING django.request Unauthorized: /api/admin-access-logs/
+[2026-02-15 03:53:42,923] WARNING django.server "GET /api/users/?page=1&is_staff=false HTTP/1.1" 401 43
+[2026-02-15 03:53:42,924] WARNING django.request Unauthorized: /api/models/
+[2026-02-15 03:53:42,925] WARNING django.server "GET /api/admin-access-logs/ HTTP/1.1" 401 43
+[2026-02-15 03:53:42,929] WARNING django.request Unauthorized: /api/roc/
+[2026-02-15 03:53:42,931] WARNING django.server "GET /api/models/ HTTP/1.1" 401 43
+[2026-02-15 03:53:42,932] WARNING django.request Unauthorized: /api/roc/evaluate/status/
+[2026-02-15 03:53:42,933] WARNING django.server "GET /api/roc/ HTTP/1.1" 401 43
+[2026-02-15 03:53:42,934] WARNING django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 401 43
+[2026-02-15 03:53:42,973] WARNING django.request Unauthorized: /api/logs/
+[2026-02-15 03:53:42,973] WARNING django.server "GET /api/logs/?page=1 HTTP/1.1" 401 43
+[2026-02-15 03:53:51,179] INFO api 用户登录: admin
+[2026-02-15 03:53:51,179] INFO django.server "POST /api/login/ HTTP/1.1" 200 99
+[2026-02-15 03:53:51,324] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-15 03:53:51,340] INFO django.server "GET /api/users/?page=1&is_staff=false HTTP/1.1" 200 251
+[2026-02-15 03:53:51,364] INFO django.server "GET /api/models/ HTTP/1.1" 200 361
+[2026-02-15 03:53:51,388] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6375
+[2026-02-15 03:53:51,388] INFO django.server "GET /api/admin-access-logs/ HTTP/1.1" 200 998
+[2026-02-15 03:53:51,389] INFO django.server "GET /api/roc/ HTTP/1.1" 200 115750
+[2026-02-15 03:53:51,391] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 399
+[2026-02-15 03:53:51,397] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 605
+[2026-02-15 03:53:51,411] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6375
+[2026-02-15 03:53:51,466] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 575
+[2026-02-15 03:53:52,419] INFO django.server "GET /api/models/ HTTP/1.1" 200 361
+[2026-02-15 03:53:52,433] INFO django.server "GET /api/roc/ HTTP/1.1" 200 115750
+[2026-02-15 03:53:57,786] INFO django.server "POST /api/roc/evaluate/ HTTP/1.1" 200 45
+[2026-02-15 03:53:59,311] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 141
+[2026-02-15 03:54:00,810] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 141
+[2026-02-15 03:54:02,300] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 141
+[2026-02-15 03:54:03,800] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 141
+[2026-02-15 03:54:05,302] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 141
+[2026-02-15 03:54:06,800] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 141
+[2026-02-15 03:54:08,300] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 141
+[2026-02-15 03:54:09,801] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 141
+[2026-02-15 03:54:11,303] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 141
+[2026-02-15 03:54:12,805] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 141
+[2026-02-15 03:54:14,314] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 141
+[2026-02-15 03:54:15,813] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 141
+[2026-02-15 03:54:17,306] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 141
+[2026-02-15 03:54:18,801] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 141
+[2026-02-15 03:54:20,300] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 141
+[2026-02-15 03:54:21,809] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 605
+[2026-02-15 03:54:21,855] INFO django.server "GET /api/roc/ HTTP/1.1" 200 115750
+[2026-02-15 03:56:17,612] INFO django.server "GET /api/roc/ HTTP/1.1" 200 115750
+[2026-02-15 03:56:18,450] INFO django.server "GET /api/roc/ HTTP/1.1" 200 115750
+[2026-02-15 03:56:22,874] INFO django.server "GET /api/admin-access-logs/ HTTP/1.1" 200 998
+[2026-02-15 03:56:26,852] INFO django.server "POST /api/threshold/ HTTP/1.1" 200 18
+[2026-02-15 03:56:28,317] INFO django.server "GET /api/models/ HTTP/1.1" 200 361
+[2026-02-15 03:56:28,332] INFO django.server "GET /api/roc/ HTTP/1.1" 200 115752
+[2026-02-15 03:56:39,644] INFO django.server "POST /api/models/switch/ HTTP/1.1" 200 30
+[2026-02-15 03:56:44,208] INFO django.server "POST /api/roc/evaluate/ HTTP/1.1" 200 47
+[2026-02-15 03:56:45,729] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 143
+[2026-02-15 03:56:47,219] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 143
+[2026-02-15 03:56:48,725] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 143
+[2026-02-15 03:56:50,224] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 143
+[2026-02-15 03:56:51,722] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 143
+[2026-02-15 03:56:53,221] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 143
+[2026-02-15 03:56:54,720] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 143
+[2026-02-15 03:56:56,223] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 143
+[2026-02-15 03:56:57,732] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 143
+[2026-02-15 03:56:59,230] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 143
+[2026-02-15 03:57:00,731] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 143
+[2026-02-15 03:57:02,224] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 143
+[2026-02-15 03:57:03,723] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 143
+[2026-02-15 03:57:05,218] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 143
+[2026-02-15 03:57:06,731] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 607
+[2026-02-15 03:57:06,777] INFO django.server "GET /api/roc/ HTTP/1.1" 200 120822
