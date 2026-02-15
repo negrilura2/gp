@@ -81,7 +81,7 @@ def compute_pairs_scores(embs, labels, max_pairs=20000):
 
     y = np.hstack([np.ones(len(same_scores)), np.zeros(len(diff_scores))])  # 1: same, 0: diff
     scores = np.hstack([same_scores, diff_scores])
-    return y, scores
+    return y, scores, np.array(same_scores), np.array(diff_scores)
 
 def eer_from_roc(fpr, tpr, thresholds):
     # fnr = 1 - tpr
@@ -91,6 +91,91 @@ def eer_from_roc(fpr, tpr, thresholds):
     eer = (fpr[idx] + fnr[idx]) / 2.0
     thr = thresholds[idx]
     return eer, thr
+
+
+def compute_mindcf(fpr, tpr, thresholds, p_target=0.01, c_miss=1.0, c_fa=1.0):
+    fnr = 1 - tpr
+    dcf = c_miss * p_target * fnr + c_fa * (1 - p_target) * fpr
+    idx = int(np.argmin(dcf))
+    return {
+        "p_target": float(p_target),
+        "c_miss": float(c_miss),
+        "c_fa": float(c_fa),
+        "threshold": float(thresholds[idx]),
+        "min_dcf": float(dcf[idx]),
+        "dcf": [float(v) for v in dcf],
+        "thresholds": [float(v) for v in thresholds],
+    }
+
+
+def recommend_threshold(fpr, tpr, thresholds):
+    if len(fpr) == 0:
+        return None, None
+    youden = tpr - fpr
+    idx = int(np.argmax(youden))
+    return float(thresholds[idx]), float(youden[idx])
+
+
+def compute_score_hist(same_scores, diff_scores, bins=30):
+    all_scores = np.hstack([same_scores, diff_scores])
+    if all_scores.size == 0:
+        return {"bins": [], "same": [], "diff": []}
+    min_v = float(np.min(all_scores))
+    max_v = float(np.max(all_scores))
+    if min_v == max_v:
+        min_v -= 1e-3
+        max_v += 1e-3
+    edges = np.linspace(min_v, max_v, bins + 1)
+    same_hist, _ = np.histogram(same_scores, bins=edges)
+    diff_hist, _ = np.histogram(diff_scores, bins=edges)
+    return {
+        "bins": [float(v) for v in edges],
+        "same": [int(v) for v in same_hist],
+        "diff": [int(v) for v in diff_hist],
+    }
+
+
+def compute_calibration(scores, labels, bins=10):
+    if len(scores) == 0:
+        return {"bins": [], "accuracy": [], "confidence": [], "count": [], "ece": None}
+    min_v = float(np.min(scores))
+    max_v = float(np.max(scores))
+    if min_v == max_v:
+        min_v -= 1e-3
+        max_v += 1e-3
+    probs = (scores - min_v) / (max_v - min_v)
+    probs = np.clip(probs, 0, 1)
+    edges = np.linspace(0, 1, bins + 1)
+    accuracy = []
+    confidence = []
+    counts = []
+    ece = 0.0
+    total = float(len(scores))
+    for i in range(bins):
+        left = edges[i]
+        right = edges[i + 1]
+        mask = (probs >= left) & (probs < right) if i < bins - 1 else (probs >= left) & (probs <= right)
+        if not np.any(mask):
+            accuracy.append(0.0)
+            confidence.append((left + right) / 2.0)
+            counts.append(0)
+            continue
+        bin_labels = labels[mask]
+        bin_probs = probs[mask]
+        acc = float(np.mean(bin_labels))
+        conf = float(np.mean(bin_probs))
+        count = int(np.sum(mask))
+        accuracy.append(acc)
+        confidence.append(conf)
+        counts.append(count)
+        ece += abs(acc - conf) * (count / total)
+    return {
+        "bins": [float(v) for v in edges],
+        "accuracy": accuracy,
+        "confidence": confidence,
+        "count": counts,
+        "ece": float(ece),
+    }
 
 if __name__ == "__main__":
     import argparse
@@ -113,7 +198,7 @@ if __name__ == "__main__":
     embs, labels, spk2idx = extract_all_embeddings(model, device, args.feature_dir)
 
     print("计算成对得分（抽样）...")
-    y, scores = compute_pairs_scores(embs, labels, max_pairs=args.max_pairs)
+    y, scores, same_scores, diff_scores = compute_pairs_scores(embs, labels, max_pairs=args.max_pairs)
 
     print("计算 ROC 与 EER ...")
     unique_labels = np.unique(y)
@@ -125,11 +210,25 @@ if __name__ == "__main__":
         roc_points_json = os.path.join(args.out_dir, "roc_points.json")
         with open(roc_points_json, "w") as f:
             json.dump({"fpr": [], "tpr": [], "thresholds": []}, f, indent=2)
+        det_points_json = os.path.join(args.out_dir, "det_points.json")
+        with open(det_points_json, "w") as f:
+            json.dump({"fpr": [], "fnr": []}, f, indent=2)
+        mindcf_json = os.path.join(args.out_dir, "mindcf.json")
+        with open(mindcf_json, "w") as f:
+            json.dump({"threshold": None, "min_dcf": None, "dcf": [], "thresholds": []}, f, indent=2)
+        score_dist_json = os.path.join(args.out_dir, "score_dist.json")
+        with open(score_dist_json, "w") as f:
+            json.dump({"bins": [], "same": [], "diff": []}, f, indent=2)
+        calib_json = os.path.join(args.out_dir, "calibration.json")
+        with open(calib_json, "w") as f:
+            json.dump({"bins": [], "accuracy": [], "confidence": [], "count": [], "ece": None}, f, indent=2)
         sys.exit(0)
     try:
         fpr, tpr, thresholds = roc_curve(y, scores)
         roc_auc = auc(fpr, tpr)
         eer, eer_thr = eer_from_roc(fpr, tpr, thresholds)
+        mindcf = compute_mindcf(fpr, tpr, thresholds)
+        rec_thr, rec_youden = recommend_threshold(fpr, tpr, thresholds)
     except ValueError as exc:
         print(f"ROC 计算失败：{exc}")
         out_json = os.path.join(args.out_dir, "eer_threshold.json")
@@ -138,8 +237,23 @@ if __name__ == "__main__":
         roc_points_json = os.path.join(args.out_dir, "roc_points.json")
         with open(roc_points_json, "w") as f:
             json.dump({"fpr": [], "tpr": [], "thresholds": []}, f, indent=2)
+        det_points_json = os.path.join(args.out_dir, "det_points.json")
+        with open(det_points_json, "w") as f:
+            json.dump({"fpr": [], "fnr": []}, f, indent=2)
+        mindcf_json = os.path.join(args.out_dir, "mindcf.json")
+        with open(mindcf_json, "w") as f:
+            json.dump({"threshold": None, "min_dcf": None, "dcf": [], "thresholds": []}, f, indent=2)
+        score_dist_json = os.path.join(args.out_dir, "score_dist.json")
+        with open(score_dist_json, "w") as f:
+            json.dump({"bins": [], "same": [], "diff": []}, f, indent=2)
+        calib_json = os.path.join(args.out_dir, "calibration.json")
+        with open(calib_json, "w") as f:
+            json.dump({"bins": [], "accuracy": [], "confidence": [], "count": [], "ece": None}, f, indent=2)
         sys.exit(0)
-    print(f"AUC={roc_auc:.4f}  EER={eer:.4f}, suggested threshold={eer_thr:.4f}")
+    if rec_thr is not None:
+        print(f"AUC={roc_auc:.4f}  EER={eer:.4f}, suggested threshold={rec_thr:.4f}")
+    else:
+        print(f"AUC={roc_auc:.4f}  EER={eer:.4f}, suggested threshold={mindcf['threshold']:.4f}")
 
     # 保存 ROC 图
     plt.figure(figsize=(6,5))
@@ -157,7 +271,23 @@ if __name__ == "__main__":
 
     out_json = os.path.join(args.out_dir, "eer_threshold.json")
     with open(out_json, "w") as f:
-        json.dump({"auc": float(roc_auc), "eer": float(eer), "threshold": float(eer_thr)}, f, indent=2)
+        json.dump(
+            {
+                "auc": float(roc_auc),
+                "eer": float(eer),
+                "threshold_eer": float(eer_thr),
+                "threshold_mindcf": float(mindcf["threshold"]),
+                "mindcf": float(mindcf["min_dcf"]),
+                "threshold_youden": float(rec_thr) if rec_thr is not None else None,
+                "youden": float(rec_youden) if rec_youden is not None else None,
+                "threshold": float(rec_thr) if rec_thr is not None else float(mindcf["threshold"]),
+                "p_target": float(mindcf["p_target"]),
+                "c_miss": float(mindcf["c_miss"]),
+                "c_fa": float(mindcf["c_fa"]),
+            },
+            f,
+            indent=2,
+        )
     print("Saved metrics to", out_json)
 
     roc_points_json = os.path.join(args.out_dir, "roc_points.json")
@@ -172,3 +302,30 @@ if __name__ == "__main__":
             indent=2,
         )
     print("Saved ROC points to", roc_points_json)
+
+    det_points_json = os.path.join(args.out_dir, "det_points.json")
+    with open(det_points_json, "w") as f:
+        json.dump(
+            {
+                "fpr": [float(v) for v in fpr],
+                "fnr": [float(1 - v) for v in tpr],
+            },
+            f,
+            indent=2,
+        )
+    print("Saved DET points to", det_points_json)
+
+    mindcf_json = os.path.join(args.out_dir, "mindcf.json")
+    with open(mindcf_json, "w") as f:
+        json.dump(mindcf, f, indent=2)
+    print("Saved minDCF to", mindcf_json)
+
+    score_dist_json = os.path.join(args.out_dir, "score_dist.json")
+    with open(score_dist_json, "w") as f:
+        json.dump(compute_score_hist(same_scores, diff_scores), f, indent=2)
+    print("Saved score distribution to", score_dist_json)
+
+    calib_json = os.path.join(args.out_dir, "calibration.json")
+    with open(calib_json, "w") as f:
+        json.dump(compute_calibration(scores, y), f, indent=2)
+    print("Saved calibration to", calib_json)

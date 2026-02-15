@@ -106,20 +106,34 @@ def count_files(root, exts=None):
     return total
 
 
-def get_latest_file_info(root, exts=None):
+def get_latest_file_path(root, exts=None):
     if not os.path.exists(root):
-        return {"name": None, "mtime": None}
+        return None
     latest_path = None
     latest_mtime = -1
     for base, _, files in os.walk(root):
         for name in files:
             if exts is None or os.path.splitext(name)[1].lower() in exts:
                 path = os.path.join(base, name)
-                mtime = os.path.getmtime(path)
+                try:
+                    mtime = os.path.getmtime(path)
+                except OSError:
+                    continue
                 if mtime > latest_mtime:
                     latest_mtime = mtime
                     latest_path = path
+    return latest_path
+
+
+def get_latest_file_info(root, exts=None):
+    if not os.path.exists(root):
+        return {"name": None, "mtime": None}
+    latest_path = get_latest_file_path(root, exts)
     if latest_path is None:
+        return {"name": None, "mtime": None}
+    try:
+        latest_mtime = os.path.getmtime(latest_path)
+    except OSError:
         return {"name": None, "mtime": None}
     return {
         "name": os.path.basename(latest_path),
@@ -135,6 +149,13 @@ def sanitize_json_value(value):
     if isinstance(value, list):
         return [sanitize_json_value(v) for v in value]
     return value
+
+
+def load_json_if_exists(path):
+    if not path or not os.path.exists(path):
+        return None
+    with open(path, "r", encoding="utf-8") as f:
+        return json.load(f)
 
 
 EVAL_STATUS_FILE = os.path.join(os.fspath(settings.REPORTS_DIR), "roc_status.json")
@@ -934,9 +955,12 @@ class StatsView(APIView):
             for d in daily
         ]
 
-        # 结果分布
-        accept_count = VerifyLog.objects.filter(result='ACCEPT').count()
-        reject_count = VerifyLog.objects.filter(result='REJECT').count()
+        result_stats = VerifyLog.objects.aggregate(
+            accept=Count('id', filter=models.Q(result='ACCEPT')),
+            reject=Count('id', filter=models.Q(result='REJECT')),
+        )
+        accept_count = result_stats.get("accept") or 0
+        reject_count = result_stats.get("reject") or 0
         total_count = accept_count + reject_count
         accept_rate = round(accept_count / total_count, 4) if total_count else 0
 
@@ -946,10 +970,14 @@ class StatsView(APIView):
         last_30_qs = VerifyLog.objects.filter(timestamp__gte=now - timedelta(days=30))
 
         def _window_summary(qs):
-            total = qs.count()
+            stats = qs.aggregate(
+                total=Count('id'),
+                accept=Count('id', filter=models.Q(result='ACCEPT')),
+            )
+            total = stats.get("total") or 0
             if total == 0:
                 return {"total": 0, "accept_rate": 0}
-            acc = qs.filter(result='ACCEPT').count()
+            acc = stats.get("accept") or 0
             return {
                 "total": total,
                 "accept_rate": round(acc / total, 4),
@@ -963,25 +991,27 @@ class StatsView(APIView):
         # 分数统计
         score_stats = {"max": 0, "min": 0, "avg": 0, "median": 0}
         all_qs = VerifyLog.objects.all()
-        if all_qs.exists():
+        total_scores = all_qs.count()
+        if total_scores > 0:
             agg = all_qs.aggregate(
                 max_score=Max('score'),
                 min_score=Min('score'),
                 avg_score=Avg('score'),
             )
-            scores = list(all_qs.order_by('score').values_list('score', flat=True))
-            n = len(scores)
-            if n > 0:
-                if n % 2 == 1:
-                    median = float(scores[n // 2])
-                else:
-                    median = float((scores[n // 2 - 1] + scores[n // 2]) / 2.0)
-                score_stats = {
-                    "max": float(agg["max_score"]) if agg["max_score"] is not None else 0,
-                    "min": float(agg["min_score"]) if agg["min_score"] is not None else 0,
-                    "avg": float(agg["avg_score"]) if agg["avg_score"] is not None else 0,
-                    "median": median,
-                }
+            ordered_scores = all_qs.order_by('score').values_list('score', flat=True)
+            mid = (total_scores - 1) // 2
+            if total_scores % 2 == 1:
+                median = float(ordered_scores[mid])
+            else:
+                left = float(ordered_scores[mid])
+                right = float(ordered_scores[mid + 1])
+                median = float((left + right) / 2.0)
+            score_stats = {
+                "max": float(agg["max_score"]) if agg["max_score"] is not None else 0,
+                "min": float(agg["min_score"]) if agg["min_score"] is not None else 0,
+                "avg": float(agg["avg_score"]) if agg["avg_score"] is not None else 0,
+                "median": median,
+            }
 
         # 用户数
         total_users = User.objects.count()
@@ -1031,13 +1061,22 @@ class DashboardView(APIView):
         admin_users = User.objects.filter(is_staff=True).count()
         enrolled_users = VoiceTemplate.objects.values('user').distinct().count()
 
-        verify_total = VerifyLog.objects.count()
-        verify_accept = VerifyLog.objects.filter(result='ACCEPT').count()
-        verify_reject = VerifyLog.objects.filter(result='REJECT').count()
+        verify_stats = VerifyLog.objects.aggregate(
+            total=Count('id'),
+            accept=Count('id', filter=models.Q(result='ACCEPT')),
+            reject=Count('id', filter=models.Q(result='REJECT')),
+        )
+        verify_total = verify_stats.get("total") or 0
+        verify_accept = verify_stats.get("accept") or 0
+        verify_reject = verify_stats.get("reject") or 0
         verify_rate = round(verify_accept / verify_total, 4) if verify_total else 0
 
-        enroll_total = EnrollLog.objects.count()
-        enroll_success = EnrollLog.objects.filter(success=True).count()
+        enroll_stats = EnrollLog.objects.aggregate(
+            total=Count('id'),
+            success=Count('id', filter=models.Q(success=True)),
+        )
+        enroll_total = enroll_stats.get("total") or 0
+        enroll_success = enroll_stats.get("success") or 0
         enroll_rate = round(enroll_success / enroll_total, 4) if enroll_total else 0
 
         verify_daily = (
@@ -1122,21 +1161,7 @@ class RocEvaluateView(APIView):
         else:
             model_path = get_model_path()
         if not model_path or not os.path.isfile(model_path):
-            latest_path = None
-            latest_mtime = -1
-            for base, _, files in os.walk(models_dir):
-                for name in files:
-                    if not name.endswith((".pth", ".pt", ".onnx")):
-                        continue
-                    path = os.path.join(base, name)
-                    try:
-                        mtime = os.path.getmtime(path)
-                    except OSError:
-                        continue
-                    if mtime > latest_mtime:
-                        latest_mtime = mtime
-                        latest_path = path
-            model_path = latest_path
+            model_path = get_latest_file_path(models_dir, {".pth", ".pt", ".onnx"})
         if not model_path or not os.path.isfile(model_path):
             return Response({"status": "failed", "error": "模型文件不存在"})
         feature_dir = os.fspath(settings.FEATURES_DIR)
@@ -1167,6 +1192,10 @@ class RocView(APIView):
         reports_dir = os.fspath(settings.REPORTS_DIR)
         eer_path = os.path.join(reports_dir, "eer_threshold.json")
         roc_points_path = os.path.join(reports_dir, "roc_points.json")
+        det_points_path = os.path.join(reports_dir, "det_points.json")
+        mindcf_path = os.path.join(reports_dir, "mindcf.json")
+        score_dist_path = os.path.join(reports_dir, "score_dist.json")
+        calib_path = os.path.join(reports_dir, "calibration.json")
 
         if not os.path.exists(eer_path):
             return Response({"error": "eer_threshold.json not found, 请先运行阈值评估脚本"}, status=404)
@@ -1174,26 +1203,42 @@ class RocView(APIView):
         with open(eer_path, "r", encoding="utf-8") as f:
             metrics = json.load(f)
 
-        roc_data = None
-        if os.path.exists(roc_points_path):
-            with open(roc_points_path, "r", encoding="utf-8") as f:
-                roc_data = json.load(f)
+        roc_data = load_json_if_exists(roc_points_path)
 
-        thr_eer = metrics.get("threshold")
+        thr_recommended = metrics.get("threshold")
+        thr_eer = metrics.get("threshold_eer") or metrics.get("threshold")
+        thr_mindcf = metrics.get("threshold_mindcf")
         thr_default = getattr(settings, "VOICE_VERIFY_THRESHOLD", None)
         threshold_diff = None
-        if thr_eer is not None and thr_default is not None:
-            threshold_diff = float(thr_default) - float(thr_eer)
+        if thr_recommended is not None and thr_default is not None:
+            threshold_diff = float(thr_default) - float(thr_recommended)
+        status_payload = _read_eval_status()
+
+        det_data = load_json_if_exists(det_points_path)
+        mindcf_data = load_json_if_exists(mindcf_path)
+        score_dist_data = load_json_if_exists(score_dist_path)
+        calib_data = load_json_if_exists(calib_path)
 
         payload = {
             "auc": metrics.get("auc"),
             "eer": metrics.get("eer"),
-            "threshold": thr_eer,
+            "threshold": thr_recommended,
+            "threshold_eer": thr_eer,
+            "threshold_mindcf": thr_mindcf,
+            "mindcf": metrics.get("mindcf"),
+            "p_target": metrics.get("p_target"),
+            "c_miss": metrics.get("c_miss"),
+            "c_fa": metrics.get("c_fa"),
             "threshold_default": thr_default,
             "threshold_diff": threshold_diff,
             "fpr": roc_data.get("fpr") if roc_data else None,
             "tpr": roc_data.get("tpr") if roc_data else None,
             "thresholds": roc_data.get("thresholds") if roc_data else None,
+            "det": det_data,
+            "mindcf_data": mindcf_data,
+            "score_dist": score_dist_data,
+            "calibration": calib_data,
+            "model": status_payload.get("model"),
         }
         return Response(sanitize_json_value(payload))
 

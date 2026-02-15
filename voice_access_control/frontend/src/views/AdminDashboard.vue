@@ -381,7 +381,10 @@
                       <div class="model-header">
                         <div>
                           <div class="settings-title">模型指标</div>
-                          <div class="card-subtitle">来自离线评估结果</div>
+                          <div class="card-subtitle">
+                            评估模型：{{ modelMetricsModel || modelCurrent || "--" }}
+                            <span v-if="modelEvaluating">（评估中）</span>
+                          </div>
                         </div>
                         <div class="settings-actions">
                           <el-button :loading="modelMetricsLoading" @click="loadModelMetrics">
@@ -481,7 +484,7 @@
                         </el-button>
                       </div>
                     </el-card>
-                    <transition name="eval-expand">
+                    <transition name="eval-expand" mode="out-in">
                       <el-card v-if="activeEval" shadow="never" class="panel-card eval-detail-card">
                         <template #header>
                           <div class="model-header">
@@ -489,12 +492,18 @@
                               <div class="settings-title">{{ activeEval.title }}</div>
                               <div class="card-subtitle">{{ activeEval.subtitle }}</div>
                             </div>
-                            <el-button text @click="activeEvalKey = ''">收起</el-button>
+                            <el-button text @click="handleEvalCollapse">收起</el-button>
                           </div>
                         </template>
                         <div class="eval-detail-body">
                           <div class="eval-detail-text">{{ activeEval.detail }}</div>
-                          <div class="eval-detail-chart">{{ activeEval.placeholder }}</div>
+                          <div class="eval-detail-chart">
+                            <div v-if="!activeEvalHasData" class="eval-detail-empty">
+                              {{ activeEval.placeholder }}
+                            </div>
+                            <div v-else ref="evalDetailChartRef" class="eval-detail-canvas"></div>
+                          </div>
+                          <div class="eval-detail-note">{{ activeEval.note }}</div>
                         </div>
                       </el-card>
                     </transition>
@@ -508,7 +517,7 @@
                       <div class="model-header">
                         <div>
                           <div class="settings-title">扩展评估</div>
-                          <div class="card-subtitle">新增指标与图表（待接入）</div>
+                          <div class="card-subtitle">新增指标与图表</div>
                         </div>
                       </div>
                     </template>
@@ -522,7 +531,14 @@
                       >
                         <div class="eval-title">{{ item.title }}</div>
                         <div class="eval-subtitle">{{ item.subtitle }}</div>
-                        <div class="eval-placeholder">{{ item.placeholder }}</div>
+                        <div class="eval-thumb">
+                          <div
+                            v-if="hasEvalData(item.key)"
+                            class="eval-thumb-canvas"
+                            :ref="setEvalThumbRef(item.key)"
+                          ></div>
+                          <div v-else class="eval-thumb-empty">暂无数据</div>
+                        </div>
                       </div>
                     </div>
                   </el-card>
@@ -1110,16 +1126,27 @@ const modelMetrics = ref({
   auc: null,
   eer: null,
   threshold: null,
+  threshold_eer: null,
+  threshold_mindcf: null,
+  mindcf: null,
+  p_target: null,
+  c_miss: null,
+  c_fa: null,
   threshold_default: null,
   threshold_diff: null,
   fpr: null,
   tpr: null,
-  thresholds: null
+  thresholds: null,
+  det: null,
+  mindcf_data: null,
+  score_dist: null,
+  calibration: null
 });
 const modelMetricsError = ref("");
 const modelMetricsLoading = ref(false);
 const modelEvaluating = ref(false);
 const modelEvaluatingStatus = ref("");
+const modelMetricsModel = ref("");
 const modelList = ref([]);
 const modelCurrent = ref("");
 const modelTarget = ref("");
@@ -1171,34 +1198,51 @@ const evalItems = [
     title: "DET 曲线",
     subtitle: "低误识区表现",
     detail: "在低误识区域更直观反映模型区分能力，常用于安全场景。",
-    placeholder: "图表待接入"
+    note: "横轴为 FPR，纵轴为 FNR，曲线越靠左下越优。",
+    placeholder: "暂无数据",
+    thumb: "DET 缩略图"
   },
   {
     key: "mindcf",
     title: "minDCF",
     subtitle: "工程决策指标",
     detail: "结合先验概率与误识/漏识成本，辅助阈值与上线决策。",
-    placeholder: "曲线与数值待接入"
+    note: "横轴为阈值，纵轴为 DCF，最低点对应推荐阈值。",
+    placeholder: "暂无数据",
+    thumb: "minDCF 缩略图"
   },
   {
     key: "score",
     title: "评分分布",
     subtitle: "同人 / 异人分布",
     detail: "展示同人/异人评分分布与重叠区，判断可分性。",
-    placeholder: "分布图待接入"
+    note: "横轴为相似度得分，纵轴为样本数量。同人分布应更偏高分，异人分布应更偏低分；两者重叠越少，误识/漏识越少，区分能力越强。",
+    placeholder: "暂无数据",
+    thumb: "分布缩略图"
   },
   {
     key: "calib",
     title: "校准指标",
     subtitle: "ECE / 可靠性曲线",
     detail: "衡量分数概率校准程度，便于阈值稳定性评估。",
-    placeholder: "校准曲线待接入"
+    note: "横轴为置信度，纵轴为准确率，曲线越贴近对角线越好。",
+    placeholder: "暂无数据",
+    thumb: "校准缩略图"
   }
 ];
 const activeEvalKey = ref("");
 const activeEval = computed(
   () => evalItems.find((item) => item.key === activeEvalKey.value) || null
 );
+const evalDetailChartRef = ref(null);
+const evalThumbRefs = ref({});
+const evalThumbCharts = {};
+let evalDetailChart = null;
+
+const activeEvalHasData = computed(() => {
+  if (!activeEvalKey.value) return false;
+  return hasEvalData(activeEvalKey.value);
+});
 const rocDerived = computed(() => {
   const thresholds = modelMetrics.value.thresholds || [];
   const fpr = modelMetrics.value.fpr || [];
@@ -1257,6 +1301,9 @@ async function pollEvalStatus() {
     const statusValue = res.data?.status || "idle";
     modelEvaluatingStatus.value = statusValue;
     if (statusValue === "ok") {
+      if (res.data?.model) {
+        modelMetricsModel.value = res.data.model;
+      }
       stopEvalPolling();
       modelEvaluating.value = false;
       await loadModelMetrics();
@@ -1514,6 +1561,254 @@ function updateRocChart() {
       }
     ]
   });
+}
+
+function setEvalThumbRef(key) {
+  return (el) => {
+    if (el) {
+      evalThumbRefs.value[key] = el;
+    }
+  };
+}
+
+function hasEvalData(key) {
+  const metrics = modelMetrics.value;
+  if (key === "det") {
+    return Array.isArray(metrics.det?.fpr) && metrics.det.fpr.length > 0;
+  }
+  if (key === "mindcf") {
+    return Array.isArray(metrics.mindcf_data?.dcf) && metrics.mindcf_data.dcf.length > 0;
+  }
+  if (key === "score") {
+    return Array.isArray(metrics.score_dist?.bins) && metrics.score_dist.bins.length > 1;
+  }
+  if (key === "calib") {
+    return Array.isArray(metrics.calibration?.bins) && metrics.calibration.bins.length > 1;
+  }
+  return false;
+}
+
+function getEvalChartOption(key, compact = false) {
+  const metrics = modelMetrics.value;
+  if (key === "det") {
+    const fpr = metrics.det?.fpr || [];
+    const fnr = metrics.det?.fnr || [];
+    const data = fpr.map((x, idx) => [x, fnr[idx] ?? 0]);
+    return {
+      grid: compact ? { left: 6, right: 6, top: 6, bottom: 6 } : { left: 58, right: 28, top: 34, bottom: 52 },
+      xAxis: {
+        type: "value",
+        name: compact ? "" : "FPR",
+        min: 0,
+        max: 1,
+        axisLabel: compact ? { show: false } : { formatter: (v) => `${Math.round(v * 100)}%`, margin: 10 },
+        nameLocation: "middle",
+        nameGap: 30,
+        axisLine: { lineStyle: { color: "#e5e7eb" } },
+        axisTick: { show: !compact }
+      },
+      yAxis: {
+        type: "value",
+        name: compact ? "" : "FNR",
+        min: 0,
+        max: 1,
+        axisLabel: compact ? { show: false } : { formatter: (v) => `${Math.round(v * 100)}%`, margin: 10 },
+        nameLocation: "middle",
+        nameGap: 38,
+        axisLine: { show: false },
+        axisTick: { show: !compact },
+        splitLine: { lineStyle: { color: "#f3f4f6" } }
+      },
+      series: [
+        {
+          type: "line",
+          smooth: true,
+          symbol: "none",
+          lineStyle: { color: "#3B82F6", width: 2 },
+          data
+        }
+      ]
+    };
+  }
+  if (key === "mindcf") {
+    const thresholds = metrics.mindcf_data?.thresholds || [];
+    const dcf = metrics.mindcf_data?.dcf || [];
+    const data = thresholds
+      .map((x, idx) => [x, dcf[idx] ?? 0])
+      .filter((item) => Number.isFinite(item[0]) && Number.isFinite(item[1]))
+      .sort((a, b) => a[0] - b[0]);
+    return {
+      grid: compact ? { left: 6, right: 6, top: 6, bottom: 6 } : { left: 58, right: 28, top: 34, bottom: 52 },
+      xAxis: {
+        type: "value",
+        name: compact ? "" : "阈值",
+        axisLabel: compact ? { show: false } : { formatter: (v) => v.toFixed(2), margin: 10 },
+        nameLocation: "middle",
+        nameGap: 30,
+        axisLine: { lineStyle: { color: "#e5e7eb" } },
+        axisTick: { show: !compact }
+      },
+      yAxis: {
+        type: "value",
+        name: compact ? "" : "DCF",
+        axisLabel: compact ? { show: false } : { formatter: (v) => v.toFixed(2), margin: 10 },
+        nameLocation: "middle",
+        nameGap: 38,
+        axisLine: { show: false },
+        axisTick: { show: !compact },
+        splitLine: { lineStyle: { color: "#f3f4f6" } }
+      },
+      series: [
+        {
+          type: "line",
+          smooth: true,
+          symbol: "none",
+          lineStyle: { color: "#10B981", width: 2 },
+          data
+        }
+      ]
+    };
+  }
+  if (key === "score") {
+    const bins = metrics.score_dist?.bins || [];
+    const same = metrics.score_dist?.same || [];
+    const diff = metrics.score_dist?.diff || [];
+    const centers = bins.length > 1 ? bins.slice(0, -1).map((b, i) => (b + bins[i + 1]) / 2) : [];
+    const labelInterval = centers.length > 12 ? Math.max(0, Math.ceil(centers.length / 10) - 1) : 0;
+    return {
+      grid: compact ? { left: 6, right: 6, top: 6, bottom: 6 } : { left: 58, right: 28, top: 34, bottom: 60 },
+      xAxis: {
+        type: "category",
+        name: compact ? "" : "得分",
+        data: centers.map((v) => v.toFixed(2)),
+        axisLabel: compact ? { show: false } : { rotate: 30, interval: labelInterval, margin: 12 },
+        nameLocation: "middle",
+        nameGap: 40,
+        axisLine: { lineStyle: { color: "#e5e7eb" } },
+        axisTick: { show: !compact }
+      },
+      yAxis: {
+        type: "value",
+        name: compact ? "" : "数量",
+        axisLabel: compact ? { show: false } : { margin: 10 },
+        nameLocation: "middle",
+        nameGap: 38,
+        axisLine: { show: false },
+        splitLine: { lineStyle: { color: "#f3f4f6" } }
+      },
+      series: [
+        {
+          type: "bar",
+          stack: "dist",
+          barMaxWidth: compact ? 6 : 16,
+          itemStyle: { color: "rgba(59, 130, 246, 0.6)" },
+          data: same
+        },
+        {
+          type: "bar",
+          stack: "dist",
+          barMaxWidth: compact ? 6 : 16,
+          itemStyle: { color: "rgba(244, 114, 182, 0.6)" },
+          data: diff
+        }
+      ]
+    };
+  }
+  if (key === "calib") {
+    const bins = metrics.calibration?.bins || [];
+    const acc = metrics.calibration?.accuracy || [];
+    const conf = metrics.calibration?.confidence || [];
+    const centers = bins.length > 1 ? bins.slice(0, -1).map((b, i) => (b + bins[i + 1]) / 2) : [];
+    return {
+      grid: compact ? { left: 6, right: 6, top: 6, bottom: 6 } : { left: 58, right: 28, top: 34, bottom: 52 },
+      xAxis: {
+        type: "value",
+        name: compact ? "" : "置信度",
+        min: 0,
+        max: 1,
+        axisLabel: compact ? { show: false } : { formatter: (v) => `${Math.round(v * 100)}%`, margin: 10 },
+        nameLocation: "middle",
+        nameGap: 30,
+        axisLine: { lineStyle: { color: "#e5e7eb" } },
+        axisTick: { show: !compact }
+      },
+      yAxis: {
+        type: "value",
+        name: compact ? "" : "准确率",
+        min: 0,
+        max: 1,
+        axisLabel: compact ? { show: false } : { formatter: (v) => `${Math.round(v * 100)}%`, margin: 10 },
+        nameLocation: "middle",
+        nameGap: 38,
+        axisLine: { show: false },
+        splitLine: { lineStyle: { color: "#f3f4f6" } }
+      },
+      series: [
+        {
+          type: "line",
+          symbol: "circle",
+          symbolSize: compact ? 2 : 6,
+          lineStyle: { color: "#6366F1" },
+          data: centers.map((x, i) => [x, acc[i] ?? 0])
+        },
+        {
+          type: "line",
+          symbol: "none",
+          lineStyle: { color: "rgba(17, 24, 39, 0.35)", type: "dashed" },
+          data: [
+            [0, 0],
+            [1, 1]
+          ]
+        }
+      ]
+    };
+  }
+  return null;
+}
+
+function updateEvalThumbCharts() {
+  evalItems.forEach((item) => {
+    const el = evalThumbRefs.value[item.key];
+    if (!el) return;
+    const hasData = hasEvalData(item.key);
+    if (!hasData) {
+      if (evalThumbCharts[item.key]) {
+        evalThumbCharts[item.key].clear();
+      }
+      return;
+    }
+    if (!evalThumbCharts[item.key]) {
+      evalThumbCharts[item.key] = echarts.init(el);
+    }
+    const option = getEvalChartOption(item.key, true);
+    if (option) {
+      evalThumbCharts[item.key].setOption(option, { notMerge: true, lazyUpdate: true });
+    } else {
+      evalThumbCharts[item.key].clear();
+    }
+  });
+}
+
+function updateEvalDetailChart() {
+  if (!activeEvalKey.value) return;
+  const el = evalDetailChartRef.value;
+  if (!el) return;
+  if (!evalDetailChart) {
+    evalDetailChart = echarts.init(el);
+  }
+  const option = hasEvalData(activeEvalKey.value) ? getEvalChartOption(activeEvalKey.value, false) : null;
+  if (option) {
+    evalDetailChart.setOption(option, { notMerge: true, lazyUpdate: true });
+  } else {
+    evalDetailChart.clear();
+  }
+}
+
+function resetEvalDetailChart() {
+  if (evalDetailChart) {
+    evalDetailChart.dispose();
+    evalDetailChart = null;
+  }
 }
 
 async function loadDashboard() {
@@ -2077,27 +2372,52 @@ async function loadModelMetrics() {
       auc: res.data.auc,
       eer: res.data.eer,
       threshold: res.data.threshold,
+      threshold_eer: res.data.threshold_eer,
+      threshold_mindcf: res.data.threshold_mindcf,
+      mindcf: res.data.mindcf,
+      p_target: res.data.p_target,
+      c_miss: res.data.c_miss,
+      c_fa: res.data.c_fa,
       threshold_default: res.data.threshold_default,
       threshold_diff: res.data.threshold_diff,
       fpr: res.data.fpr,
       tpr: res.data.tpr,
-      thresholds: res.data.thresholds
+      thresholds: res.data.thresholds,
+      det: res.data.det,
+      mindcf_data: res.data.mindcf_data,
+      score_dist: res.data.score_dist,
+      calibration: res.data.calibration
     };
+    modelMetricsModel.value = res.data.model || modelMetricsModel.value || modelCurrent.value;
     modelMetricsError.value = "";
     updateRocChart();
+    updateEvalThumbCharts();
+    updateEvalDetailChart();
   } catch (e) {
     modelMetricsError.value = e.response?.data?.error || "模型指标未生成";
     modelMetrics.value = {
       auc: null,
       eer: null,
       threshold: null,
+      threshold_eer: null,
+      threshold_mindcf: null,
+      mindcf: null,
+      p_target: null,
+      c_miss: null,
+      c_fa: null,
       threshold_default: null,
       threshold_diff: null,
       fpr: null,
       tpr: null,
-      thresholds: null
+      thresholds: null,
+      det: null,
+      mindcf_data: null,
+      score_dist: null,
+      calibration: null
     };
     updateRocChart();
+    updateEvalThumbCharts();
+    updateEvalDetailChart();
   } finally {
     modelMetricsLoading.value = false;
   }
@@ -2111,6 +2431,7 @@ async function handleModelEvaluate() {
       await loadModelList();
     }
     const name = modelCurrent.value || modelTarget.value || "";
+    modelMetricsModel.value = name || modelMetricsModel.value;
     const res = await evaluateRocMetrics(name);
     const statusValue = res.data?.status || "idle";
     modelEvaluatingStatus.value = statusValue;
@@ -2141,13 +2462,21 @@ async function handleModelEvaluate() {
 
 function handleEvalCardClick(key) {
   if (activeEvalKey.value === key) {
+    resetEvalDetailChart();
     activeEvalKey.value = "";
     return;
   }
+  resetEvalDetailChart();
   activeEvalKey.value = key;
   nextTick(() => {
     handleResize();
+    updateEvalDetailChart();
   });
+}
+
+function handleEvalCollapse() {
+  resetEvalDetailChart();
+  activeEvalKey.value = "";
 }
 
 async function loadModelList() {
@@ -2256,6 +2585,8 @@ function handleResize() {
   if (lineChart) lineChart.resize();
   if (pieChart) pieChart.resize();
   if (rocChart) rocChart.resize();
+  Object.values(evalThumbCharts).forEach((chart) => chart && chart.resize());
+  if (evalDetailChart) evalDetailChart.resize();
   updateLogLayout();
 }
 
@@ -2296,6 +2627,10 @@ function handleTabChange() {
       initCharts();
       loadModelList();
       loadModelMetrics();
+      nextTick(() => {
+        updateEvalThumbCharts();
+        updateEvalDetailChart();
+      });
     }
   });
 }
@@ -2309,6 +2644,10 @@ onMounted(() => {
   loadModelList();
   loadModelMetrics();
   updateLogLayout();
+  nextTick(() => {
+    updateEvalThumbCharts();
+    updateEvalDetailChart();
+  });
   fetchRocEvaluateStatus()
     .then((res) => {
       if (res.data?.status === "running") {
@@ -2334,6 +2673,13 @@ onUnmounted(() => {
   if (rocChart) {
     rocChart.dispose();
     rocChart = null;
+  }
+  Object.values(evalThumbCharts).forEach((chart) => {
+    if (chart) chart.dispose();
+  });
+  if (evalDetailChart) {
+    evalDetailChart.dispose();
+    evalDetailChart = null;
   }
 });
 </script>
@@ -2663,10 +3009,28 @@ onUnmounted(() => {
   color: #9ca3af;
 }
 
-.eval-placeholder {
-  margin-top: auto;
+.eval-thumb {
+  margin-top: 6px;
+  border-radius: 10px;
+  background: linear-gradient(145deg, rgba(59, 130, 246, 0.12), rgba(16, 185, 129, 0.12));
+  border: 1px dashed rgba(59, 130, 246, 0.25);
+  height: 54px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-size: 12px;
   color: #6b7280;
+}
+
+.eval-thumb-canvas {
+  width: 100%;
+  height: 100%;
+}
+
+.eval-thumb-empty {
+  font-size: 12px;
+  color: #9ca3af;
 }
 
 .eval-detail-card {
@@ -2685,7 +3049,7 @@ onUnmounted(() => {
 }
 
 .eval-detail-chart {
-  min-height: 220px;
+  min-height: 250px;
   border-radius: 12px;
   background: rgba(15, 23, 42, 0.04);
   display: flex;
@@ -2693,6 +3057,27 @@ onUnmounted(() => {
   justify-content: center;
   color: #9ca3af;
   font-size: 13px;
+  padding: 8px;
+  box-sizing: border-box;
+}
+
+.eval-detail-canvas {
+  width: 100%;
+  height: 100%;
+  min-height: 250px;
+}
+
+.eval-detail-empty {
+  padding: 12px;
+  color: #9ca3af;
+}
+
+.eval-detail-note {
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(15, 23, 42, 0.04);
+  font-size: 12px;
+  color: #6b7280;
 }
 
 .model-switch {
