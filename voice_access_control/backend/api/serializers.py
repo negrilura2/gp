@@ -67,6 +67,7 @@ class AdminListUserSerializer(serializers.ModelSerializer):
     full_name = serializers.SerializerMethodField()
     phone = serializers.SerializerMethodField()
     department = serializers.SerializerMethodField()
+    last_login = serializers.SerializerMethodField()
 
     class Meta:
         model = User
@@ -97,6 +98,9 @@ class AdminListUserSerializer(serializers.ModelSerializer):
 
     def get_department(self, obj):
         return self._get_profile_value(obj, "department")
+
+    def get_last_login(self, obj):
+        return getattr(obj, "last_admin_login", None)
 
 
 class AdminUserCreateSerializer(serializers.ModelSerializer):

@@ -28,750 +28,118 @@
             @tab-change="handleTabChange"
           >
             <el-tab-pane label="概览" name="overview">
-              <div class="section-stack">
-                <el-row :gutter="16">
-                  <el-col
-                    :span="4"
-                    v-for="card in summaryCards"
-                    :key="card.key"
-                  >
-                    <el-card shadow="hover" class="stat-card">
-                      <div class="card-label">{{ card.label }}</div>
-                      <div class="card-value">{{ card.value }}</div>
-                    </el-card>
-                  </el-col>
-                </el-row>
-
-                <el-row :gutter="16">
-                  <el-col :span="18">
-                    <el-card shadow="never" class="panel-card">
-                      <template #header>
-                        <div class="card-header">
-                          <div>验证趋势</div>
-                          <div class="card-subtitle">
-                            柱状为验证次数，折线为通过率
-                          </div>
-                        </div>
-                      </template>
-                      <div
-                        ref="lineChartRef"
-                        style="width: 100%; height: 340px"
-                      ></div>
-                    </el-card>
-                  </el-col>
-                  <el-col :span="6">
-                    <el-card shadow="never" class="panel-card">
-                      <template #header>
-                        <div class="card-header">
-                          <div>验证结果分布</div>
-                          <div class="card-subtitle">通过与拒绝的占比</div>
-                        </div>
-                      </template>
-                      <div
-                        ref="pieChartRef"
-                        style="width: 100%; height: 340px"
-                      ></div>
-                    </el-card>
-                  </el-col>
-                </el-row>
-              </div>
+              <AdminOverviewTab
+                :summary-cards="summaryCards"
+                :line-chart-ref="setLineChartRef"
+                :pie-chart-ref="setPieChartRef"
+              />
             </el-tab-pane>
             <el-tab-pane label="验证日志" name="logs">
-              <el-row :gutter="16">
-                <el-col :span="24">
-                  <el-card shadow="never" class="panel-card">
-                    <template #header>
-                      <div class="log-header">
-                        <div class="log-title">
-                          <div>验证日志</div>
-                          <div class="card-subtitle">按用户、结果和日期范围筛选</div>
-                        </div>
-                        <div class="log-actions">
-                          <el-button type="primary" @click="handleLogSearch">查询</el-button>
-                          <el-button @click="handleLogReset">重置</el-button>
-                          <el-button type="danger" plain @click="handleDeleteSelectedLogs">
-                            删除选中
-                          </el-button>
-                        </div>
-                      </div>
-                      <el-form
-                        :inline="true"
-                        :model="logFilters"
-                        size="small"
-                        class="log-filter-form"
-                      >
-                        <el-form-item label="预测用户">
-                          <el-input
-                            v-model="logFilters.predicted"
-                            placeholder="predicted"
-                            clearable
-                          />
-                        </el-form-item>
-                        <el-form-item label="结果">
-                          <el-select
-                            v-model="logFilters.result"
-                            placeholder="全部"
-                            clearable
-                            style="width: 110px"
-                          >
-                            <el-option label="ACCEPT" value="ACCEPT" />
-                            <el-option label="REJECT" value="REJECT" />
-                          </el-select>
-                        </el-form-item>
-                        <el-form-item label="日期">
-                          <el-date-picker
-                            v-model="logFilters.dates"
-                            type="daterange"
-                            range-separator="至"
-                            start-placeholder="开始日期"
-                            end-placeholder="结束日期"
-                            value-format="YYYY-MM-DD"
-                          />
-                        </el-form-item>
-                      </el-form>
-                    </template>
-                    <div class="log-table-wrap" ref="logTableWrapRef">
-                      <el-table
-                        :data="logs"
-                        border
-                        style="width: 100%"
-                        size="small"
-                        row-key="id"
-                        :height="logTableHeight"
-                        @selection-change="handleLogSelectionChange"
-                      >
-                        <el-table-column type="selection" width="44" />
-                        <el-table-column label="时间" width="180">
-                          <template #default="{ row }">
-                            <span class="time-text">{{ formatDateTime(row.timestamp) }}</span>
-                          </template>
-                        </el-table-column>
-                        <el-table-column
-                          prop="predicted_user"
-                          label="预测用户"
-                          width="140"
-                        />
-                        <el-table-column prop="score" label="得分" width="100" />
-                        <el-table-column
-                          prop="threshold"
-                          label="阈值"
-                          width="80"
-                        />
-                        <el-table-column prop="result" label="结果" width="90" />
-                        <el-table-column
-                          prop="door_state"
-                          label="门状态"
-                          width="90"
-                        />
-                        <el-table-column
-                          prop="client_ip"
-                          label="客户端IP"
-                          width="140"
-                        />
-                        <el-table-column
-                          prop="error_msg"
-                          label="错误信息"
-                          min-width="200"
-                          show-overflow-tooltip
-                        />
-                      </el-table>
-                    </div>
-                  </el-card>
-                </el-col>
-              </el-row>
-              <el-row style="margin-top: 8px">
-                <el-col :span="24" style="text-align: right">
-                  <el-pagination
-                    layout="prev, pager, next, jumper"
-                    background
-                    :page-size="logPageSize"
-                    :current-page="logPage"
-                    :total="logTotal"
-                    @current-change="handleLogPageChange"
-                  />
-                </el-col>
-              </el-row>
+              <AdminLogsTab
+                :logs="logs"
+                :log-total="logTotal"
+                :log-page="logPage"
+                :log-page-size="logPageSize"
+                :log-table-height="logTableHeight"
+                :log-table-wrap-ref="setLogTableWrapRef"
+                :log-filters="logFilters"
+                :format-date-time="formatDateTime"
+                :on-log-search="handleLogSearch"
+                :on-log-reset="handleLogReset"
+                :on-delete-selected-logs="handleDeleteSelectedLogs"
+                :on-log-selection-change="handleLogSelectionChange"
+                :on-log-page-change="handleLogPageChange"
+              />
             </el-tab-pane>
             <el-tab-pane label="用户管理" name="users">
-              <el-row :gutter="16">
-                <el-col :span="24">
-                  <el-card shadow="never" class="panel-card">
-                    <template #header>
-                      <div class="user-header">
-                        <div class="user-title">
-                          <div>用户管理</div>
-                          <div class="card-subtitle">仅展示普通用户账号与声纹状态</div>
-                        </div>
-                        <div class="user-actions">
-                          <el-button
-                            plain
-                            @click="handleUserRefresh"
-                            :loading="usersLoading"
-                          >
-                            刷新
-                          </el-button>
-                          <el-button type="primary" @click="openCreateUser">
-                            新建用户
-                          </el-button>
-                        </div>
-                      </div>
-                      <el-form
-                        :inline="true"
-                        :model="userFilters"
-                        size="small"
-                        class="user-filter-form"
-                      >
-                        <el-form-item label="关键词">
-                          <el-input
-                            v-model="userFilters.q"
-                            placeholder="用户名 / 姓名 / 手机 / 邮箱"
-                            clearable
-                          />
-                        </el-form-item>
-                        <el-form-item label="状态">
-                          <el-select v-model="userFilters.is_active" clearable placeholder="全部">
-                            <el-option label="启用" value="true" />
-                            <el-option label="禁用" value="false" />
-                          </el-select>
-                        </el-form-item>
-                        <el-form-item label="声纹">
-                          <el-select v-model="userFilters.has_voiceprint" clearable placeholder="全部">
-                            <el-option label="已录入" value="true" />
-                            <el-option label="未录入" value="false" />
-                          </el-select>
-                        </el-form-item>
-                        <el-form-item>
-                          <el-button type="primary" @click="handleUserSearch">
-                            查询
-                          </el-button>
-                          <el-button @click="handleUserReset">重置</el-button>
-                        </el-form-item>
-                      </el-form>
-                      <div class="user-batch">
-                        <div class="user-batch-info">
-                          已选 {{ selectedUserIds.length }} 个
-                        </div>
-                        <div class="user-batch-actions">
-                          <el-button
-                            size="small"
-                            :disabled="!selectedUserIds.length"
-                            @click="handleBatchToggle(true)"
-                          >
-                            批量启用
-                          </el-button>
-                          <el-button
-                            size="small"
-                            :disabled="!selectedUserIds.length"
-                            @click="handleBatchToggle(false)"
-                          >
-                            批量禁用
-                          </el-button>
-                          <el-button
-                            size="small"
-                            :disabled="!selectedUserIds.length"
-                            @click="handleBatchClearVoiceprint"
-                          >
-                            批量清理声纹
-                          </el-button>
-                          <el-button
-                            size="small"
-                            :disabled="!selectedUserIds.length"
-                            @click="openBatchResetPassword"
-                          >
-                            批量重置密码
-                          </el-button>
-                          <el-button
-                            size="small"
-                            type="danger"
-                            plain
-                            :disabled="!selectedUserIds.length"
-                            @click="handleBatchDelete"
-                          >
-                            批量删除
-                          </el-button>
-                        </div>
-                      </div>
-                    </template>
-                    <el-table
-                      :data="users"
-                      border
-                      style="width: 100%"
-                      size="small"
-                      row-key="id"
-                      v-loading="usersLoading"
-                      @selection-change="handleUserSelectionChange"
-                    >
-                      <el-table-column type="selection" width="44" />
-                      <el-table-column prop="username" label="用户名" width="140" />
-                      <el-table-column prop="full_name" label="姓名" width="120" />
-                      <el-table-column prop="phone" label="联系电话" width="140" />
-                      <el-table-column prop="email" label="邮箱" min-width="180" />
-                      <el-table-column prop="department" label="部门" width="120" />
-                      <el-table-column label="状态" width="100">
-                        <template #default="{ row }">
-                          <el-tag :type="row.is_active ? 'success' : 'danger'" effect="light">
-                            {{ row.is_active ? "启用" : "禁用" }}
-                          </el-tag>
-                        </template>
-                      </el-table-column>
-                      <el-table-column label="声纹" width="110">
-                        <template #default="{ row }">
-                          <el-tag :type="row.has_voiceprint ? 'success' : 'info'" effect="light">
-                            {{ row.has_voiceprint ? "已录入" : "未录入" }}
-                          </el-tag>
-                        </template>
-                      </el-table-column>
-                      <el-table-column label="注册时间" width="185">
-                        <template #default="{ row }">
-                          <span class="time-text">{{ formatDateTime(row.date_joined) }}</span>
-                        </template>
-                      </el-table-column>
-                      <el-table-column label="最近登录" width="185">
-                        <template #default="{ row }">
-                          <span class="time-text">{{ formatDateTime(row.last_login) }}</span>
-                        </template>
-                      </el-table-column>
-                      <el-table-column label="操作" min-width="240">
-                        <template #default="{ row }">
-                          <div class="user-action-stack">
-                            <el-button size="small" @click="openEditUser(row)">编辑</el-button>
-                            <el-button size="small" @click="openResetPassword(row)">
-                              重置密码
-                            </el-button>
-                            <el-button
-                              size="small"
-                              plain
-                              @click="handleResetVoiceprint(row)"
-                            >
-                              清理声纹
-                            </el-button>
-                            <el-button
-                              size="small"
-                              type="danger"
-                              plain
-                              @click="handleDeleteUser(row)"
-                            >
-                              删除
-                            </el-button>
-                          </div>
-                        </template>
-                      </el-table-column>
-                    </el-table>
-                  </el-card>
-                </el-col>
-              </el-row>
-              <el-row style="margin-top: 8px">
-                <el-col :span="24" style="text-align: right">
-                  <el-pagination
-                    layout="prev, pager, next, jumper"
-                    background
-                    :page-size="usersPageSize"
-                    :current-page="usersPage"
-                    :total="usersTotal"
-                    @current-change="handleUserPageChange"
-                  />
-                </el-col>
-              </el-row>
+              <AdminUsersTab
+                :users="users"
+                :users-total="usersTotal"
+                :users-page="usersPage"
+                :users-page-size="usersPageSize"
+                :users-loading="usersLoading"
+                :user-filters="userFilters"
+                :selected-user-ids="selectedUserIds"
+                :format-date-time="formatDateTime"
+                :on-user-refresh="handleUserRefresh"
+                :on-create-user="openCreateUser"
+                :on-user-search="handleUserSearch"
+                :on-user-reset="handleUserReset"
+                :on-batch-toggle="handleBatchToggle"
+                :on-batch-clear-voiceprint="handleBatchClearVoiceprint"
+                :on-batch-reset-password="openBatchResetPassword"
+                :on-batch-delete="handleBatchDelete"
+                :on-user-selection-change="handleUserSelectionChange"
+                :on-user-page-change="handleUserPageChange"
+                :on-edit-user="openEditUser"
+                :on-reset-password="openResetPassword"
+                :on-reset-voiceprint="handleResetVoiceprint"
+                :on-delete-user="handleDeleteUser"
+              />
             </el-tab-pane>
             <el-tab-pane label="模型评估" name="model">
-              <el-row :gutter="16">
-                <el-col :span="12">
-                  <el-card shadow="never" class="panel-card">
-                    <template #header>
-                      <div class="model-header">
-                        <div>
-                          <div class="settings-title">模型指标</div>
-                          <div class="card-subtitle">
-                            评估模型：{{ modelMetricsModel || modelCurrent || "--" }}
-                            <span v-if="modelEvaluating">（评估中）</span>
-                          </div>
-                        </div>
-                        <div class="settings-actions">
-                          <el-button :loading="modelMetricsLoading" @click="loadModelMetrics">
-                            刷新
-                          </el-button>
-                          <el-button type="primary" :loading="modelEvaluating" @click="handleModelEvaluate">
-                            立即评估
-                          </el-button>
-                        </div>
-                      </div>
-                    </template>
-                    <div v-if="modelMetricsError" class="model-empty">
-                      {{ modelMetricsError }}
-                    </div>
-                    <div v-else class="metric-grid">
-                      <div class="metric-card">
-                        <div class="metric-card-label">AUC</div>
-                        <div class="metric-card-value">{{ formatMetric(modelMetrics.auc) }}</div>
-                      </div>
-                      <div class="metric-card">
-                        <div class="metric-card-label">EER</div>
-                        <div class="metric-card-value">{{ formatMetric(modelMetrics.eer) }}</div>
-                      </div>
-                      <div class="metric-card">
-                        <div class="metric-card-label">推荐阈值</div>
-                        <div class="metric-card-value">{{ formatMetric(modelMetrics.threshold) }}</div>
-                      </div>
-                      <div class="metric-card">
-                        <div class="metric-card-label">当前阈值</div>
-                        <div class="metric-card-value">
-                          {{ formatMetric(modelMetrics.threshold_default) }}
-                        </div>
-                      </div>
-                      <div class="metric-card">
-                        <div class="metric-card-label">FAR@当前阈值</div>
-                        <div class="metric-card-value">
-                          {{ formatPercent(rocDerived.far) }}
-                        </div>
-                      </div>
-                      <div class="metric-card">
-                        <div class="metric-card-label">FRR@当前阈值</div>
-                        <div class="metric-card-value">
-                          {{ formatPercent(rocDerived.frr) }}
-                        </div>
-                      </div>
-                    </div>
-                    <div class="metric-hint">
-                      <div class="metric-hint-title">指标说明</div>
-                      <div class="metric-hint-item">AUC：ROC 曲线下面积，越接近 1 越好</div>
-                      <div class="metric-hint-item">EER：等错误率，越低越好</div>
-                      <div class="metric-hint-item">TPR：通过率（真正率），越高越好</div>
-                      <div class="metric-hint-item">FPR：误识率（假接受率），越低越好</div>
-                      <div class="metric-hint-item">FAR：误识率（在当前阈值下的假接受率）</div>
-                      <div class="metric-hint-item">FRR：漏识率（在当前阈值下的假拒绝率）</div>
-                      <div class="metric-hint-item">虚线为随机猜测基线，曲线越靠左上越优</div>
-                    </div>
-                    <div class="roc-chart" ref="rocChartRef"></div>
-                  </el-card>
-                </el-col>
-                <el-col :span="12">
-                  <div class="model-right-stack">
-                    <el-card shadow="never" class="panel-card">
-                      <template #header>
-                        <div class="model-header">
-                          <div>
-                            <div class="settings-title">模型切换</div>
-                            <div class="card-subtitle">切换后立即用于新的验证请求</div>
-                          </div>
-                          <el-button :loading="modelSwitching" @click="loadModelList">刷新</el-button>
-                        </div>
-                      </template>
-                      <div class="model-switch">
-                        <div class="metric-row">
-                          <span class="metric-label">当前模型</span>
-                          <span class="metric-value">{{ modelCurrent || "--" }}</span>
-                        </div>
-                        <el-select
-                          v-model="modelTarget"
-                          placeholder="选择模型"
-                          style="width: 100%"
-                        >
-                          <el-option
-                            v-for="item in modelList"
-                            :key="item.name"
-                            :label="item.name"
-                            :value="item.name"
-                          />
-                        </el-select>
-                        <el-button
-                          type="primary"
-                          style="margin-top: 12px"
-                          :loading="modelSwitching"
-                          :disabled="!modelTarget"
-                          @click="handleModelSwitch"
-                        >
-                          切换模型
-                        </el-button>
-                      </div>
-                    </el-card>
-                    <transition name="eval-expand" mode="out-in">
-                      <el-card v-if="activeEval" shadow="never" class="panel-card eval-detail-card">
-                        <template #header>
-                          <div class="model-header">
-                            <div>
-                              <div class="settings-title">{{ activeEval.title }}</div>
-                              <div class="card-subtitle">{{ activeEval.subtitle }}</div>
-                            </div>
-                            <el-button text @click="handleEvalCollapse">收起</el-button>
-                          </div>
-                        </template>
-                        <div class="eval-detail-body">
-                          <div class="eval-detail-text">{{ activeEval.detail }}</div>
-                          <div class="eval-detail-chart">
-                            <div v-if="!activeEvalHasData" class="eval-detail-empty">
-                              {{ activeEval.placeholder }}
-                            </div>
-                            <div v-else ref="evalDetailChartRef" class="eval-detail-canvas"></div>
-                          </div>
-                          <div class="eval-detail-note">{{ activeEval.note }}</div>
-                        </div>
-                      </el-card>
-                    </transition>
-                  </div>
-                </el-col>
-              </el-row>
-              <el-row :gutter="16" style="margin-top: 16px">
-                <el-col :span="24">
-                  <el-card shadow="never" class="panel-card">
-                    <template #header>
-                      <div class="model-header">
-                        <div>
-                          <div class="settings-title">扩展评估</div>
-                          <div class="card-subtitle">新增指标与图表</div>
-                        </div>
-                      </div>
-                    </template>
-                    <div class="eval-grid">
-                      <div
-                        v-for="item in evalItems"
-                        :key="item.key"
-                        class="eval-panel"
-                        :class="{ 'is-active': activeEvalKey === item.key }"
-                        @click="handleEvalCardClick(item.key)"
-                      >
-                        <div class="eval-title">{{ item.title }}</div>
-                        <div class="eval-subtitle">{{ item.subtitle }}</div>
-                        <div class="eval-thumb">
-                          <div
-                            v-if="hasEvalData(item.key)"
-                            class="eval-thumb-canvas"
-                            :ref="setEvalThumbRef(item.key)"
-                          ></div>
-                          <div v-else class="eval-thumb-empty">暂无数据</div>
-                        </div>
-                      </div>
-                    </div>
-                  </el-card>
-                </el-col>
-              </el-row>
+              <AdminModelTab
+                :model-metrics="modelMetrics"
+                :model-metrics-model="modelMetricsModel"
+                :model-current="modelCurrent"
+                :model-evaluating="modelEvaluating"
+                :model-metrics-loading="modelMetricsLoading"
+                :model-metrics-error="modelMetricsError"
+                :roc-derived="rocDerived"
+                :format-metric="formatMetric"
+                :format-percent="formatPercent"
+                :roc-chart-ref="setRocChartRef"
+                :model-switching="modelSwitching"
+                :model-list="modelList"
+                :model-target="modelTarget"
+                :active-eval="activeEval"
+                :active-eval-has-data="activeEvalHasData"
+                :active-eval-key="activeEvalKey"
+                :eval-items="evalItems"
+                :eval-detail-chart-ref="setEvalDetailChartRef"
+                :set-eval-thumb-ref="setEvalThumbRef"
+                :has-eval-data="hasEvalData"
+                :on-load-model-metrics="loadModelMetrics"
+                :on-model-evaluate="handleModelEvaluate"
+                :on-load-model-list="loadModelList"
+                :on-model-target-change="handleModelTargetChange"
+                :on-model-switch="handleModelSwitch"
+                :on-eval-collapse="handleEvalCollapse"
+                :on-eval-card-click="handleEvalCardClick"
+              />
             </el-tab-pane>
             <el-tab-pane label="系统设置" name="settings">
-              <el-row :gutter="16">
-                <el-col :span="24">
-                  <el-card shadow="never" class="panel-card">
-                    <template #header>
-                      <div class="settings-header">
-                        <div>
-                          <div class="settings-title">日志与审计</div>
-                          <div class="card-subtitle">记录管理员列表访问与安全事件</div>
-                        </div>
-                        <div class="settings-actions">
-                          <el-button @click="loadAdminAccessLogs">刷新</el-button>
-                        </div>
-                      </div>
-                    </template>
-                    <el-table
-                      :data="adminAccessLogs"
-                      size="small"
-                      stripe
-                      :loading="adminAccessLogsLoading"
-                    >
-                      <el-table-column prop="user_username" label="操作者" min-width="120" />
-                      <el-table-column label="结果" min-width="100">
-                        <template #default="{ row }">
-                          <el-tag :type="row.success ? 'success' : 'danger'">
-                            {{ row.success ? "成功" : "失败" }}
-                          </el-tag>
-                        </template>
-                      </el-table-column>
-                      <el-table-column prop="client_ip" label="IP" min-width="140" />
-                      <el-table-column label="时间" min-width="160">
-                        <template #default="{ row }">
-                          {{ row.created_at ? formatDateTime(row.created_at) : "--" }}
-                        </template>
-                      </el-table-column>
-                    </el-table>
-                  </el-card>
-                </el-col>
-                <el-col :span="24">
-                  <el-card shadow="never" class="panel-card">
-                    <template #header>
-                      <div class="settings-header">
-                        <div>
-                          <div class="settings-title">验证策略</div>
-                          <div class="card-subtitle">阈值策略与规则提示</div>
-                        </div>
-                      </div>
-                    </template>
-                    <div class="threshold-box">
-                      <div class="threshold-row">
-                        <span class="threshold-label">当前阈值</span>
-                        <span class="threshold-text">
-                          {{ threshold.toFixed(2) }}
-                        </span>
-                      </div>
-                      <el-slider
-                        v-model="thresholdDraft"
-                        :min="0.3"
-                        :max="0.9"
-                        :step="0.01"
-                        style="margin-top: 8px"
-                      />
-                      <div class="threshold-row">
-                        <span class="threshold-label">新阈值</span>
-                        <span class="threshold-text">
-                          {{ thresholdDraft.toFixed(2) }}
-                        </span>
-                      </div>
-                      <div class="settings-actions" style="margin-top: 10px">
-                        <el-button
-                          type="primary"
-                          size="small"
-                          :loading="savingThreshold"
-                          @click="handleSaveThreshold"
-                        >
-                          保存阈值
-                        </el-button>
-                      </div>
-                    </div>
-                  </el-card>
-                </el-col>
-                <el-col :span="24">
-                  <el-card shadow="never" class="panel-card">
-                    <template #header>
-                      <div class="settings-header">
-                        <div>
-                          <div class="settings-title">数据维护</div>
-                          <div class="card-subtitle">缓存、日志与模型文件维护</div>
-                        </div>
-                      </div>
-                    </template>
-                    <div class="maintenance-list">
-                      <div class="maintenance-item">
-                        <span>清理旧验证日志</span>
-                        <el-tag type="info">待接入</el-tag>
-                      </div>
-                      <div class="maintenance-item">
-                        <span>模型文件完整性检查</span>
-                        <el-tag type="info">待接入</el-tag>
-                      </div>
-                      <div class="maintenance-item">
-                        <span>缓存与临时文件整理</span>
-                        <el-tag type="info">待接入</el-tag>
-                      </div>
-                    </div>
-                  </el-card>
-                </el-col>
-              </el-row>
+              <AdminSettingsTab
+                :admin-access-logs="adminAccessLogs"
+                :admin-access-logs-loading="adminAccessLogsLoading"
+                :format-date-time="formatDateTime"
+                :threshold="threshold"
+                :threshold-draft="thresholdDraft"
+                :saving-threshold="savingThreshold"
+                :on-load-admin-access-logs="loadAdminAccessLogs"
+                :on-threshold-draft-change="handleThresholdDraftChange"
+                :on-save-threshold="handleSaveThreshold"
+              />
             </el-tab-pane>
             <el-tab-pane label="管理员列表" name="admins">
-              <el-card shadow="never" class="panel-card">
-                <template #header>
-                  <div class="settings-header">
-                    <div>
-                      <div class="settings-title">管理员列表</div>
-                      <div class="card-subtitle">进入时需要验证高层密码</div>
-                    </div>
-                    <div class="settings-actions">
-                      <el-button :disabled="!adminListUnlocked" @click="handleAdminListRefresh">刷新</el-button>
-                      <el-button type="primary" :disabled="!adminListUnlocked" @click="openCreateAdmin">
-                        新建管理员
-                      </el-button>
-                    </div>
-                  </div>
-                </template>
-                <div v-if="adminListUnlocked">
-                  <el-form
-                    :inline="true"
-                    :model="adminFilters"
-                    size="small"
-                    class="user-filter-form"
-                  >
-                    <el-form-item label="关键词">
-                      <el-input
-                        v-model="adminFilters.q"
-                        placeholder="用户名 / 姓名 / 手机 / 邮箱"
-                        clearable
-                      />
-                    </el-form-item>
-                    <el-form-item label="状态">
-                      <el-select v-model="adminFilters.is_active" clearable placeholder="全部">
-                        <el-option label="启用" value="true" />
-                        <el-option label="禁用" value="false" />
-                      </el-select>
-                    </el-form-item>
-                    <el-form-item>
-                      <el-button type="primary" @click="handleAdminSearch">查询</el-button>
-                      <el-button @click="handleAdminReset">重置</el-button>
-                    </el-form-item>
-                  </el-form>
-                  <div class="user-batch">
-                    <div class="user-batch-info">已选 {{ selectedAdminIds.length }} 个</div>
-                    <div class="user-batch-actions">
-                      <el-button
-                        size="small"
-                        :disabled="!selectedAdminIds.length"
-                        @click="handleAdminBatchToggle(true)"
-                      >
-                        批量启用
-                      </el-button>
-                      <el-button
-                        size="small"
-                        :disabled="!selectedAdminIds.length"
-                        @click="handleAdminBatchToggle(false)"
-                      >
-                        批量禁用
-                      </el-button>
-                      <el-button
-                        size="small"
-                        :disabled="!selectedAdminIds.length"
-                        @click="openAdminBatchResetPassword"
-                      >
-                        批量重置密码
-                      </el-button>
-                    </div>
-                  </div>
-                  <el-table
-                    :data="adminList"
-                    size="small"
-                    stripe
-                    :loading="adminListLoading"
-                    @selection-change="handleAdminSelectionChange"
-                  >
-                    <el-table-column type="selection" width="44" />
-                    <el-table-column prop="username" label="账号" min-width="120" />
-                    <el-table-column prop="full_name" label="姓名" min-width="120" />
-                    <el-table-column prop="phone" label="联系电话" min-width="140" />
-                    <el-table-column prop="email" label="邮箱" min-width="180" />
-                    <el-table-column prop="department" label="部门" min-width="120" />
-                    <el-table-column label="状态" min-width="100">
-                      <template #default="{ row }">
-                        <el-tag :type="row.is_active ? 'success' : 'info'">
-                          {{ row.is_active ? "启用" : "禁用" }}
-                        </el-tag>
-                      </template>
-                    </el-table-column>
-                    <el-table-column label="最近登录" min-width="160">
-                      <template #default="{ row }">
-                        {{ row.last_login ? formatDateTime(row.last_login) : "--" }}
-                      </template>
-                    </el-table-column>
-                    <el-table-column label="创建时间" min-width="160">
-                      <template #default="{ row }">
-                        {{ row.date_joined ? formatDateTime(row.date_joined) : "--" }}
-                      </template>
-                    </el-table-column>
-                    <el-table-column label="操作" min-width="220">
-                      <template #default="{ row }">
-                        <div class="user-action-stack">
-                          <el-button size="small" @click="openEditAdmin(row)">编辑</el-button>
-                          <el-button size="small" @click="openAdminResetPassword(row)">
-                            重置密码
-                          </el-button>
-                          <el-button
-                            size="small"
-                            plain
-                            @click="handleAdminToggle(row)"
-                          >
-                            {{ row.is_active ? "禁用" : "启用" }}
-                          </el-button>
-                        </div>
-                      </template>
-                    </el-table-column>
-                  </el-table>
-                </div>
-                <el-empty v-else description="进入时需要验证高层密码" />
-              </el-card>
+              <AdminAdminsTab
+                :admin-list-unlocked="adminListUnlocked"
+                :admin-filters="adminFilters"
+                :selected-admin-ids="selectedAdminIds"
+                :admin-list="adminList"
+                :admin-list-loading="adminListLoading"
+                :format-date-time="formatDateTime"
+                :on-admin-list-refresh="handleAdminListRefresh"
+                :on-create-admin="openCreateAdmin"
+                :on-admin-search="handleAdminSearch"
+                :on-admin-reset="handleAdminReset"
+                :on-admin-batch-toggle="handleAdminBatchToggle"
+                :on-admin-batch-reset-password="openAdminBatchResetPassword"
+                :on-admin-selection-change="handleAdminSelectionChange"
+                :on-edit-admin="openEditAdmin"
+                :on-reset-admin-password="openAdminResetPassword"
+                :on-admin-toggle="handleAdminToggle"
+              />
             </el-tab-pane>
           </el-tabs>
           <el-dialog
@@ -1009,6 +377,12 @@ import { onMounted, onUnmounted, ref, computed, nextTick } from "vue";
 import { useRouter } from "vue-router";
 import { ElMessage, ElMessageBox } from "element-plus";
 import * as echarts from "echarts";
+import AdminOverviewTab from "./admin/AdminOverviewTab.vue";
+import AdminLogsTab from "./admin/AdminLogsTab.vue";
+import AdminUsersTab from "./admin/AdminUsersTab.vue";
+import AdminModelTab from "./admin/AdminModelTab.vue";
+import AdminSettingsTab from "./admin/AdminSettingsTab.vue";
+import AdminAdminsTab from "./admin/AdminAdminsTab.vue";
 import {
   fetchDashboard,
   fetchStatsEcharts,
@@ -1049,6 +423,9 @@ const logPage = ref(1);
 const logPageSize = ref(12);
 const logTableHeight = ref(520);
 const logTableWrapRef = ref(null);
+const setLogTableWrapRef = (el) => {
+  logTableWrapRef.value = el;
+};
 const logSelectedIds = ref([]);
 const logFilters = ref({
   actor: "",
@@ -1164,6 +541,19 @@ const lineChartRef = ref(null);
 const pieChartRef = ref(null);
 let lineChart;
 let pieChart;
+
+const setLineChartRef = (el) => {
+  lineChartRef.value = el;
+};
+const setPieChartRef = (el) => {
+  pieChartRef.value = el;
+};
+const setRocChartRef = (el) => {
+  rocChartRef.value = el;
+};
+const setEvalDetailChartRef = (el) => {
+  evalDetailChartRef.value = el;
+};
 
 const summaryCards = computed(() => {
   const s = summary.value;
@@ -2493,6 +1883,10 @@ async function loadModelList() {
   }
 }
 
+function handleModelTargetChange(value) {
+  modelTarget.value = value || "";
+}
+
 async function handleModelSwitch() {
   if (!modelTarget.value) return;
   modelSwitching.value = true;
@@ -2573,6 +1967,10 @@ async function handleSaveThreshold() {
   } finally {
     savingThreshold.value = false;
   }
+}
+
+function handleThresholdDraftChange(value) {
+  thresholdDraft.value = value;
 }
 
 function handleLogout() {
@@ -2684,7 +2082,7 @@ onUnmounted(() => {
 });
 </script>
 
-<style scoped>
+<style>
 .dashboard-container {
   background: #f5f7fb;
   background-image: radial-gradient(

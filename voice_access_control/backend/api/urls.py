@@ -1,17 +1,9 @@
 from django.urls import path
-from .views import (
-    RegisterView,
-    LoginView,
-    EnrollView,
-    VerifyView,
-    VerifyLogListView,
-    VerifyLogBulkDeleteView,
-    MyVerifyLogListView,
-    EnrollLogListView,
-    UserListView,
-    UserDetailView,
-    UserResetPasswordView,
-    UserVoiceprintResetView,
+from .views_auth import RegisterView, LoginView, CurrentUserView
+from .views_voice import EnrollView, VerifyView, VoiceprintStatusView
+from .views_logs import VerifyLogListView, VerifyLogBulkDeleteView, MyVerifyLogListView, EnrollLogListView
+from .views_users import UserListView, UserDetailView, UserResetPasswordView, UserVoiceprintResetView
+from .views_admin import (
     AdminSecretStatusView,
     AdminSecretSetView,
     AdminListView,
@@ -22,15 +14,9 @@ from .views import (
     AdminAccessLogListView,
     ModelListView,
     ModelSwitchView,
-    StatsView,
-    DashboardView,
-    CurrentUserView,
-    VoiceprintStatusView,
-    RocView,
-    RocEvaluateView,
-    RocEvaluateStatusView,
-    ThresholdConfigView,
 )
+from .views_stats import StatsView, DashboardView
+from .views_roc import RocView, RocEvaluateView, RocEvaluateStatusView, ThresholdConfigView
 
 urlpatterns = [
     # 用户
