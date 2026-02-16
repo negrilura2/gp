@@ -78,16 +78,50 @@
         </template>
         <div class="maintenance-list">
           <div class="maintenance-item">
-            <span>清理旧验证日志</span>
-            <el-tag type="info">待接入</el-tag>
+            <div>
+              <div>清理旧验证日志</div>
+              <div class="card-subtitle">默认清理 30 天前的验证与注册日志</div>
+            </div>
+            <div class="settings-actions">
+              <el-button size="small" :loading="maintenanceLogsLoading" @click="onCleanVerifyLogs">
+                执行
+              </el-button>
+            </div>
+          </div>
+          <div v-if="maintenanceLogsResult" class="card-subtitle">
+            已清理验证日志 {{ maintenanceLogsResult.verify_deleted }} 条，注册日志
+            {{ maintenanceLogsResult.enroll_deleted }} 条
           </div>
           <div class="maintenance-item">
-            <span>模型文件完整性检查</span>
-            <el-tag type="info">待接入</el-tag>
+            <div>
+              <div>模型文件完整性检查</div>
+              <div class="card-subtitle">检查模型文件是否存在、是否为空</div>
+            </div>
+            <div class="settings-actions">
+              <el-button size="small" :loading="maintenanceModelsLoading" @click="onCheckModels">
+                检查
+              </el-button>
+            </div>
+          </div>
+          <div v-if="maintenanceModelsResult" class="card-subtitle">
+            当前模型 {{ maintenanceModelsResult.current || "未设置" }}，
+            {{ maintenanceModelsResult.current_exists ? "可用" : "不可用" }}，
+            无效文件 {{ maintenanceModelsResult.invalid_count }} 个
           </div>
           <div class="maintenance-item">
-            <span>缓存与临时文件整理</span>
-            <el-tag type="info">待接入</el-tag>
+            <div>
+              <div>缓存与临时文件整理</div>
+              <div class="card-subtitle">默认清理 7 天前录音与报告文件</div>
+            </div>
+            <div class="settings-actions">
+              <el-button size="small" :loading="maintenanceCacheLoading" @click="onCleanCache">
+                执行
+              </el-button>
+            </div>
+          </div>
+          <div v-if="maintenanceCacheResult" class="card-subtitle">
+            已清理 {{ maintenanceCacheResult.deleted }} 个文件，释放
+            {{ maintenanceCacheResult.freed_bytes }} 字节
           </div>
         </div>
       </el-card>
@@ -103,8 +137,17 @@ defineProps({
   threshold: { type: Number, required: true },
   thresholdDraft: { type: Number, required: true },
   savingThreshold: { type: Boolean, required: true },
+  maintenanceLogsLoading: { type: Boolean, required: true },
+  maintenanceModelsLoading: { type: Boolean, required: true },
+  maintenanceCacheLoading: { type: Boolean, required: true },
+  maintenanceLogsResult: { type: Object, default: null },
+  maintenanceModelsResult: { type: Object, default: null },
+  maintenanceCacheResult: { type: Object, default: null },
   onLoadAdminAccessLogs: { type: Function, required: true },
   onThresholdDraftChange: { type: Function, required: true },
-  onSaveThreshold: { type: Function, required: true }
+  onSaveThreshold: { type: Function, required: true },
+  onCleanVerifyLogs: { type: Function, required: true },
+  onCheckModels: { type: Function, required: true },
+  onCleanCache: { type: Function, required: true }
 });
 </script>

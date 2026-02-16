@@ -115,34 +115,37 @@ class IsAdminUser(permissions.BasePermission):
 
 
 EVAL_STATUS_FILE = os.path.join(os.fspath(settings.REPORTS_DIR), "roc_status.json")
-EVAL_STATUS_LOCK = threading.Lock()
+EVAL_STATUS_LOCK = threading.RLock()
 EVAL_THREAD = None
 
 
 def _read_eval_status():
-    if not os.path.exists(EVAL_STATUS_FILE):
+    with EVAL_STATUS_LOCK:
+        if not os.path.exists(EVAL_STATUS_FILE):
+            return {"status": "idle"}
+        try:
+            with open(EVAL_STATUS_FILE, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            if isinstance(data, dict):
+                return data
+        except Exception:
+            pass
         return {"status": "idle"}
-    try:
-        with open(EVAL_STATUS_FILE, "r", encoding="utf-8") as f:
-            data = json.load(f)
-        if isinstance(data, dict):
-            return data
-    except Exception:
-        pass
-    return {"status": "idle"}
 
 
 def _write_eval_status(payload):
-    os.makedirs(os.fspath(settings.REPORTS_DIR), exist_ok=True)
-    with open(EVAL_STATUS_FILE, "w", encoding="utf-8") as f:
-        json.dump(payload, f, ensure_ascii=False)
+    with EVAL_STATUS_LOCK:
+        os.makedirs(os.fspath(settings.REPORTS_DIR), exist_ok=True)
+        with open(EVAL_STATUS_FILE, "w", encoding="utf-8") as f:
+            json.dump(payload, f, ensure_ascii=False)
 
 
 def _set_eval_status(status_value, **kwargs):
-    payload = {"status": status_value, "updated_at": timezone.now().isoformat()}
-    payload.update(kwargs)
-    _write_eval_status(payload)
-    return payload
+    with EVAL_STATUS_LOCK:
+        payload = {"status": status_value, "updated_at": timezone.now().isoformat()}
+        payload.update(kwargs)
+        _write_eval_status(payload)
+        return payload
 
 
 def get_eval_thread():

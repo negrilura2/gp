@@ -9,7 +9,8 @@ from django.contrib.auth.models import User
 from django.db import models
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status, generics
+from rest_framework import status, generics, permissions
+from django.utils import timezone
 
 from .models import VoiceTemplate
 from .serializers import (
@@ -107,6 +108,58 @@ class UserVoiceprintResetView(APIView):
         if result.get("error"):
             return Response(result, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         return Response(result, status=status.HTTP_200_OK)
+
+
+class MyVoiceprintView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        template = VoiceTemplate.objects.filter(user=request.user).first()
+        has_voiceprint = bool(template)
+        preview, embedding_dim = build_voiceprint_preview(request.user.username)
+        return Response(
+            {
+                "has_voiceprint": has_voiceprint,
+                "embedding_count": template.embedding_count if template else 0,
+                "embedding_dim": embedding_dim,
+                "updated_at": timezone.localtime(template.updated_at).strftime("%Y-%m-%d %H:%M:%S")
+                if template
+                else "",
+                "preview": preview,
+            }
+        )
+
+    def delete(self, request):
+        result = remove_user_voiceprint(request.user.username)
+        if result.get("error"):
+            return Response(result, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response(result, status=status.HTTP_200_OK)
+
+
+def build_voiceprint_preview(username, buckets=64):
+    template_path = os.path.join(os.fspath(settings.VOICEPRINTS_DIR), "user_templates.npy")
+    if not os.path.exists(template_path):
+        return [], 0
+    try:
+        templates = np.load(template_path, allow_pickle=True).item()
+    except Exception:
+        return [], 0
+    emb = templates.get(username)
+    if emb is None:
+        return [], 0
+    values = np.abs(np.array(emb, dtype=float))
+    embedding_dim = int(values.size)
+    if embedding_dim == 0:
+        return [], 0
+    if embedding_dim < buckets:
+        values = np.pad(values, (0, buckets - embedding_dim))
+    if values.size > buckets:
+        chunks = np.array_split(values, buckets)
+        values = np.array([float(chunk.mean()) for chunk in chunks])
+    max_val = float(values.max()) if values.size else 0
+    if max_val > 0:
+        values = values / max_val
+    return values.round(4).tolist(), embedding_dim
 
 
 def remove_user_voiceprint(username):

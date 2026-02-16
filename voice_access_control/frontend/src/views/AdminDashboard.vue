@@ -116,9 +116,18 @@
                 :threshold="threshold"
                 :threshold-draft="thresholdDraft"
                 :saving-threshold="savingThreshold"
+                :maintenance-logs-loading="maintenanceLogsLoading"
+                :maintenance-models-loading="maintenanceModelsLoading"
+                :maintenance-cache-loading="maintenanceCacheLoading"
+                :maintenance-logs-result="maintenanceLogsResult"
+                :maintenance-models-result="maintenanceModelsResult"
+                :maintenance-cache-result="maintenanceCacheResult"
                 :on-load-admin-access-logs="loadAdminAccessLogs"
                 :on-threshold-draft-change="handleThresholdDraftChange"
                 :on-save-threshold="handleSaveThreshold"
+                :on-clean-verify-logs="handleCleanVerifyLogs"
+                :on-check-models="handleCheckModels"
+                :on-clean-cache="handleCleanCache"
               />
             </el-tab-pane>
             <el-tab-pane label="管理员列表" name="admins">
@@ -409,6 +418,9 @@ import {
   fetchRocEvaluateStatus,
   fetchModels,
   switchModel,
+  cleanVerifyLogs,
+  checkModelFiles,
+  cleanCacheFiles,
   setAuthToken
 } from "../api";
 
@@ -498,6 +510,12 @@ const adminBatchPasswordSaving = ref(false);
 const adminBatchPasswordForm = ref({ password: "" });
 const adminAccessLogs = ref([]);
 const adminAccessLogsLoading = ref(false);
+const maintenanceLogsLoading = ref(false);
+const maintenanceModelsLoading = ref(false);
+const maintenanceCacheLoading = ref(false);
+const maintenanceLogsResult = ref(null);
+const maintenanceModelsResult = ref(null);
+const maintenanceCacheResult = ref(null);
 
 const modelMetrics = ref({
   auc: null,
@@ -1973,10 +1991,49 @@ function handleThresholdDraftChange(value) {
   thresholdDraft.value = value;
 }
 
+async function handleCleanVerifyLogs() {
+  maintenanceLogsLoading.value = true;
+  try {
+    const res = await cleanVerifyLogs(30);
+    maintenanceLogsResult.value = res.data;
+    ElMessage.success("日志清理完成");
+  } catch (e) {
+    ElMessage.error("日志清理失败");
+  } finally {
+    maintenanceLogsLoading.value = false;
+  }
+}
+
+async function handleCheckModels() {
+  maintenanceModelsLoading.value = true;
+  try {
+    const res = await checkModelFiles();
+    maintenanceModelsResult.value = res.data;
+    ElMessage.success("模型检查完成");
+  } catch (e) {
+    ElMessage.error("模型检查失败");
+  } finally {
+    maintenanceModelsLoading.value = false;
+  }
+}
+
+async function handleCleanCache() {
+  maintenanceCacheLoading.value = true;
+  try {
+    const res = await cleanCacheFiles(7);
+    maintenanceCacheResult.value = res.data;
+    ElMessage.success("缓存清理完成");
+  } catch (e) {
+    ElMessage.error("缓存清理失败");
+  } finally {
+    maintenanceCacheLoading.value = false;
+  }
+}
+
 function handleLogout() {
   localStorage.removeItem("token");
   setAuthToken(null);
-  router.push("/login");
+  router.push("/");
 }
 
 function handleResize() {

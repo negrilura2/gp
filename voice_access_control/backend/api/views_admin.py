@@ -1,6 +1,6 @@
 import os
 import logging
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -12,7 +12,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, generics
 
-from .models import AdminSecret, AdminAccessLog
+from .models import AdminSecret, AdminAccessLog, VerifyLog, EnrollLog
 from .serializers import (
     AdminSecretSetSerializer,
     AdminSecretVerifySerializer,
@@ -270,5 +270,110 @@ class ModelSwitchView(APIView):
         return Response(
             {
                 "current": os.path.basename(path),
+            }
+        )
+
+
+class MaintenanceVerifyLogCleanView(APIView):
+    permission_classes = [IsAdminUser]
+
+    def post(self, request):
+        days = request.data.get("days", 30)
+        try:
+            days = int(days)
+        except (TypeError, ValueError):
+            return Response({"error": "days 必须是整数"}, status=status.HTTP_400_BAD_REQUEST)
+        if days < 1:
+            return Response({"error": "days 必须大于 0"}, status=status.HTTP_400_BAD_REQUEST)
+        cutoff = timezone.now() - timedelta(days=days)
+        verify_deleted = VerifyLog.objects.filter(timestamp__lt=cutoff).delete()[0]
+        enroll_deleted = EnrollLog.objects.filter(timestamp__lt=cutoff).delete()[0]
+        return Response(
+            {
+                "cutoff": cutoff.isoformat(),
+                "verify_deleted": verify_deleted,
+                "enroll_deleted": enroll_deleted,
+            }
+        )
+
+
+class MaintenanceModelCheckView(APIView):
+    permission_classes = [IsAdminUser]
+
+    def get(self, request):
+        models_dir = os.fspath(settings.MODELS_DIR)
+        files = []
+        invalid = []
+        allowed_exts = {".pth", ".pt", ".onnx"}
+        if os.path.isdir(models_dir):
+            for name in sorted(os.listdir(models_dir)):
+                path = os.path.join(models_dir, name)
+                _, ext = os.path.splitext(name)
+                if ext.lower() not in allowed_exts or not os.path.isfile(path):
+                    continue
+                try:
+                    size = os.path.getsize(path)
+                    mtime = datetime.fromtimestamp(os.path.getmtime(path), tz=timezone.utc).isoformat()
+                except OSError:
+                    invalid.append({"name": name, "reason": "无法读取"})
+                    continue
+                files.append({"name": name, "size": size, "mtime": mtime})
+                if size <= 0:
+                    invalid.append({"name": name, "reason": "文件为空"})
+        current_path = get_model_path()
+        current_exists = bool(current_path and os.path.isfile(current_path))
+        current_name = os.path.basename(current_path) if current_path else ""
+        return Response(
+            {
+                "current": current_name,
+                "current_exists": current_exists,
+                "total": len(files),
+                "invalid_count": len(invalid),
+                "invalid_files": invalid,
+            }
+        )
+
+
+class MaintenanceCacheCleanView(APIView):
+    permission_classes = [IsAdminUser]
+
+    def post(self, request):
+        days = request.data.get("days", 7)
+        try:
+            days = int(days)
+        except (TypeError, ValueError):
+            return Response({"error": "days 必须是整数"}, status=status.HTTP_400_BAD_REQUEST)
+        if days < 1:
+            return Response({"error": "days 必须大于 0"}, status=status.HTTP_400_BAD_REQUEST)
+        cutoff_ts = (timezone.now() - timedelta(days=days)).timestamp()
+        targets = [
+            os.fspath(settings.RECORDINGS_DIR),
+            os.fspath(settings.REPORTS_DIR),
+        ]
+        deleted = 0
+        failed = 0
+        freed_bytes = 0
+        for root in targets:
+            if not os.path.isdir(root):
+                continue
+            for dirpath, _, filenames in os.walk(root):
+                for name in filenames:
+                    path = os.path.join(dirpath, name)
+                    try:
+                        mtime = os.path.getmtime(path)
+                        if mtime >= cutoff_ts:
+                            continue
+                        size = os.path.getsize(path)
+                        os.remove(path)
+                        deleted += 1
+                        freed_bytes += size
+                    except OSError:
+                        failed += 1
+        return Response(
+            {
+                "days": days,
+                "deleted": deleted,
+                "failed": failed,
+                "freed_bytes": freed_bytes,
             }
         )

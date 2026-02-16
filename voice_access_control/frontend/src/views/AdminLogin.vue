@@ -1,7 +1,7 @@
 <template>
   <div class="login-wrapper">
     <el-card class="login-card">
-      <div class="login-title">声纹门禁后台登录</div>
+      <div class="login-title">声纹门禁系统登录</div>
       <el-form @submit.prevent>
         <el-form-item label="用户名">
           <el-input v-model="loginUsername" autocomplete="username" />

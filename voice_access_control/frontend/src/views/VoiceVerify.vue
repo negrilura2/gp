@@ -3,7 +3,23 @@
     <el-main>
       <div class="verify-wrapper">
         <el-card class="verify-card">
-          <div class="verify-title">声纹识别</div>
+          <div class="verify-header">
+            <div class="verify-title">声纹识别</div>
+            <div class="verify-actions">
+              <el-button size="small" @click="handleEntry">
+                {{ hasToken ? "个人中心" : "登录" }}
+              </el-button>
+              <el-button
+                v-if="hasToken"
+                size="small"
+                type="danger"
+                plain
+                @click="handleLogout"
+              >
+                退出登录
+              </el-button>
+            </div>
+          </div>
           <div class="record-section">
             <div class="record-header">实时录音识别</div>
             <div class="record-main">
@@ -50,10 +66,13 @@
             <el-form-item label="音频文件">
               <input
                 ref="fileInputRef"
+                class="file-input"
                 type="file"
                 accept=".wav"
                 @change="onFileChange"
               />
+              <el-button size="small" @click="triggerFileSelect">选择文件</el-button>
+              <span class="file-hint">{{ fileLabel }}</span>
             </el-form-item>
             <el-form-item>
               <el-button
@@ -85,12 +104,35 @@
       </div>
     </el-main>
   </el-container>
+  <el-dialog v-model="loginVisible" title="登录" width="360px" center>
+    <el-form @submit.prevent>
+      <el-form-item label="用户名">
+        <el-input v-model="loginUsername" autocomplete="username" />
+      </el-form-item>
+      <el-form-item label="密码">
+        <el-input
+          v-model="loginPassword"
+          type="password"
+          show-password
+          autocomplete="current-password"
+        />
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" :loading="loginLoading" @click="handleLogin">
+          登录
+        </el-button>
+      </el-form-item>
+    </el-form>
+  </el-dialog>
 </template>
 
 <script setup>
 import { onMounted, onUnmounted, ref, computed } from "vue";
+import { useRouter } from "vue-router";
 import { ElMessage, ElMessageBox } from "element-plus";
-import { verifyVoice } from "../api";
+import { verifyVoice, login as apiLogin, setAuthToken } from "../api";
+
+const router = useRouter();
 
 const file = ref(null);
 const loading = ref(false);
@@ -102,6 +144,14 @@ const audioRef = ref(null);
 const fileInputRef = ref(null);
 const staticWaveValues = ref([]);
 const playProgress = ref(0);
+
+const tokenState = ref(localStorage.getItem("token") || "");
+const hasToken = computed(() => Boolean(tokenState.value));
+const fileLabel = computed(() => (file.value ? file.value.name : "未选择文件"));
+const loginVisible = ref(false);
+const loginUsername = ref("");
+const loginPassword = ref("");
+const loginLoading = ref(false);
 
 let mediaStream = null;
 let mediaRecorder = null;
@@ -139,6 +189,12 @@ function ensureCanvasReady() {
   const { canvas, width, height, ratio } = metrics;
   const ctx = setupHiDpiCanvas(canvas, width, height, ratio);
   return { canvas, ctx, width, height, ratio };
+}
+
+function triggerFileSelect() {
+  if (fileInputRef.value) {
+    fileInputRef.value.click();
+  }
 }
 
 async function onFileChange(e) {
@@ -194,6 +250,52 @@ const resultSubtitle = computed(() => {
   }
   return "";
 });
+
+function handleEntry() {
+  if (hasToken.value) {
+    router.push("/me");
+  } else {
+    loginVisible.value = true;
+  }
+}
+
+async function handleLogin() {
+  if (!loginUsername.value || !loginPassword.value) {
+    ElMessage.error("请输入用户名和密码");
+    return;
+  }
+  loginLoading.value = true;
+  try {
+    const res = await apiLogin(loginUsername.value, loginPassword.value);
+    const token = res.data.token;
+    const isStaff = res.data.is_staff;
+    localStorage.setItem("token", token);
+    setAuthToken(token);
+    tokenState.value = token;
+    ElMessage.success("登录成功");
+    loginVisible.value = false;
+    if (isStaff) {
+      router.push("/admin");
+    } else {
+      router.push("/me");
+    }
+  } catch (e) {
+    const msg =
+      e.response && e.response.data && e.response.data.error
+        ? e.response.data.error
+        : "登录失败";
+    ElMessage.error(msg);
+  } finally {
+    loginLoading.value = false;
+  }
+}
+
+function handleLogout() {
+  localStorage.removeItem("token");
+  setAuthToken(null);
+  tokenState.value = "";
+  ElMessage.success("已退出登录");
+}
 
 function drawWave() {
   if (!analyser) return;
@@ -723,10 +825,23 @@ onUnmounted(() => {
   backdrop-filter: blur(6px);
 }
 
+.verify-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.verify-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .verify-title {
   font-size: 20px;
   font-weight: 600;
-  margin-bottom: 16px;
 }
 
 .result-block {
@@ -758,6 +873,16 @@ onUnmounted(() => {
   border: 1px solid #ebeef5;
   border-radius: 4px;
   padding: 12px;
+}
+
+.file-input {
+  display: none;
+}
+
+.file-hint {
+  font-size: 12px;
+  color: #909399;
+  margin-left: 8px;
 }
 
 .wave-header {

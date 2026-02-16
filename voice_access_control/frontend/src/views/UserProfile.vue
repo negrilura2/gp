@@ -5,7 +5,6 @@
         <el-card class="me-card">
           <div class="me-header">
             <div class="me-title">个人主页</div>
-            <el-button size="small" @click="handleLogout">退出登录</el-button>
           </div>
           <div v-if="loading" class="me-loading">
             <span>加载中...</span>
@@ -19,172 +18,242 @@
               />
             </div>
             <template v-else>
-              <el-descriptions title="基本信息" :column="1" border>
-                <el-descriptions-item label="用户名">
-                  {{ user.username }}
-                </el-descriptions-item>
-                <el-descriptions-item label="是否管理员">
-                  {{ user.is_staff ? "是" : "否" }}
-                </el-descriptions-item>
-                <el-descriptions-item label="是否已录入声纹">
-                  {{ user.has_voiceprint ? "是" : "否" }}
-                </el-descriptions-item>
-                <el-descriptions-item label="注册时间">
-                  {{ user.date_joined }}
-                </el-descriptions-item>
-              </el-descriptions>
-
-              <el-card class="me-section" shadow="never">
-                <template #header>
-                  <div class="section-header">
-                    <span>
-                      {{ user.has_voiceprint ? "重新录制声纹" : "首次录制声纹" }}
-                    </span>
-                  </div>
-                </template>
-                <div class="record-main">
-                  <div class="wave-header">
-                    <span class="wave-title">声波图</span>
-                    <span class="wave-subtitle">播放时走过区域会高亮</span>
-                  </div>
-                  <canvas ref="waveCanvasRef" class="wave-canvas"></canvas>
-                  <div class="record-actions">
-                    <el-button
-                      :type="recording ? 'danger' : 'primary'"
-                      @click="toggleRecording"
-                    >
-                      {{ recording ? "停止录音" : "开始录音一条语音" }}
-                    </el-button>
-                    <el-button
-                      type="success"
-                      :loading="enrolling"
-                      :disabled="!enrollFiles.length"
-                      @click="handleEnroll"
-                    >
-                      提交声纹（当前 {{ enrollFiles.length }} 条）
-                    </el-button>
-                    <el-button
-                      type="info"
-                      plain
-                      :disabled="!enrollFiles.length && !playbackUrl"
-                      @click="confirmClearVoice"
-                    >
-                      清空全部录音/上传
-                    </el-button>
-                    <span class="record-hint">
-                      建议录制 3~5 条不同内容的语音，用于提高鲁棒性
-                    </span>
-                  </div>
-                  <div class="upload-row">
-                    <input
-                      ref="uploadInputRef"
-                      type="file"
-                      accept=".wav"
-                      multiple
-                      @change="onUploadChange"
-                    />
-                  </div>
-                  <div v-if="audioItems.length" class="file-list">
-                    <div v-if="recordItems.length" class="file-group">
-                      <div class="file-group-title">录制语音</div>
-                      <div class="file-chips">
-                        <el-tag
-                          v-for="item in recordItems"
-                          :key="item.id"
-                          class="file-chip"
-                          :type="item.id === selectedAudioId ? 'success' : 'info'"
-                          effect="plain"
-                          closable
-                          @close="handleDeleteAudio(item.id)"
-                          @click="handleSelectAudio(item.id)"
+              <el-tabs v-model="activeTab">
+                <el-tab-pane label="基础信息" name="basic">
+                  <el-descriptions title="基本信息" :column="1" border>
+                    <el-descriptions-item label="用户名">
+                      {{ user.username }}
+                    </el-descriptions-item>
+                    <el-descriptions-item label="是否管理员">
+                      {{ user.is_staff ? "是" : "否" }}
+                    </el-descriptions-item>
+                    <el-descriptions-item label="是否已录入声纹">
+                      {{ user.has_voiceprint ? "是" : "否" }}
+                    </el-descriptions-item>
+                    <el-descriptions-item label="注册时间">
+                      {{ user.date_joined }}
+                    </el-descriptions-item>
+                  </el-descriptions>
+                </el-tab-pane>
+                <el-tab-pane label="声纹管理" name="voice">
+                  <el-card class="me-section" shadow="never">
+                    <template #header>
+                      <div class="section-header">
+                        <span>
+                          {{ user.has_voiceprint ? "重新录制声纹" : "首次录制声纹" }}
+                        </span>
+                      </div>
+                    </template>
+                    <div class="voiceprint-summary">
+                      <div class="voiceprint-header">
+                        <span>当前声纹</span>
+                        <el-button
+                          v-if="user.has_voiceprint"
+                          size="small"
+                          type="danger"
+                          plain
+                          :loading="voiceprintDeleting"
+                          @click="confirmDeleteVoiceprint"
                         >
-                          {{ item.name }}
-                        </el-tag>
+                          删除声纹
+                        </el-button>
+                      </div>
+                      <div v-if="voiceprintLoading" class="card-subtitle">
+                        正在加载声纹概览...
+                      </div>
+                      <template v-else>
+                        <div v-if="!user.has_voiceprint" class="card-subtitle">
+                          暂无已注册声纹
+                        </div>
+                        <div v-else class="voiceprint-body">
+                          <div class="voiceprint-meta">
+                            <span>特征维度 {{ voiceprintMeta?.embedding_dim || 0 }}</span>
+                            <span>样本数 {{ voiceprintMeta?.embedding_count || 0 }}</span>
+                            <span>更新时间 {{ voiceprintMeta?.updated_at || "-" }}</span>
+                          </div>
+                          <div class="voiceprint-chart">
+                            <div
+                              v-for="(v, idx) in voiceprintPreview"
+                              :key="idx"
+                              class="voiceprint-bar"
+                              :style="{ height: `${Math.max(6, v * 100)}%` }"
+                            ></div>
+                          </div>
+                        </div>
+                      </template>
+                    </div>
+                    <div class="record-main">
+                      <div class="wave-header">
+                        <span class="wave-title">声波图</span>
+                        <span class="wave-subtitle">播放时走过区域会高亮</span>
+                      </div>
+                      <canvas ref="waveCanvasRef" class="wave-canvas"></canvas>
+                      <div class="record-actions">
+                        <el-button
+                          :type="recording ? 'danger' : 'primary'"
+                          @click="toggleRecording"
+                        >
+                          {{ recording ? "停止录音" : "开始录音一条语音" }}
+                        </el-button>
+                        <el-button
+                          type="success"
+                          :loading="enrolling"
+                          :disabled="!enrollFiles.length"
+                          @click="handleEnroll"
+                        >
+                          提交声纹（当前 {{ enrollFiles.length }} 条）
+                        </el-button>
+                        <el-button
+                          type="info"
+                          plain
+                          :disabled="!enrollFiles.length && !playbackUrl"
+                          @click="confirmClearVoice"
+                        >
+                          清空全部录音/上传
+                        </el-button>
+                        <span class="record-hint">
+                          建议录制 3~5 条不同内容的语音，用于提高鲁棒性
+                        </span>
+                      </div>
+                      <div class="upload-row">
+                        <input
+                          ref="uploadInputRef"
+                        class="upload-input"
+                          type="file"
+                          accept=".wav"
+                          multiple
+                          @change="onUploadChange"
+                        />
+                      <el-button size="small" @click="triggerUpload">选择文件</el-button>
+                      <span class="upload-hint">{{ uploadLabel }}</span>
+                      </div>
+                      <div v-if="audioItems.length" class="file-list">
+                        <div v-if="recordItems.length" class="file-group">
+                          <div class="file-group-title">录制语音</div>
+                          <div class="file-chips">
+                            <el-tag
+                              v-for="item in recordItems"
+                              :key="item.id"
+                              class="file-chip"
+                              :type="item.id === selectedAudioId ? 'success' : 'info'"
+                              effect="plain"
+                              closable
+                              @close="handleDeleteAudio(item.id)"
+                              @click="handleSelectAudio(item.id)"
+                            >
+                              {{ item.name }}
+                            </el-tag>
+                          </div>
+                        </div>
+                        <div v-if="uploadItems.length" class="file-group">
+                          <div class="file-group-title">上传语音</div>
+                          <div class="file-chips">
+                            <el-tag
+                              v-for="item in uploadItems"
+                              :key="item.id"
+                              class="file-chip"
+                              :type="item.id === selectedAudioId ? 'success' : 'info'"
+                              effect="plain"
+                              closable
+                              @close="handleDeleteAudio(item.id)"
+                              @click="handleSelectAudio(item.id)"
+                            >
+                              {{ item.name }}
+                            </el-tag>
+                          </div>
+                        </div>
+                      </div>
+                      <div v-if="playbackUrl" class="playback">
+                        <audio
+                          ref="audioRef"
+                          :src="playbackUrl"
+                          controls
+                          @play="handleAudioPlay"
+                          @pause="handleAudioPause"
+                          @ended="handleAudioEnded"
+                          @timeupdate="handleAudioTimeUpdate"
+                          @loadedmetadata="handleAudioLoaded"
+                        />
                       </div>
                     </div>
-                    <div v-if="uploadItems.length" class="file-group">
-                      <div class="file-group-title">上传语音</div>
-                      <div class="file-chips">
-                        <el-tag
-                          v-for="item in uploadItems"
-                          :key="item.id"
-                          class="file-chip"
-                          :type="item.id === selectedAudioId ? 'success' : 'info'"
-                          effect="plain"
-                          closable
-                          @close="handleDeleteAudio(item.id)"
-                          @click="handleSelectAudio(item.id)"
-                        >
-                          {{ item.name }}
-                        </el-tag>
+                  </el-card>
+                </el-tab-pane>
+                <el-tab-pane label="验证记录" name="logs">
+                  <el-card class="me-section" shadow="never">
+                    <template #header>
+                      <div class="section-header">
+                        <span>最近验证记录</span>
+                        <span class="log-hint">仅显示最近 100 条记录</span>
                       </div>
+                    </template>
+                    <div class="log-toolbar">
+                      <el-date-picker
+                        v-model="logDateRange"
+                        type="daterange"
+                        range-separator="至"
+                        start-placeholder="开始日期"
+                        end-placeholder="结束日期"
+                        value-format="YYYY-MM-DD"
+                        size="small"
+                      />
                     </div>
+                    <el-table
+                      :data="pagedLogs"
+                      size="small"
+                      border
+                      style="width: 100%"
+                    >
+                      <el-table-column prop="timestamp" label="时间" width="180" />
+                      <el-table-column
+                        prop="predicted_user"
+                        label="预测用户"
+                        width="140"
+                      />
+                      <el-table-column prop="score" label="得分" width="100" />
+                      <el-table-column prop="threshold" label="阈值" width="80" />
+                      <el-table-column prop="result" label="结果" width="90" />
+                      <el-table-column
+                        prop="door_state"
+                        label="门状态"
+                        width="90"
+                      />
+                    </el-table>
+                    <div class="log-pagination">
+                      <el-pagination
+                        layout="prev, pager, next, jumper"
+                        background
+                        :page-size="logPageSize"
+                        :current-page="logPage"
+                        :total="filteredLogs.length"
+                        @current-change="handleLogPageChange"
+                      />
+                    </div>
+                  </el-card>
+                </el-tab-pane>
+                <el-tab-pane label="账号设置" name="account">
+                  <el-card class="me-section" shadow="never">
+                    <template #header>
+                      <div class="section-header">
+                        <span>账号设置</span>
+                      </div>
+                    </template>
+                    <el-descriptions :column="1" border>
+                      <el-descriptions-item label="当前账号">
+                        {{ user.username }}
+                      </el-descriptions-item>
+                      <el-descriptions-item label="账号角色">
+                        {{ user.is_staff ? "管理员" : "普通用户" }}
+                      </el-descriptions-item>
+                      <el-descriptions-item label="声纹状态">
+                        {{ user.has_voiceprint ? "已录入" : "未录入" }}
+                      </el-descriptions-item>
+                    </el-descriptions>
+                  <div class="record-actions" style="margin-top: 12px">
+                    <el-button type="danger" @click="handleLogout">退出登录</el-button>
                   </div>
-                  <div v-if="playbackUrl" class="playback">
-                    <audio
-                      ref="audioRef"
-                      :src="playbackUrl"
-                      controls
-                      @play="handleAudioPlay"
-                      @pause="handleAudioPause"
-                      @ended="handleAudioEnded"
-                      @timeupdate="handleAudioTimeUpdate"
-                      @loadedmetadata="handleAudioLoaded"
-                    />
-                  </div>
-                </div>
-              </el-card>
-
-              <el-card class="me-section" shadow="never">
-                <template #header>
-                  <div class="section-header">
-                    <span>最近验证记录</span>
-                    <span class="log-hint">仅显示最近 100 条记录</span>
-                  </div>
-                </template>
-                <div class="log-toolbar">
-                  <el-date-picker
-                    v-model="logDateRange"
-                    type="daterange"
-                    range-separator="至"
-                    start-placeholder="开始日期"
-                    end-placeholder="结束日期"
-                    value-format="YYYY-MM-DD"
-                    size="small"
-                  />
-                </div>
-                <el-table
-                  :data="pagedLogs"
-                  size="small"
-                  border
-                  style="width: 100%"
-                >
-                  <el-table-column prop="timestamp" label="时间" width="180" />
-                  <el-table-column
-                    prop="predicted_user"
-                    label="预测用户"
-                    width="140"
-                  />
-                  <el-table-column prop="score" label="得分" width="100" />
-                  <el-table-column prop="threshold" label="阈值" width="80" />
-                  <el-table-column prop="result" label="结果" width="90" />
-                  <el-table-column
-                    prop="door_state"
-                    label="门状态"
-                    width="90"
-                  />
-                </el-table>
-                <div class="log-pagination">
-                  <el-pagination
-                    layout="prev, pager, next, jumper"
-                    background
-                    :page-size="logPageSize"
-                    :current-page="logPage"
-                    :total="filteredLogs.length"
-                    @current-change="handleLogPageChange"
-                  />
-                </div>
-              </el-card>
+                  </el-card>
+                </el-tab-pane>
+              </el-tabs>
             </template>
           </div>
         </el-card>
@@ -194,16 +263,24 @@
 </template>
 
 <script setup>
-import { onMounted, onUnmounted, ref, computed, watch } from "vue";
+import { onMounted, onUnmounted, ref, computed, watch, nextTick } from "vue";
 import { useRouter } from "vue-router";
 import { ElMessage, ElMessageBox } from "element-plus";
-import { fetchCurrentUser, enrollVoice, fetchMyLogs, setAuthToken } from "../api";
+import {
+  fetchCurrentUser,
+  enrollVoice,
+  fetchMyLogs,
+  setAuthToken,
+  fetchMyVoiceprint,
+  deleteMyVoiceprint
+} from "../api";
 
 const router = useRouter();
 
 const user = ref(null);
 const logs = ref([]);
 const loading = ref(true);
+const activeTab = ref("basic");
 const enrolling = ref(false);
 const logPage = ref(1);
 const logPageSize = ref(10);
@@ -221,6 +298,10 @@ const audioItems = ref([]);
 const selectedAudioId = ref("");
 const staticWaveValues = ref([]);
 const playProgress = ref(0);
+const voiceprintLoading = ref(false);
+const voiceprintDeleting = ref(false);
+const voiceprintPreview = ref([]);
+const voiceprintMeta = ref(null);
 
 let mediaStream = null;
 let mediaRecorder = null;
@@ -269,7 +350,7 @@ async function loadUserAndLogs() {
   try {
     const token = localStorage.getItem("token");
     if (!token) {
-      router.push("/login");
+      router.push("/");
       return;
     }
     const [userRes, logRes] = await Promise.all([
@@ -285,10 +366,25 @@ async function loadUserAndLogs() {
     } else {
       logs.value = [];
     }
+    await loadVoiceprintPreview();
   } catch (e) {
-    router.push("/login");
+    router.push("/");
   } finally {
     loading.value = false;
+  }
+}
+
+async function loadVoiceprintPreview() {
+  voiceprintLoading.value = true;
+  try {
+    const res = await fetchMyVoiceprint();
+    voiceprintMeta.value = res.data || null;
+    voiceprintPreview.value = Array.isArray(res.data?.preview) ? res.data.preview : [];
+  } catch (e) {
+    voiceprintMeta.value = null;
+    voiceprintPreview.value = [];
+  } finally {
+    voiceprintLoading.value = false;
   }
 }
 
@@ -348,6 +444,9 @@ const recordItems = computed(() =>
 const uploadItems = computed(() =>
   audioItems.value.filter((item) => item.source === "upload")
 );
+const uploadLabel = computed(() =>
+  uploadFiles.value.length ? `已选择 ${uploadFiles.value.length} 条` : "未选择文件"
+);
 
 const filteredLogs = computed(() => {
   const items = logs.value || [];
@@ -376,6 +475,14 @@ watch(logDateRange, () => {
 
 watch(logs, () => {
   logPage.value = 1;
+});
+
+watch(activeTab, (tab) => {
+  if (tab === "voice") {
+    nextTick(() => {
+      initCanvas();
+    });
+  }
 });
 
 function handleLogPageChange(page) {
@@ -799,9 +906,8 @@ async function handleEnroll() {
     enrollFiles.value.forEach((f) => form.append("files", f));
     await enrollVoice(form);
     ElMessage.success("声纹已更新");
-    recordFiles.value = [];
-    uploadFiles.value = [];
-    enrollFiles.value = [];
+    handleClearVoice();
+    await loadVoiceprintPreview();
     await loadUserAndLogs();
   } catch (e) {
     const data = e.response && e.response.data;
@@ -809,6 +915,12 @@ async function handleEnroll() {
     ElMessage.error(msg);
   } finally {
     enrolling.value = false;
+  }
+}
+
+function triggerUpload() {
+  if (uploadInputRef.value) {
+    uploadInputRef.value.click();
   }
 }
 
@@ -908,10 +1020,38 @@ async function confirmClearVoice() {
   }
 }
 
+async function confirmDeleteVoiceprint() {
+  try {
+    await ElMessageBox.confirm("确认删除已注册声纹？", "提示", {
+      confirmButtonText: "确定",
+      cancelButtonText: "取消",
+      type: "warning"
+    });
+  } catch (e) {
+    return;
+  }
+  voiceprintDeleting.value = true;
+  try {
+    await deleteMyVoiceprint();
+    if (user.value) {
+      user.value.has_voiceprint = false;
+    }
+    voiceprintPreview.value = [];
+    voiceprintMeta.value = null;
+    ElMessage.success("声纹已删除");
+  } catch (e) {
+    const data = e.response && e.response.data;
+    const msg = data && data.error ? data.error : "删除声纹失败";
+    ElMessage.error(msg);
+  } finally {
+    voiceprintDeleting.value = false;
+  }
+}
+
 function handleLogout() {
   localStorage.removeItem("token");
   setAuthToken(null);
-  router.push("/login");
+  router.push("/");
 }
 
 function syncProgressFromAudio() {
@@ -1047,6 +1187,53 @@ function handleAudioTimeUpdate() {
   margin-top: 12px;
 }
 
+.voiceprint-summary {
+  border: 1px solid #ebeef5;
+  border-radius: 4px;
+  padding: 12px;
+  margin-bottom: 12px;
+  background: #fafcff;
+}
+
+.voiceprint-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.voiceprint-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.voiceprint-meta {
+  display: flex;
+  gap: 16px;
+  font-size: 12px;
+  color: #606266;
+}
+
+.voiceprint-chart {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(6px, 1fr));
+  gap: 2px;
+  height: 72px;
+  align-items: end;
+  background: #0f172a;
+  border-radius: 4px;
+  padding: 6px;
+}
+
+.voiceprint-bar {
+  width: 100%;
+  background: linear-gradient(180deg, #67e8a9, #3b82f6);
+  border-radius: 2px;
+  min-height: 6px;
+}
+
 .record-main {
   border: 1px solid #ebeef5;
   border-radius: 4px;
@@ -1097,6 +1284,10 @@ function handleAudioTimeUpdate() {
   display: flex;
   align-items: center;
   gap: 12px;
+}
+
+.upload-input {
+  display: none;
 }
 
 .file-list {

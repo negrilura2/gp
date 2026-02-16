@@ -57,6 +57,14 @@ export function fetchMyLogs() {
   return api.get("/my-logs/");
 }
 
+export function fetchMyVoiceprint() {
+  return api.get("/me/voiceprint/");
+}
+
+export function deleteMyVoiceprint() {
+  return api.delete("/me/voiceprint/");
+}
+
 export function fetchThreshold() {
   return api.get("/threshold/");
 }
@@ -143,4 +151,16 @@ export function fetchModels() {
 
 export function switchModel(name) {
   return api.post("/models/switch/", { name });
+}
+
+export function cleanVerifyLogs(days) {
+  return api.post("/maintenance/logs-clean/", { days });
+}
+
+export function checkModelFiles() {
+  return api.get("/maintenance/models-check/");
+}
+
+export function cleanCacheFiles(days) {
+  return api.post("/maintenance/cache-clean/", { days });
 }

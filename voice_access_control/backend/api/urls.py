@@ -2,7 +2,13 @@ from django.urls import path
 from .views_auth import RegisterView, LoginView, CurrentUserView
 from .views_voice import EnrollView, VerifyView, VoiceprintStatusView
 from .views_logs import VerifyLogListView, VerifyLogBulkDeleteView, MyVerifyLogListView, EnrollLogListView
-from .views_users import UserListView, UserDetailView, UserResetPasswordView, UserVoiceprintResetView
+from .views_users import (
+    UserListView,
+    UserDetailView,
+    UserResetPasswordView,
+    UserVoiceprintResetView,
+    MyVoiceprintView,
+)
 from .views_admin import (
     AdminSecretStatusView,
     AdminSecretSetView,
@@ -14,6 +20,9 @@ from .views_admin import (
     AdminAccessLogListView,
     ModelListView,
     ModelSwitchView,
+    MaintenanceVerifyLogCleanView,
+    MaintenanceModelCheckView,
+    MaintenanceCacheCleanView,
 )
 from .views_stats import StatsView, DashboardView
 from .views_roc import RocView, RocEvaluateView, RocEvaluateStatusView, ThresholdConfigView
@@ -23,6 +32,7 @@ urlpatterns = [
     path('register/', RegisterView.as_view(), name='register'),
     path('login/', LoginView.as_view(), name='login'),
     path('me/', CurrentUserView.as_view(), name='current-user'),
+    path('me/voiceprint/', MyVoiceprintView.as_view(), name='my-voiceprint'),
 
     # 核心功能
     path('enroll/', EnrollView.as_view(), name='enroll'),
@@ -47,6 +57,9 @@ urlpatterns = [
     path('admin-access-logs/', AdminAccessLogListView.as_view(), name='admin-access-logs'),
     path('models/', ModelListView.as_view(), name='model-list'),
     path('models/switch/', ModelSwitchView.as_view(), name='model-switch'),
+    path('maintenance/logs-clean/', MaintenanceVerifyLogCleanView.as_view(), name='maintenance-logs-clean'),
+    path('maintenance/models-check/', MaintenanceModelCheckView.as_view(), name='maintenance-models-check'),
+    path('maintenance/cache-clean/', MaintenanceCacheCleanView.as_view(), name='maintenance-cache-clean'),
     path('stats/', StatsView.as_view(), name='stats'),
     path('dashboard/', DashboardView.as_view(), name='dashboard'),
     path('threshold/', ThresholdConfigView.as_view(), name='threshold-config'),
