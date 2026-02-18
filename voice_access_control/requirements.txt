@@ -33,6 +33,7 @@ requests==2.32.5
 scikit-learn==1.6.1
 scipy==1.10.1
 six==1.17.0
+setuptools==80.9.0
 sounddevice==0.4.6
 soundfile==0.13.1
 soxr==1.0.0

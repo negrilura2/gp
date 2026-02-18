@@ -57,7 +57,9 @@ if __name__ == "__main__":
     device = args.device
     ds = SpeakerDataset(args.feature_dir)
     n_spk = len(ds.spk2idx)
-    model = LightECAPA(feat_dim=39, emb_dim=192, n_speakers=None).to(device)
+    sample_feat, _ = ds[0]
+    feat_dim = int(sample_feat.shape[0])
+    model = LightECAPA(feat_dim=feat_dim, emb_dim=192, n_speakers=None).to(device)
     state = torch.load(args.model_path, map_location=device)
     # if saved with classifier, state may contain classifier keys (ok to load)
     model.load_state_dict(state, strict=False)

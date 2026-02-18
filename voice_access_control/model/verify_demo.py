@@ -8,11 +8,8 @@
 import numpy as np
 import torch
 import os
-from .ecapa_tdnn import LightECAPA
 from .infer import cosine_score
-import soundfile as sf
-from python_speech_features import mfcc, delta
-from .enroll import SAMPLE_RATE, N_MFCC, pre_emphasis, normalize, preprocess_wave
+from .enroll import load_model, wav_to_feat_tensor
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 TEMPLATE_PATH = os.path.join(ROOT, "data", "voiceprints", "user_templates.npy")
@@ -26,22 +23,8 @@ def load_templates(path=None):
     return np.load(path, allow_pickle=True).item()
 
 
-def wav_to_feat(wav_path):
-    if not os.path.exists(wav_path):
-        raise FileNotFoundError(f"音频文件不存在: {wav_path}")
-    y, sr = sf.read(wav_path)
-    if len(y) == 0:
-        raise ValueError(f"音频文件为空: {wav_path}")
-    y, sr = preprocess_wave(y, sr)
-    m = mfcc(y, samplerate=SAMPLE_RATE, numcep=N_MFCC, winlen=0.025, winstep=0.01, nfft=512)
-    d1 = delta(m, 2)
-    d2 = delta(d1, 2)
-    feat = np.hstack([m, d1, d2])
-    return torch.from_numpy(feat.T).unsqueeze(0).float()
-
-
 def verify(wav_path, model_path="models/ecapa_best.pth", threshold=0.75,
-           model=None, device=None, template_path=None):
+           model=None, device=None, template_path=None, feature_type="mfcc_delta", n_mels=40):
     """
     声纹验证。
 
@@ -58,11 +41,7 @@ def verify(wav_path, model_path="models/ecapa_best.pth", threshold=0.75,
     """
     # 加载模型（若未外部注入）
     if model is None:
-        device = device or ("cuda" if torch.cuda.is_available() else "cpu")
-        model = LightECAPA(feat_dim=39, emb_dim=192, n_speakers=None).to(device)
-        state = torch.load(model_path, map_location=device)
-        model.load_state_dict(state, strict=False)
-        model.eval()
+        model, device = load_model(model_path=model_path, device=device, feature_type=feature_type, n_mels=n_mels)
     else:
         device = device or ("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -70,7 +49,7 @@ def verify(wav_path, model_path="models/ecapa_best.pth", threshold=0.75,
     templates = load_templates(template_path)
 
     # 提取 embedding
-    feat = wav_to_feat(wav_path).to(device)
+    feat = wav_to_feat_tensor(wav_path, feature_type=feature_type, n_mels=n_mels).to(device)
     lengths = torch.tensor([feat.shape[2]], device=device)
     with torch.no_grad():
         emb = model(feat, lengths, return_embedding=True)
