@@ -26,161 +26,14 @@ from scripts import FEATURES_DIR, MODELS_DIR, REPORTS_DIR
 from voice_engine.ecapa_tdnn import LightECAPA
 from voice_engine.dataset import SpeakerDataset, pad_collate
 from torch.utils.data import DataLoader
+from voice_engine.evaluation import extract_all_embeddings
+from voice_engine.metrics import compute_pairs_scores, eer_from_roc, compute_mindcf, recommend_threshold, compute_score_hist, compute_calibration
 
-def extract_all_embeddings(model, device, feature_dir, batch_size=32, num_workers=2):
-    ds = SpeakerDataset(feature_dir)
-    loader = DataLoader(ds, batch_size=batch_size, shuffle=False, collate_fn=pad_collate, num_workers=num_workers)
-    model.eval()
-    embs = []
-    labels = []
-    with torch.no_grad():
-        for feats, lengths, lbs in loader:
-            feats = feats.to(device)
-            lengths = lengths.to(device)
-            emb = model(feats, lengths, return_embedding=True)  # (B, emb_dim)
-            embs.append(emb.cpu().numpy())
-            labels.append(lbs.numpy())
-    embs = np.vstack(embs)
-    labels = np.hstack(labels)
-    return embs, labels, ds.spk2idx
+def main():
 
-def compute_pairs_scores(embs, labels, max_pairs=20000):
-    # sample pairs for same and different
-    n = embs.shape[0]
-    rng = np.random.RandomState(42)
-    same_scores = []
-    diff_scores = []
-    # create indices grouped by label
-    idx_by_label = {}
-    for i, l in enumerate(labels):
-        idx_by_label.setdefault(l, []).append(i)
-    labels_unique = list(idx_by_label.keys())
-
-    # sample same pairs
-    attempts = 0
-    while len(same_scores) < max_pairs//2 and attempts < max_pairs*5:
-        spk = rng.choice(labels_unique)
-        idxs = idx_by_label[spk]
-        if len(idxs) < 2:
-            attempts += 1
-            continue
-        i1, i2 = rng.choice(idxs, size=2, replace=False)
-        s = np.dot(embs[i1], embs[i2]) / (np.linalg.norm(embs[i1]) * np.linalg.norm(embs[i2]) + 1e-9)
-        same_scores.append(s)
-        attempts += 1
-
-    # sample diff pairs
-    attempts = 0
-    while len(diff_scores) < max_pairs//2 and attempts < max_pairs*5:
-        spk1, spk2 = rng.choice(labels_unique, size=2, replace=False)
-        i1 = rng.choice(idx_by_label[spk1])
-        i2 = rng.choice(idx_by_label[spk2])
-        s = np.dot(embs[i1], embs[i2]) / (np.linalg.norm(embs[i1]) * np.linalg.norm(embs[i2]) + 1e-9)
-        diff_scores.append(s)
-        attempts += 1
-
-    y = np.hstack([np.ones(len(same_scores)), np.zeros(len(diff_scores))])  # 1: same, 0: diff
-    scores = np.hstack([same_scores, diff_scores])
-    return y, scores, np.array(same_scores), np.array(diff_scores)
-
-def eer_from_roc(fpr, tpr, thresholds):
-    # fnr = 1 - tpr
-    fnr = 1 - tpr
-    abs_diffs = np.abs(fpr - fnr)
-    idx = np.argmin(abs_diffs)
-    eer = (fpr[idx] + fnr[idx]) / 2.0
-    thr = thresholds[idx]
-    return eer, thr
-
-
-def compute_mindcf(fpr, tpr, thresholds, p_target=0.01, c_miss=1.0, c_fa=1.0):
-    fnr = 1 - tpr
-    dcf = c_miss * p_target * fnr + c_fa * (1 - p_target) * fpr
-    idx = int(np.argmin(dcf))
-    return {
-        "p_target": float(p_target),
-        "c_miss": float(c_miss),
-        "c_fa": float(c_fa),
-        "threshold": float(thresholds[idx]),
-        "min_dcf": float(dcf[idx]),
-        "dcf": [float(v) for v in dcf],
-        "thresholds": [float(v) for v in thresholds],
-    }
-
-
-def recommend_threshold(fpr, tpr, thresholds):
-    if len(fpr) == 0:
-        return None, None
-    youden = tpr - fpr
-    idx = int(np.argmax(youden))
-    return float(thresholds[idx]), float(youden[idx])
-
-
-def compute_score_hist(same_scores, diff_scores, bins=30):
-    all_scores = np.hstack([same_scores, diff_scores])
-    if all_scores.size == 0:
-        return {"bins": [], "same": [], "diff": []}
-    min_v = float(np.min(all_scores))
-    max_v = float(np.max(all_scores))
-    if min_v == max_v:
-        min_v -= 1e-3
-        max_v += 1e-3
-    edges = np.linspace(min_v, max_v, bins + 1)
-    same_hist, _ = np.histogram(same_scores, bins=edges)
-    diff_hist, _ = np.histogram(diff_scores, bins=edges)
-    return {
-        "bins": [float(v) for v in edges],
-        "same": [int(v) for v in same_hist],
-        "diff": [int(v) for v in diff_hist],
-    }
-
-
-def compute_calibration(scores, labels, bins=10):
-    if len(scores) == 0:
-        return {"bins": [], "accuracy": [], "confidence": [], "count": [], "ece": None}
-    min_v = float(np.min(scores))
-    max_v = float(np.max(scores))
-    if min_v == max_v:
-        min_v -= 1e-3
-        max_v += 1e-3
-    probs = (scores - min_v) / (max_v - min_v)
-    probs = np.clip(probs, 0, 1)
-    edges = np.linspace(0, 1, bins + 1)
-    accuracy = []
-    confidence = []
-    counts = []
-    ece = 0.0
-    total = float(len(scores))
-    for i in range(bins):
-        left = edges[i]
-        right = edges[i + 1]
-        mask = (probs >= left) & (probs < right) if i < bins - 1 else (probs >= left) & (probs <= right)
-        if not np.any(mask):
-            accuracy.append(0.0)
-            confidence.append((left + right) / 2.0)
-            counts.append(0)
-            continue
-        bin_labels = labels[mask]
-        bin_probs = probs[mask]
-        acc = float(np.mean(bin_labels))
-        conf = float(np.mean(bin_probs))
-        count = int(np.sum(mask))
-        accuracy.append(acc)
-        confidence.append(conf)
-        counts.append(count)
-        ece += abs(acc - conf) * (count / total)
-    return {
-        "bins": [float(v) for v in edges],
-        "accuracy": accuracy,
-        "confidence": confidence,
-        "count": counts,
-        "ece": float(ece),
-    }
-
-if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser()
-    parser.add_argument("--model", default=os.path.join(MODELS_DIR, "ecapa_best.pth"))
+    parser.add_argument("--model", required=True)
     parser.add_argument("--feature_dir", default=str(FEATURES_DIR))
     parser.add_argument("--out_dir", default=str(REPORTS_DIR))
     parser.add_argument("--max_pairs", type=int, default=20000)
@@ -349,3 +202,6 @@ if __name__ == "__main__":
     with open(calib_json, "w") as f:
         json.dump(compute_calibration(scores, y), f, indent=2)
     print("Saved calibration to", calib_json)
+
+if __name__ == "__main__":
+    main()

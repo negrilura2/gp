@@ -647,6 +647,16 @@ const evalThumbRefs = ref({});
 const evalThumbCharts = {};
 let evalDetailChart = null;
 
+function canInitChart(el) {
+  return el && el.clientWidth > 0 && el.clientHeight > 0;
+}
+
+function ensureChart(el, chart) {
+  if (!canInitChart(el)) return chart;
+  if (!chart) return echarts.init(el);
+  return chart;
+}
+
 const activeEvalHasData = computed(() => {
   if (!activeEvalKey.value) return false;
   return hasEvalData(activeEvalKey.value);
@@ -685,15 +695,9 @@ const rocDerived = computed(() => {
 });
 
 function initCharts() {
-  if (lineChartRef.value && !lineChart) {
-    lineChart = echarts.init(lineChartRef.value);
-  }
-  if (pieChartRef.value && !pieChart) {
-    pieChart = echarts.init(pieChartRef.value);
-  }
-  if (rocChartRef.value && !rocChart) {
-    rocChart = echarts.init(rocChartRef.value);
-  }
+  lineChart = ensureChart(lineChartRef.value, lineChart);
+  pieChart = ensureChart(pieChartRef.value, pieChart);
+  rocChart = ensureChart(rocChartRef.value, rocChart);
 }
 
 function stopEvalPolling() {
@@ -864,6 +868,7 @@ function updateCharts() {
 }
 
 function updateRocChart() {
+  rocChart = ensureChart(rocChartRef.value, rocChart);
   if (!rocChart) return;
   const fpr = modelMetrics.value.fpr || [];
   const tpr = modelMetrics.value.tpr || [];
@@ -1178,6 +1183,7 @@ function updateEvalThumbCharts() {
   evalItems.forEach((item) => {
     const el = evalThumbRefs.value[item.key];
     if (!el) return;
+    if (!canInitChart(el)) return;
     const hasData = hasEvalData(item.key);
     if (!hasData) {
       if (evalThumbCharts[item.key]) {
@@ -1185,9 +1191,8 @@ function updateEvalThumbCharts() {
       }
       return;
     }
-    if (!evalThumbCharts[item.key]) {
-      evalThumbCharts[item.key] = echarts.init(el);
-    }
+    evalThumbCharts[item.key] = ensureChart(el, evalThumbCharts[item.key]);
+    if (!evalThumbCharts[item.key]) return;
     const option = getEvalChartOption(item.key, true);
     if (option) {
       evalThumbCharts[item.key].setOption(option, { notMerge: true, lazyUpdate: true });
@@ -1201,9 +1206,9 @@ function updateEvalDetailChart() {
   if (!activeEvalKey.value) return;
   const el = evalDetailChartRef.value;
   if (!el) return;
-  if (!evalDetailChart) {
-    evalDetailChart = echarts.init(el);
-  }
+  if (!canInitChart(el)) return;
+  evalDetailChart = ensureChart(el, evalDetailChart);
+  if (!evalDetailChart) return;
   const option = hasEvalData(activeEvalKey.value) ? getEvalChartOption(activeEvalKey.value, false) : null;
   if (option) {
     evalDetailChart.setOption(option, { notMerge: true, lazyUpdate: true });
@@ -1798,9 +1803,13 @@ async function loadModelMetrics() {
     };
     modelMetricsModel.value = res.data.model || modelMetricsModel.value || modelCurrent.value;
     modelMetricsError.value = "";
-    updateRocChart();
-    updateEvalThumbCharts();
-    updateEvalDetailChart();
+    
+    // Ensure charts are updated after DOM update
+    nextTick(() => {
+        updateRocChart();
+        updateEvalThumbCharts();
+        updateEvalDetailChart();
+    });
   } catch (e) {
     modelMetricsError.value = e.response?.data?.error || "模型指标未生成";
     modelMetrics.value = {
@@ -2082,7 +2091,9 @@ function handleTabChange() {
       initCharts();
       loadModelList();
       loadModelMetrics();
-      nextTick(() => {
+      requestAnimationFrame(() => {
+        handleResize();
+        updateRocChart();
         updateEvalThumbCharts();
         updateEvalDetailChart();
       });
@@ -2100,6 +2111,7 @@ onMounted(() => {
   loadModelMetrics();
   updateLogLayout();
   nextTick(() => {
+    handleResize();
     updateEvalThumbCharts();
     updateEvalDetailChart();
   });

@@ -1,0 +1,41 @@
+# Git
+.git
+.gitignore
+
+# Python
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.env
+
+# Jupyter
+.ipynb_checkpoints
+
+# VS Code
+.vscode
+
+# Data & Models (通常不打包大型模型和数据，改为挂载卷)
+data/raw
+data/processed
+data/features
+# 保留 voiceprints 结构但不打包内容
+data/voiceprints/*
+!data/voiceprints/.gitkeep
+# 保留 models 结构
+models/*
+!models/.gitkeep
+# 排除存档
+models/archive
+reports/archive
+
+# Recordings
+data/recordings
+data/enroll
+
+# Frontend (如果有)
+frontend/node_modules
+frontend/dist

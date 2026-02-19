@@ -22,92 +22,15 @@ from voice_engine.config import (
     VALID_FEATURE_TYPES
 )
 from voice_engine.features import extract_feature_from_signal, load_and_resample
+from voice_engine.augmentation import add_noise
+from voice_engine.evaluation import build_templates
 from voice_engine.config import SAMPLE_RATE
 import soundfile as sf
 import librosa
 import scipy.signal
 
 def extract_feature(y, sr, feature_type="mfcc", n_mels=40):
-    # 使用统一的 features.extract_feature_from_signal
-    # 注意: extract_feature_from_signal 返回 (T, dim)
-    # 而 noise_robustness 中原来的逻辑也返回 (T, dim)
-    # 所以直接调用即可
     return extract_feature_from_signal(y, sr, feature_type=feature_type, n_mels=n_mels, normalize=False)
-
-def add_noise(y, snr_db, rng, noise_y=None):
-    if snr_db is None:
-        return y
-    signal_power = np.mean(y ** 2)
-    if signal_power <= 1e-12:
-        return y
-    snr_linear = 10 ** (snr_db / 10.0)
-    noise_power = signal_power / snr_linear
-    if noise_y is None:
-        noise = rng.normal(0.0, np.sqrt(noise_power), size=y.shape)
-        return y + noise
-    if len(noise_y) < len(y):
-        rep = int(np.ceil(len(y) / len(noise_y)))
-        src = np.tile(noise_y, rep)[: len(y)]
-    else:
-        start = rng.randint(0, len(noise_y) - len(y) + 1)
-        src = noise_y[start : start + len(y)]
-    noise = src * np.sqrt(noise_power)
-    
-    # Ensure no clipping if possible, or clip? Usually for SNR we just add.
-    # But if we want to save or process, values > 1 might be an issue?
-    # For feature extraction, float32 > 1 is fine usually.
-    return y + noise
-
-def build_templates(model, feature_dir, device, batch_size=32, max_speakers=0, max_utts_per_spk=0, seed=42):
-    ds = SpeakerDataset(feature_dir)
-    spk2idx = ds.spk2idx
-    allowed_spk = None
-    if max_speakers and max_speakers > 0 and len(spk2idx) > max_speakers:
-        rng = np.random.RandomState(seed)
-        all_spk = list(spk2idx.values())
-        idx_sel = rng.choice(len(all_spk), size=max_speakers, replace=False)
-        allowed_ids = set(all_spk[i] for i in idx_sel)
-        allowed_spk = allowed_ids
-    use_limit_utt = max_utts_per_spk and max_utts_per_spk > 0
-    utt_counter = {}
-    indices = []
-    for i, (_, label) in enumerate(ds.samples):
-        if allowed_spk is not None and label not in allowed_spk:
-            continue
-        if use_limit_utt:
-            cnt = utt_counter.get(label, 0)
-            if cnt >= max_utts_per_spk:
-                continue
-            utt_counter[label] = cnt + 1
-        indices.append(i)
-    
-    print(f"DEBUG: Selected {len(indices)} samples for templates.")
-    subset = Subset(ds, indices) if indices else ds
-    loader = DataLoader(subset, batch_size=batch_size, shuffle=False, collate_fn=pad_collate)
-    
-    model.eval()
-    emb_by_spk = {}
-    print("DEBUG: Starting template inference loop...")
-    with torch.no_grad():
-        for batch_idx, (feats, lengths, labels) in enumerate(loader):
-            if batch_idx % 10 == 0:
-                print(f"DEBUG: Processing batch {batch_idx}")
-            feats = feats.to(device)
-            lengths = lengths.to(device)
-            emb = model(feats, lengths, return_embedding=True)
-            emb = emb.cpu().numpy()
-            labels = labels.numpy()
-            for e, l in zip(emb, labels):
-                lid = int(l)
-                emb_by_spk.setdefault(lid, []).append(e)
-    print("DEBUG: Template inference loop done.")
-    templates = {}
-    for spk, embs in emb_by_spk.items():
-        arr = np.stack(embs, axis=0)
-        avg = np.mean(arr, axis=0)
-        avg = avg / (np.linalg.norm(avg) + 1e-9)
-        templates[spk] = avg
-    return templates, spk2idx
 
 def evaluate_noise(model, templates, spk2idx, processed_root, feature_type, snr_db, device, n_mels, seed, noise_y, max_utts_per_spk=5):
     rng = np.random.RandomState(seed)

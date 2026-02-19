@@ -120,7 +120,10 @@ class RocView(APIView):
             "calibration": calib_data,
             "model": status_payload.get("model"),
         }
-        return Response(sanitize_json_value(payload))
+        resp = Response(sanitize_json_value(payload))
+        resp["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+        resp["Pragma"] = "no-cache"
+        return resp
 
 
 class ThresholdConfigView(APIView):

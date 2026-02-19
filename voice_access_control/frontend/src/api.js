@@ -134,7 +134,7 @@ export function bulkResetAdminPassword(ids, password) {
 }
 
 export function fetchRocMetrics() {
-  return api.get("/roc/");
+  return api.get("/roc/", { params: { t: Date.now() } });
 }
 
 export function evaluateRocMetrics(name) {

@@ -5910,3 +5910,1627 @@ NameError: name 'os' is not defined
 [2026-02-20 01:33:01,432] INFO django.utils.autoreload Watching for file changes with StatReloader
 [2026-02-20 01:33:08,042] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\backend\api\views\__init__.py changed, reloading.
 [2026-02-20 01:33:09,183] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-02-20 01:35:00,408] INFO api 用户登录: admin
+[2026-02-20 01:35:00,414] INFO django.server "POST /api/login/ HTTP/1.1" 200 99
+[2026-02-20 01:35:00,454] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-20 01:35:00,710] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-20 01:35:00,747] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6212
+[2026-02-20 01:35:00,749] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 460
+[2026-02-20 01:35:00,752] INFO django.server "GET /api/users/?page=1&is_staff=false HTTP/1.1" 200 625
+[2026-02-20 01:35:00,779] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 17
+[2026-02-20 01:35:00,780] WARNING django.request Not Found: /api/roc/
+[2026-02-20 01:35:00,784] WARNING django.server "GET /api/roc/ HTTP/1.1" 404 72
+[2026-02-20 01:35:00,793] INFO django.server "GET /api/admin-access-logs/ HTTP/1.1" 200 2107
+[2026-02-20 01:35:00,801] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6212
+[2026-02-20 01:35:00,845] INFO django.server "GET /api/models/ HTTP/1.1" 200 55757
+[2026-02-20 01:35:00,986] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 794
+[2026-02-20 01:35:04,244] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6212
+[2026-02-20 01:35:06,562] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6212
+[2026-02-20 01:35:07,414] INFO django.server "GET /api/admin-access-logs/ HTTP/1.1" 200 2107
+[2026-02-20 01:35:09,607] INFO django.server "POST /api/maintenance/logs-clean/ HTTP/1.1" 200 83
+[2026-02-20 01:35:11,063] INFO django.server "GET /api/maintenance/models-check/ HTTP/1.1" 200 110
+[2026-02-20 01:35:13,292] INFO django.server "POST /api/maintenance/cache-clean/ HTTP/1.1" 200 49
+[2026-02-20 01:35:14,910] WARNING django.request Not Found: /api/roc/
+[2026-02-20 01:35:14,911] WARNING django.server "GET /api/roc/ HTTP/1.1" 404 72
+[2026-02-20 01:35:14,940] INFO django.server "GET /api/models/ HTTP/1.1" 200 55757
+[2026-02-20 01:35:16,594] INFO django.server "POST /api/roc/evaluate/ HTTP/1.1" 200 137
+[2026-02-20 01:35:18,114] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-02-20 01:35:19,605] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-02-20 01:35:21,142] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-02-20 01:35:23,065] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-02-20 01:35:24,528] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-02-20 01:35:25,608] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-02-20 01:35:27,107] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-02-20 01:35:28,606] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-02-20 01:35:30,107] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-02-20 01:35:31,606] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-02-20 01:35:33,105] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-02-20 01:35:34,614] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 1176
+[2026-02-20 01:35:34,716] INFO django.server "GET /api/roc/ HTTP/1.1" 200 243437
+[2026-02-20 01:35:36,504] INFO django.server "GET /api/roc/ HTTP/1.1" 200 243437
+[2026-02-20 01:35:57,462] INFO django.server "POST /api/users/5/reset-password/ HTTP/1.1" 200 27
+[2026-02-20 01:35:57,466] INFO django.server "POST /api/users/4/reset-password/ HTTP/1.1" 200 27
+[2026-02-20 01:35:57,469] INFO django.server "POST /api/users/3/reset-password/ HTTP/1.1" 200 27
+[2026-02-20 01:36:07,093] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6212
+[2026-02-20 01:36:08,642] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6212
+[2026-02-20 01:36:08,649] INFO django.server "GET /api/admin-access-logs/ HTTP/1.1" 200 2107
+[2026-02-20 01:36:12,299] INFO django.server "POST /api/admin-list/ HTTP/1.1" 200 404
+[2026-02-20 01:36:12,337] INFO django.server "GET /api/admin-access-logs/ HTTP/1.1" 200 2266
+[2026-02-20 01:36:12,377] INFO django.server "GET /api/admins/ HTTP/1.1" 200 432
+[2026-02-20 01:36:18,583] INFO django.server "GET /api/admin-access-logs/ HTTP/1.1" 200 2266
+[2026-02-20 01:36:21,302] INFO django.server "GET /api/roc/ HTTP/1.1" 200 243437
+[2026-02-20 01:36:21,340] INFO django.server "GET /api/models/ HTTP/1.1" 200 55757
+[2026-02-20 01:36:29,680] INFO api 用户登录: guo
+[2026-02-20 01:36:29,681] INFO django.server "POST /api/login/ HTTP/1.1" 200 98
+[2026-02-20 01:36:29,745] INFO django.server "GET /api/me/ HTTP/1.1" 200 105
+[2026-02-20 01:36:29,750] INFO django.server "GET /api/my-logs/ HTTP/1.1" 200 6215
+[2026-02-20 01:36:29,765] INFO django.server "GET /api/me/voiceprint/ HTTP/1.1" 200 548
+[2026-02-20 01:36:43,341] INFO api 声纹验证: guo score=-0.0461 => REJECT
+[2026-02-20 01:36:43,342] INFO django.server "POST /api/verify/ HTTP/1.1" 200 127
+[2026-02-20 01:36:55,365] INFO api 用户登录: guo
+[2026-02-20 01:36:55,367] INFO django.server "POST /api/login/ HTTP/1.1" 200 98
+[2026-02-20 01:36:55,423] INFO django.server "GET /api/me/ HTTP/1.1" 200 105
+[2026-02-20 01:36:55,435] INFO django.server "GET /api/my-logs/ HTTP/1.1" 200 6221
+[2026-02-20 01:36:55,455] INFO django.server "GET /api/me/voiceprint/ HTTP/1.1" 200 548
+[2026-02-20 01:36:59,374] INFO django.server "DELETE /api/me/voiceprint/ HTTP/1.1" 200 177
+[2026-02-20 01:37:06,301] INFO api 声纹注册成功: guo, 5 条音频
+[2026-02-20 01:37:06,302] INFO django.server "POST /api/enroll/ HTTP/1.1" 200 48
+[2026-02-20 01:37:06,339] INFO django.server "GET /api/me/voiceprint/ HTTP/1.1" 200 552
+[2026-02-20 01:37:06,360] INFO django.server "GET /api/me/ HTTP/1.1" 200 105
+[2026-02-20 01:37:06,367] INFO django.server "GET /api/my-logs/ HTTP/1.1" 200 6221
+[2026-02-20 01:37:06,380] INFO django.server "GET /api/me/voiceprint/ HTTP/1.1" 200 552
+[2026-02-20 01:37:17,783] INFO api 声纹验证: guo score=0.8404 => ACCEPT
+[2026-02-20 01:37:17,785] INFO django.server "POST /api/verify/ HTTP/1.1" 200 171
+[2026-02-20 01:37:22,885] INFO api 声纹验证: guo score=0.9737 => ACCEPT
+[2026-02-20 01:37:22,887] INFO django.server "POST /api/verify/ HTTP/1.1" 200 171
+[2026-02-20 01:37:28,387] INFO api 声纹验证: guo score=0.4119 => REJECT
+[2026-02-20 01:37:28,388] INFO django.server "POST /api/verify/ HTTP/1.1" 200 125
+[2026-02-20 01:37:40,527] INFO api 声纹验证: guo score=0.5849 => REJECT
+[2026-02-20 01:37:40,530] INFO django.server "POST /api/verify/ HTTP/1.1" 200 124
+[2026-02-20 01:37:49,017] INFO api 声纹验证: guo score=0.2203 => REJECT
+[2026-02-20 01:37:49,018] INFO django.server "POST /api/verify/ HTTP/1.1" 200 123
+[2026-02-20 01:37:59,554] INFO api 声纹验证: guo score=0.3202 => REJECT
+[2026-02-20 01:37:59,556] INFO django.server "POST /api/verify/ HTTP/1.1" 200 125
+[2026-02-20 01:38:09,137] INFO api 用户登录: admin
+[2026-02-20 01:38:09,141] INFO django.server "POST /api/login/ HTTP/1.1" 200 99
+[2026-02-20 01:38:09,357] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-20 01:38:09,390] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 482
+[2026-02-20 01:38:09,390] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6299
+[2026-02-20 01:38:09,396] INFO django.server "GET /api/users/?page=1&is_staff=false HTTP/1.1" 200 625
+[2026-02-20 01:38:09,421] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 1176
+[2026-02-20 01:38:09,440] INFO django.server "GET /api/admin-access-logs/ HTTP/1.1" 200 2266
+[2026-02-20 01:38:09,442] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6299
+[2026-02-20 01:38:09,463] INFO django.server "GET /api/roc/ HTTP/1.1" 200 243437
+[2026-02-20 01:38:09,496] INFO django.server "GET /api/models/ HTTP/1.1" 200 55757
+[2026-02-20 01:38:09,591] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 858
+[2026-02-20 01:38:10,246] INFO django.server "GET /api/roc/ HTTP/1.1" 200 243437
+[2026-02-20 01:38:10,282] INFO django.server "GET /api/models/ HTTP/1.1" 200 55757
+[2026-02-20 01:38:12,789] INFO django.server "POST /api/models/switch/ HTTP/1.1" 200 35
+[2026-02-20 01:38:24,889] INFO api 用户登录: xxyhh
+[2026-02-20 01:38:24,890] INFO django.server "POST /api/login/ HTTP/1.1" 200 100
+[2026-02-20 01:38:24,942] INFO django.server "GET /api/me/ HTTP/1.1" 200 108
+[2026-02-20 01:38:24,953] INFO django.server "GET /api/my-logs/ HTTP/1.1" 200 5172
+[2026-02-20 01:38:24,967] INFO django.server "GET /api/me/voiceprint/ HTTP/1.1" 200 91
+[2026-02-20 01:38:38,327] INFO api 声纹注册成功: xxyhh, 5 条音频
+[2026-02-20 01:38:38,329] INFO django.server "POST /api/enroll/ HTTP/1.1" 200 50
+[2026-02-20 01:38:38,367] INFO django.server "GET /api/me/voiceprint/ HTTP/1.1" 200 547
+[2026-02-20 01:38:38,388] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-20 01:38:38,400] INFO django.server "GET /api/my-logs/ HTTP/1.1" 200 5172
+[2026-02-20 01:38:38,415] INFO django.server "GET /api/me/voiceprint/ HTTP/1.1" 200 547
+[2026-02-20 01:38:45,463] INFO api 声纹验证: xxyhh score=0.9589 => ACCEPT
+[2026-02-20 01:38:45,464] INFO django.server "POST /api/verify/ HTTP/1.1" 200 175
+[2026-02-20 01:38:50,908] INFO api 声纹验证: xxyhh score=0.9381 => ACCEPT
+[2026-02-20 01:38:50,909] INFO django.server "POST /api/verify/ HTTP/1.1" 200 175
+[2026-02-20 01:38:59,710] INFO api 声纹验证: xxyhh score=0.8138 => ACCEPT
+[2026-02-20 01:38:59,712] INFO django.server "POST /api/verify/ HTTP/1.1" 200 175
+[2026-02-20 01:39:08,144] INFO api 声纹验证: xxyhh score=0.7960 => ACCEPT
+[2026-02-20 01:39:08,146] INFO django.server "POST /api/verify/ HTTP/1.1" 200 175
+[2026-02-20 01:39:15,090] INFO api 声纹验证: xxyhh score=0.8060 => ACCEPT
+[2026-02-20 01:39:15,092] INFO django.server "POST /api/verify/ HTTP/1.1" 200 175
+[2026-02-20 01:39:34,496] INFO api 声纹验证: xxyhh score=0.8666 => ACCEPT
+[2026-02-20 01:39:34,498] INFO django.server "POST /api/verify/ HTTP/1.1" 200 175
+[2026-02-20 01:39:43,345] INFO api 用户登录: xxyhh
+[2026-02-20 01:39:43,346] INFO django.server "POST /api/login/ HTTP/1.1" 200 100
+[2026-02-20 01:39:43,410] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-20 01:39:43,420] INFO django.server "GET /api/my-logs/ HTTP/1.1" 200 6421
+[2026-02-20 01:39:43,434] INFO django.server "GET /api/me/voiceprint/ HTTP/1.1" 200 547
+[2026-02-20 01:39:46,836] INFO django.server "DELETE /api/me/voiceprint/ HTTP/1.1" 200 179
+[2026-02-20 01:39:57,536] INFO api 声纹注册成功: xxyhh, 6 条音频
+[2026-02-20 01:39:57,537] INFO django.server "POST /api/enroll/ HTTP/1.1" 200 50
+[2026-02-20 01:39:57,568] INFO django.server "GET /api/me/voiceprint/ HTTP/1.1" 200 549
+[2026-02-20 01:39:57,588] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-20 01:39:57,603] INFO django.server "GET /api/my-logs/ HTTP/1.1" 200 6421
+[2026-02-20 01:39:57,622] INFO django.server "GET /api/me/voiceprint/ HTTP/1.1" 200 549
+[2026-02-20 01:40:08,539] INFO api 声纹验证: xxyhh score=0.8648 => ACCEPT
+[2026-02-20 01:40:08,540] INFO django.server "POST /api/verify/ HTTP/1.1" 200 175
+[2026-02-20 01:40:21,364] INFO api 声纹验证: xxyhh score=0.9704 => ACCEPT
+[2026-02-20 01:40:21,365] INFO django.server "POST /api/verify/ HTTP/1.1" 200 175
+[2026-02-20 01:40:26,829] INFO api 声纹验证: xxyhh score=0.9854 => ACCEPT
+[2026-02-20 01:40:26,830] INFO django.server "POST /api/verify/ HTTP/1.1" 200 175
+[2026-02-20 01:40:36,664] INFO api 用户登录: admin
+[2026-02-20 01:40:36,671] INFO django.server "POST /api/login/ HTTP/1.1" 200 99
+[2026-02-20 01:40:36,867] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-20 01:40:36,886] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 483
+[2026-02-20 01:40:36,889] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6407
+[2026-02-20 01:40:36,910] INFO django.server "GET /api/users/?page=1&is_staff=false HTTP/1.1" 200 624
+[2026-02-20 01:40:36,926] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 1176
+[2026-02-20 01:40:36,961] INFO django.server "GET /api/admin-access-logs/ HTTP/1.1" 200 2266
+[2026-02-20 01:40:36,966] INFO django.server "GET /api/roc/ HTTP/1.1" 200 243437
+[2026-02-20 01:40:36,968] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6407
+[2026-02-20 01:40:36,997] INFO django.server "GET /api/models/ HTTP/1.1" 200 55753
+[2026-02-20 01:40:37,037] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 859
+[2026-02-20 01:40:37,891] INFO django.server "GET /api/roc/ HTTP/1.1" 200 243437
+[2026-02-20 01:40:37,925] INFO django.server "GET /api/models/ HTTP/1.1" 200 55753
+[2026-02-20 01:40:39,154] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6407
+[2026-02-20 01:40:46,017] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6407
+[2026-02-20 01:40:46,043] INFO django.server "GET /api/roc/ HTTP/1.1" 200 243437
+[2026-02-20 01:40:46,072] INFO django.server "GET /api/models/ HTTP/1.1" 200 55753
+[2026-02-20 01:40:46,813] INFO django.server "POST /api/roc/evaluate/ HTTP/1.1" 200 129
+[2026-02-20 01:40:48,333] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 148
+[2026-02-20 01:40:49,825] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 148
+[2026-02-20 01:40:51,332] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 148
+[2026-02-20 01:40:52,826] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 148
+[2026-02-20 01:40:54,325] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 148
+[2026-02-20 01:40:55,827] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 148
+[2026-02-20 01:40:57,326] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 148
+[2026-02-20 01:40:58,828] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 148
+[2026-02-20 01:41:00,325] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 148
+[2026-02-20 01:41:01,825] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 148
+[2026-02-20 01:41:03,327] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 148
+[2026-02-20 01:41:04,835] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 1172
+[2026-02-20 01:41:04,945] INFO django.server "GET /api/roc/ HTTP/1.1" 200 299477
+[2026-02-20 01:41:29,106] INFO django.server "POST /api/models/switch/ HTTP/1.1" 200 33
+[2026-02-20 01:41:41,260] INFO api 用户登录: xxyhh
+[2026-02-20 01:41:41,261] INFO django.server "POST /api/login/ HTTP/1.1" 200 100
+[2026-02-20 01:41:41,322] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-20 01:41:41,329] INFO django.server "GET /api/my-logs/ HTTP/1.1" 200 6449
+[2026-02-20 01:41:41,342] INFO django.server "GET /api/me/voiceprint/ HTTP/1.1" 200 549
+[2026-02-20 01:41:44,476] INFO django.server "DELETE /api/me/voiceprint/ HTTP/1.1" 200 179
+[2026-02-20 01:41:54,672] INFO api 声纹注册成功: xxyhh, 5 条音频
+[2026-02-20 01:41:54,674] INFO django.server "POST /api/enroll/ HTTP/1.1" 200 50
+[2026-02-20 01:41:54,708] INFO django.server "GET /api/me/voiceprint/ HTTP/1.1" 200 550
+[2026-02-20 01:41:54,729] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-20 01:41:54,739] INFO django.server "GET /api/my-logs/ HTTP/1.1" 200 6449
+[2026-02-20 01:41:54,758] INFO django.server "GET /api/me/voiceprint/ HTTP/1.1" 200 550
+[2026-02-20 01:42:01,928] WARNING django.request Unauthorized: /api/login/
+[2026-02-20 01:42:01,929] WARNING django.server "POST /api/login/ HTTP/1.1" 401 36
+[2026-02-20 01:42:06,471] INFO api 用户登录: guo
+[2026-02-20 01:42:06,472] INFO django.server "POST /api/login/ HTTP/1.1" 200 98
+[2026-02-20 01:42:06,533] INFO django.server "GET /api/me/ HTTP/1.1" 200 105
+[2026-02-20 01:42:06,538] INFO django.server "GET /api/my-logs/ HTTP/1.1" 200 6302
+[2026-02-20 01:42:06,553] INFO django.server "GET /api/me/voiceprint/ HTTP/1.1" 200 552
+[2026-02-20 01:42:09,667] INFO django.server "DELETE /api/me/voiceprint/ HTTP/1.1" 200 177
+[2026-02-20 01:42:17,938] INFO api 声纹注册成功: guo, 5 条音频
+[2026-02-20 01:42:17,940] INFO django.server "POST /api/enroll/ HTTP/1.1" 200 48
+[2026-02-20 01:42:17,977] INFO django.server "GET /api/me/voiceprint/ HTTP/1.1" 200 549
+[2026-02-20 01:42:18,000] INFO django.server "GET /api/me/ HTTP/1.1" 200 105
+[2026-02-20 01:42:18,005] INFO django.server "GET /api/my-logs/ HTTP/1.1" 200 6302
+[2026-02-20 01:42:18,020] INFO django.server "GET /api/me/voiceprint/ HTTP/1.1" 200 549
+[2026-02-20 01:42:24,969] INFO api 声纹验证: guo score=0.9418 => ACCEPT
+[2026-02-20 01:42:24,969] INFO django.server "POST /api/verify/ HTTP/1.1" 200 171
+[2026-02-20 01:42:32,778] INFO api 声纹验证: xxyhh score=0.8020 => ACCEPT
+[2026-02-20 01:42:32,779] INFO django.server "POST /api/verify/ HTTP/1.1" 200 175
+[2026-02-20 01:42:41,044] INFO api 声纹验证: guo score=0.1381 => REJECT
+[2026-02-20 01:42:41,045] INFO django.server "POST /api/verify/ HTTP/1.1" 200 125
+[2026-02-20 01:43:44,056] INFO api 声纹验证: guo score=0.7492 => ACCEPT
+[2026-02-20 01:43:44,058] INFO django.server "POST /api/verify/ HTTP/1.1" 200 171
+[2026-02-20 01:43:57,564] INFO api 声纹验证: guo score=0.5319 => REJECT
+[2026-02-20 01:43:57,565] INFO django.server "POST /api/verify/ HTTP/1.1" 200 124
+[2026-02-20 01:52:52,932] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\voice_engine\config.py changed, reloading.
+[2026-02-20 01:52:54,545] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-02-20 01:53:01,437] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\voice_engine\config.py changed, reloading.
+[2026-02-20 01:53:02,974] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-02-20 01:54:27,590] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\backend\api\model_loader.py changed, reloading.
+[2026-02-20 01:54:29,116] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-02-20 01:54:50,190] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\backend\api\views\voice.py changed, reloading.
+[2026-02-20 01:54:51,446] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-02-20 01:55:01,485] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\backend\api\views\voice.py changed, reloading.
+[2026-02-20 01:55:02,733] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-02-20 02:06:54,960] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\voice_engine\config.py changed, reloading.
+[2026-02-20 02:06:56,576] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-02-20 02:37:28,321] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-02-20 02:47:45,844] INFO api 用户登录: test_user
+[2026-02-20 02:47:45,853] WARNING django.request Forbidden: /api/dashboard/
+[2026-02-20 02:47:46,403] INFO api 用户登录: test_user
+[2026-02-20 02:47:46,414] INFO api 声纹注册成功: test_user, 1 条音频
+[2026-02-20 02:47:47,008] INFO api 用户登录: test_user
+[2026-02-20 02:47:47,012] ERROR api 验证异常: 'predicted_user'
+[2026-02-20 02:47:47,013] ERROR django.request Internal Server Error: /api/verify/
+[2026-02-20 02:47:47,574] INFO api 用户登录: test_user
+[2026-02-20 02:50:46,304] INFO api 用户登录: test_user
+[2026-02-20 02:50:46,315] WARNING django.request Forbidden: /api/dashboard/
+[2026-02-20 02:50:46,986] INFO api 用户登录: test_user
+[2026-02-20 02:50:46,995] INFO api 声纹注册成功: test_user, 1 条音频
+[2026-02-20 02:50:47,560] INFO api 用户登录: test_user
+[2026-02-20 02:50:47,564] ERROR api 验证异常: 'predicted_user'
+[2026-02-20 02:50:47,565] ERROR django.request Internal Server Error: /api/verify/
+[2026-02-20 02:50:48,140] INFO api 用户登录: test_user
+[2026-02-20 02:50:48,146] ERROR api 验证异常: 'predicted_user'
+[2026-02-20 02:50:48,147] ERROR django.request Internal Server Error: /api/verify/
+[2026-02-20 02:55:02,329] INFO api 用户登录: test_user
+[2026-02-20 02:55:02,334] WARNING django.request Forbidden: /api/dashboard/
+[2026-02-20 02:55:02,943] INFO api 用户登录: test_user
+[2026-02-20 02:55:02,950] INFO api 声纹注册成功: test_user, 1 条音频
+[2026-02-20 02:55:03,502] INFO api 用户登录: test_user
+[2026-02-20 02:55:03,505] ERROR api 验证异常: 'predicted_user'
+[2026-02-20 02:55:03,506] ERROR django.request Internal Server Error: /api/verify/
+[2026-02-20 02:55:04,050] INFO api 用户登录: test_user
+[2026-02-20 02:55:04,054] ERROR api 验证异常: 'predicted_user'
+[2026-02-20 02:55:04,055] ERROR django.request Internal Server Error: /api/verify/
+[2026-02-20 02:57:06,643] INFO api 用户登录: test_user
+[2026-02-20 02:57:06,650] WARNING django.request Forbidden: /api/dashboard/
+[2026-02-20 02:57:07,239] INFO api 用户登录: test_user
+[2026-02-20 02:57:07,245] INFO api 声纹注册成功: test_user, 1 条音频
+[2026-02-20 02:57:07,798] INFO api 用户登录: test_user
+[2026-02-20 02:57:07,803] INFO api 声纹验证: unknown score=0.4500 => REJECT
+[2026-02-20 02:57:08,404] INFO api 用户登录: test_user
+[2026-02-20 02:57:08,410] INFO api 声纹验证: test_user score=0.8500 => ACCEPT
+[2026-02-20 02:59:57,421] INFO api 用户登录: test_user
+[2026-02-20 02:59:57,429] WARNING django.request Forbidden: /api/dashboard/
+[2026-02-20 02:59:58,071] INFO api 用户登录: test_user
+[2026-02-20 02:59:58,078] INFO api 声纹注册成功: test_user, 1 条音频
+[2026-02-20 02:59:58,677] INFO api 用户登录: test_user
+[2026-02-20 02:59:58,683] INFO api 声纹验证: unknown score=0.4500 => REJECT
+[2026-02-20 02:59:59,255] INFO api 用户登录: test_user
+[2026-02-20 02:59:59,261] INFO api 声纹验证: test_user score=0.8500 => ACCEPT
+[2026-02-20 03:05:08,764] INFO api 用户登录: test_user
+[2026-02-20 03:05:08,770] WARNING django.request Forbidden: /api/dashboard/
+[2026-02-20 03:05:09,354] INFO api 用户登录: test_user
+[2026-02-20 03:05:09,359] INFO api 声纹注册成功: test_user, 1 条音频
+[2026-02-20 03:05:09,891] INFO api 用户登录: test_user
+[2026-02-20 03:05:09,896] INFO api 声纹验证: unknown score=0.4500 => REJECT
+[2026-02-20 03:05:10,430] INFO api 用户登录: test_user
+[2026-02-20 03:05:10,436] INFO api 声纹验证: test_user score=0.8500 => ACCEPT
+[2026-02-20 03:10:24,464] INFO api 用户登录: test_user
+[2026-02-20 03:10:24,471] WARNING django.request Forbidden: /api/dashboard/
+[2026-02-20 03:10:25,127] INFO api 用户登录: test_user
+[2026-02-20 03:10:25,134] INFO api 声纹注册成功: test_user, 1 条音频
+[2026-02-20 03:10:25,757] INFO api 用户登录: test_user
+[2026-02-20 03:10:25,764] INFO api 声纹验证: unknown score=0.4500 => REJECT
+[2026-02-20 03:10:26,335] INFO api 用户登录: test_user
+[2026-02-20 03:10:26,342] INFO api 声纹验证: test_user score=0.8500 => ACCEPT
+[2026-02-20 03:23:50,537] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-02-20 03:25:07,664] INFO django.server "GET /admin HTTP/1.1" 301 0
+[2026-02-20 03:25:07,715] INFO django.server "GET /admin/ HTTP/1.1" 302 0
+[2026-02-20 03:25:07,753] INFO django.server "GET /admin/login/?next=/admin/ HTTP/1.1" 200 4195
+[2026-02-20 03:25:07,811] INFO django.server "GET /static/admin/css/dark_mode.css HTTP/1.1" 200 2929
+[2026-02-20 03:25:07,811] INFO django.server "GET /static/admin/css/base.css HTTP/1.1" 200 21310
+[2026-02-20 03:25:07,812] INFO django.server "GET /static/admin/css/login.css HTTP/1.1" 200 958
+[2026-02-20 03:25:07,813] INFO django.server "GET /static/admin/css/nav_sidebar.css HTTP/1.1" 200 2694
+[2026-02-20 03:25:07,814] INFO django.server "GET /static/admin/css/responsive.css HTTP/1.1" 200 18559
+[2026-02-20 03:25:07,821] INFO django.server "GET /static/admin/js/theme.js HTTP/1.1" 200 1943
+[2026-02-20 03:25:07,822] INFO django.server "GET /static/admin/js/nav_sidebar.js HTTP/1.1" 200 3063
+[2026-02-20 03:25:07,941] WARNING django.request Not Found: /@vite/client
+[2026-02-20 03:25:07,941] WARNING django.server "GET /@vite/client HTTP/1.1" 404 2218
+[2026-02-20 03:34:13,592] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-02-20 03:37:40,799] INFO api 用户登录: admin
+[2026-02-20 03:37:40,815] INFO django.server "POST /api/login/ HTTP/1.1" 200 99
+[2026-02-20 03:37:40,853] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-20 03:37:41,171] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-20 03:37:41,230] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6456
+[2026-02-20 03:37:41,238] INFO django.server "GET /api/users/?page=1&is_staff=false HTTP/1.1" 200 624
+[2026-02-20 03:37:41,264] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 483
+[2026-02-20 03:37:41,274] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 1172
+[2026-02-20 03:37:41,285] INFO django.server "GET /api/admin-access-logs/ HTTP/1.1" 200 2266
+[2026-02-20 03:37:41,303] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6456
+[2026-02-20 03:37:41,353] INFO django.server "GET /api/roc/ HTTP/1.1" 200 299478
+[2026-02-20 03:37:41,632] INFO django.server "GET /api/models/ HTTP/1.1" 200 46943
+[2026-02-20 03:37:42,340] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 859
+[2026-02-20 03:37:45,659] INFO django.server "GET /api/roc/ HTTP/1.1" 200 299478
+[2026-02-20 03:37:46,023] INFO django.server "GET /api/models/ HTTP/1.1" 200 46943
+[2026-02-20 03:37:49,261] INFO django.server "POST /api/roc/evaluate/ HTTP/1.1" 200 102
+[2026-02-20 03:37:50,789] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-02-20 03:37:52,282] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-02-20 03:37:53,782] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 160
+[2026-02-20 03:37:53,853] INFO django.server "GET /api/roc/ HTTP/1.1" 200 299482
+[2026-02-20 03:38:01,917] INFO django.server "GET /api/roc/ HTTP/1.1" 200 299482
+[2026-02-20 03:38:21,237] INFO django.server "POST /api/roc/evaluate/ HTTP/1.1" 200 102
+[2026-02-20 03:38:22,759] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-02-20 03:38:24,255] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-02-20 03:38:25,749] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 160
+[2026-02-20 03:38:25,820] INFO django.server "GET /api/roc/ HTTP/1.1" 200 299482
+[2026-02-20 03:38:32,692] INFO django.server "POST /api/models/switch/ HTTP/1.1" 200 39
+[2026-02-20 03:38:33,779] INFO django.server "POST /api/roc/evaluate/ HTTP/1.1" 200 102
+[2026-02-20 03:38:35,300] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-02-20 03:38:36,791] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-02-20 03:38:38,284] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 160
+[2026-02-20 03:38:38,358] INFO django.server "GET /api/roc/ HTTP/1.1" 200 299482
+[2026-02-20 03:38:40,690] INFO django.server "POST /api/models/switch/ HTTP/1.1" 200 33
+[2026-02-20 03:38:41,513] INFO django.server "POST /api/roc/evaluate/ HTTP/1.1" 200 90
+[2026-02-20 03:38:43,040] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 146
+[2026-02-20 03:38:44,545] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 146
+[2026-02-20 03:38:46,048] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 154
+[2026-02-20 03:38:46,119] INFO django.server "GET /api/roc/ HTTP/1.1" 200 299476
+[2026-02-20 03:38:52,232] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6456
+[2026-02-20 03:38:53,455] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6456
+[2026-02-20 03:38:54,614] INFO django.server "GET /api/admin-access-logs/ HTTP/1.1" 200 2266
+[2026-02-20 03:38:56,980] INFO django.server "GET /api/roc/ HTTP/1.1" 200 299476
+[2026-02-20 03:38:57,346] INFO django.server "GET /api/models/ HTTP/1.1" 200 46937
+[2026-02-20 03:41:29,064] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-02-20 03:48:21,892] INFO api 用户登录: admin
+[2026-02-20 03:48:21,899] INFO django.server "POST /api/login/ HTTP/1.1" 200 99
+[2026-02-20 03:48:21,927] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-20 03:48:22,150] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 483
+[2026-02-20 03:48:22,164] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6458
+[2026-02-20 03:48:22,173] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-20 03:48:22,193] INFO django.server "GET /api/users/?page=1&is_staff=false HTTP/1.1" 200 624
+[2026-02-20 03:48:22,220] INFO django.server "GET /api/admin-access-logs/ HTTP/1.1" 200 2266
+[2026-02-20 03:48:22,281] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 859
+[2026-02-20 03:48:22,322] INFO django.server "GET /api/roc/ HTTP/1.1" 200 299476
+[2026-02-20 03:48:22,406] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 154
+[2026-02-20 03:48:22,436] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6458
+[2026-02-20 03:48:22,718] ERROR django.request Internal Server Error: /api/models/
+Traceback (most recent call last):
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\views\decorators\csrf.py", line 56, in wrapper_view
+    return view_func(*args, **kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\views\generic\base.py", line 105, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "D:\traepg\gp\voice_access_control\backend\api\views\admin.py", line 246, in get
+    current_path = get_model_path()
+  File "D:\traepg\gp\voice_access_control\backend\api\model_loader.py", line 43, in get_model_path
+    service = get_service()
+  File "D:\traepg\gp\voice_access_control\backend\api\model_loader.py", line 29, in get_service
+    _service = VoiceService.get_instance()
+  File "D:\traepg\gp\voice_access_control\voice_engine\service.py", line 42, in get_instance
+    cls._instance = cls()
+  File "D:\traepg\gp\voice_access_control\voice_engine\service.py", line 37, in __init__
+    self._load()
+  File "D:\traepg\gp\voice_access_control\voice_engine\service.py", line 49, in _load
+    self.model, self.device, self.feature_type = load_model(
+  File "D:\traepg\gp\voice_access_control\voice_engine\enroll.py", line 39, in load_model
+    state = torch.load(model_path, map_location=device)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\torch\serialization.py", line 1479, in load
+    with _open_file_like(f, "rb") as opened_file:
+  File "D:\anaconda\envs\voice_access\lib\site-packages\torch\serialization.py", line 759, in _open_file_like
+    return _open_file(name_or_buffer, mode)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\torch\serialization.py", line 740, in __init__
+    super().__init__(open(name, mode))
+FileNotFoundError: [Errno 2] No such file or directory: '/app/models\\ecapa_mfcc_delta_best.pth'
+[2026-02-20 03:48:22,723] ERROR django.server "GET /api/models/ HTTP/1.1" 500 142369
+[2026-02-20 03:48:23,433] INFO django.server "GET /api/roc/ HTTP/1.1" 200 299476
+[2026-02-20 03:48:23,516] ERROR django.request Internal Server Error: /api/models/
+Traceback (most recent call last):
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\views\decorators\csrf.py", line 56, in wrapper_view
+    return view_func(*args, **kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\views\generic\base.py", line 105, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "D:\traepg\gp\voice_access_control\backend\api\views\admin.py", line 246, in get
+    current_path = get_model_path()
+  File "D:\traepg\gp\voice_access_control\backend\api\model_loader.py", line 43, in get_model_path
+    service = get_service()
+  File "D:\traepg\gp\voice_access_control\backend\api\model_loader.py", line 29, in get_service
+    _service = VoiceService.get_instance()
+  File "D:\traepg\gp\voice_access_control\voice_engine\service.py", line 42, in get_instance
+    cls._instance = cls()
+  File "D:\traepg\gp\voice_access_control\voice_engine\service.py", line 37, in __init__
+    self._load()
+  File "D:\traepg\gp\voice_access_control\voice_engine\service.py", line 49, in _load
+    self.model, self.device, self.feature_type = load_model(
+  File "D:\traepg\gp\voice_access_control\voice_engine\enroll.py", line 39, in load_model
+    state = torch.load(model_path, map_location=device)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\torch\serialization.py", line 1479, in load
+    with _open_file_like(f, "rb") as opened_file:
+  File "D:\anaconda\envs\voice_access\lib\site-packages\torch\serialization.py", line 759, in _open_file_like
+    return _open_file(name_or_buffer, mode)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\torch\serialization.py", line 740, in __init__
+    super().__init__(open(name, mode))
+FileNotFoundError: [Errno 2] No such file or directory: '/app/models\\ecapa_mfcc_delta_best.pth'
+[2026-02-20 03:48:23,517] ERROR django.server "GET /api/models/ HTTP/1.1" 500 142369
+[2026-02-20 03:48:26,608] INFO django.server "GET /api/roc/ HTTP/1.1" 200 299476
+[2026-02-20 03:48:28,821] ERROR django.request Internal Server Error: /api/models/
+Traceback (most recent call last):
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\views\decorators\csrf.py", line 56, in wrapper_view
+    return view_func(*args, **kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\views\generic\base.py", line 105, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "D:\traepg\gp\voice_access_control\backend\api\views\admin.py", line 246, in get
+    current_path = get_model_path()
+  File "D:\traepg\gp\voice_access_control\backend\api\model_loader.py", line 43, in get_model_path
+    service = get_service()
+  File "D:\traepg\gp\voice_access_control\backend\api\model_loader.py", line 29, in get_service
+    _service = VoiceService.get_instance()
+  File "D:\traepg\gp\voice_access_control\voice_engine\service.py", line 42, in get_instance
+    cls._instance = cls()
+  File "D:\traepg\gp\voice_access_control\voice_engine\service.py", line 37, in __init__
+    self._load()
+  File "D:\traepg\gp\voice_access_control\voice_engine\service.py", line 49, in _load
+    self.model, self.device, self.feature_type = load_model(
+  File "D:\traepg\gp\voice_access_control\voice_engine\enroll.py", line 39, in load_model
+    state = torch.load(model_path, map_location=device)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\torch\serialization.py", line 1479, in load
+    with _open_file_like(f, "rb") as opened_file:
+  File "D:\anaconda\envs\voice_access\lib\site-packages\torch\serialization.py", line 759, in _open_file_like
+    return _open_file(name_or_buffer, mode)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\torch\serialization.py", line 740, in __init__
+    super().__init__(open(name, mode))
+FileNotFoundError: [Errno 2] No such file or directory: '/app/models\\ecapa_mfcc_delta_best.pth'
+[2026-02-20 03:48:28,823] ERROR django.server "GET /api/models/ HTTP/1.1" 500 142369
+[2026-02-20 03:49:16,422] ERROR django.request Internal Server Error: /api/models/
+Traceback (most recent call last):
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\views\decorators\csrf.py", line 56, in wrapper_view
+    return view_func(*args, **kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\views\generic\base.py", line 105, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "D:\traepg\gp\voice_access_control\backend\api\views\admin.py", line 246, in get
+    current_path = get_model_path()
+  File "D:\traepg\gp\voice_access_control\backend\api\model_loader.py", line 43, in get_model_path
+    service = get_service()
+  File "D:\traepg\gp\voice_access_control\backend\api\model_loader.py", line 29, in get_service
+    _service = VoiceService.get_instance()
+  File "D:\traepg\gp\voice_access_control\voice_engine\service.py", line 42, in get_instance
+    cls._instance = cls()
+  File "D:\traepg\gp\voice_access_control\voice_engine\service.py", line 37, in __init__
+    self._load()
+  File "D:\traepg\gp\voice_access_control\voice_engine\service.py", line 49, in _load
+    self.model, self.device, self.feature_type = load_model(
+  File "D:\traepg\gp\voice_access_control\voice_engine\enroll.py", line 39, in load_model
+    state = torch.load(model_path, map_location=device)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\torch\serialization.py", line 1479, in load
+    with _open_file_like(f, "rb") as opened_file:
+  File "D:\anaconda\envs\voice_access\lib\site-packages\torch\serialization.py", line 759, in _open_file_like
+    return _open_file(name_or_buffer, mode)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\torch\serialization.py", line 740, in __init__
+    super().__init__(open(name, mode))
+FileNotFoundError: [Errno 2] No such file or directory: '/app/models\\ecapa_mfcc_delta_best.pth'
+[2026-02-20 03:49:16,423] ERROR django.server "GET /api/models/ HTTP/1.1" 500 142369
+[2026-02-20 03:51:24,998] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\voice_engine\config.py changed, reloading.
+[2026-02-20 03:51:26,524] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-02-20 03:51:41,766] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\voice_engine\config.py changed, reloading.
+[2026-02-20 03:51:43,011] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-02-20 03:53:19,437] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-20 03:53:19,820] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-20 03:53:19,844] INFO django.server "GET /api/users/?page=1&is_staff=false HTTP/1.1" 200 624
+[2026-02-20 03:53:19,852] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6458
+[2026-02-20 03:53:19,858] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 483
+[2026-02-20 03:53:19,875] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 154
+[2026-02-20 03:53:19,890] INFO django.server "GET /api/admin-access-logs/ HTTP/1.1" 200 2266
+[2026-02-20 03:53:19,914] INFO django.server "GET /api/roc/ HTTP/1.1" 200 299476
+[2026-02-20 03:53:19,951] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6458
+[2026-02-20 03:53:20,106] ERROR django.request Internal Server Error: /api/models/
+Traceback (most recent call last):
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\views\decorators\csrf.py", line 56, in wrapper_view
+    return view_func(*args, **kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\views\generic\base.py", line 105, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "D:\traepg\gp\voice_access_control\backend\api\views\admin.py", line 246, in get
+    current_path = get_model_path()
+  File "D:\traepg\gp\voice_access_control\backend\api\model_loader.py", line 43, in get_model_path
+    service = get_service()
+  File "D:\traepg\gp\voice_access_control\backend\api\model_loader.py", line 29, in get_service
+    _service = VoiceService.get_instance()
+  File "D:\traepg\gp\voice_access_control\voice_engine\service.py", line 42, in get_instance
+    cls._instance = cls()
+  File "D:\traepg\gp\voice_access_control\voice_engine\service.py", line 37, in __init__
+    self._load()
+  File "D:\traepg\gp\voice_access_control\voice_engine\service.py", line 49, in _load
+    self.model, self.device, self.feature_type = load_model(
+  File "D:\traepg\gp\voice_access_control\voice_engine\enroll.py", line 39, in load_model
+    state = torch.load(model_path, map_location=device)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\torch\serialization.py", line 1479, in load
+    with _open_file_like(f, "rb") as opened_file:
+  File "D:\anaconda\envs\voice_access\lib\site-packages\torch\serialization.py", line 759, in _open_file_like
+    return _open_file(name_or_buffer, mode)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\torch\serialization.py", line 740, in __init__
+    super().__init__(open(name, mode))
+FileNotFoundError: [Errno 2] No such file or directory: '/app/models\\ecapa_mfcc_delta_best.pth'
+[2026-02-20 03:53:20,115] ERROR django.server "GET /api/models/ HTTP/1.1" 500 142634
+[2026-02-20 03:53:20,196] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 859
+[2026-02-20 03:53:21,546] INFO django.server "GET /api/roc/ HTTP/1.1" 200 299476
+[2026-02-20 03:53:21,623] ERROR django.request Internal Server Error: /api/models/
+Traceback (most recent call last):
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\views\decorators\csrf.py", line 56, in wrapper_view
+    return view_func(*args, **kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\views\generic\base.py", line 105, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "D:\traepg\gp\voice_access_control\backend\api\views\admin.py", line 246, in get
+    current_path = get_model_path()
+  File "D:\traepg\gp\voice_access_control\backend\api\model_loader.py", line 43, in get_model_path
+    service = get_service()
+  File "D:\traepg\gp\voice_access_control\backend\api\model_loader.py", line 29, in get_service
+    _service = VoiceService.get_instance()
+  File "D:\traepg\gp\voice_access_control\voice_engine\service.py", line 42, in get_instance
+    cls._instance = cls()
+  File "D:\traepg\gp\voice_access_control\voice_engine\service.py", line 37, in __init__
+    self._load()
+  File "D:\traepg\gp\voice_access_control\voice_engine\service.py", line 49, in _load
+    self.model, self.device, self.feature_type = load_model(
+  File "D:\traepg\gp\voice_access_control\voice_engine\enroll.py", line 39, in load_model
+    state = torch.load(model_path, map_location=device)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\torch\serialization.py", line 1479, in load
+    with _open_file_like(f, "rb") as opened_file:
+  File "D:\anaconda\envs\voice_access\lib\site-packages\torch\serialization.py", line 759, in _open_file_like
+    return _open_file(name_or_buffer, mode)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\torch\serialization.py", line 740, in __init__
+    super().__init__(open(name, mode))
+FileNotFoundError: [Errno 2] No such file or directory: '/app/models\\ecapa_mfcc_delta_best.pth'
+[2026-02-20 03:53:21,624] ERROR django.server "GET /api/models/ HTTP/1.1" 500 142369
+[2026-02-20 03:53:24,595] ERROR django.request Internal Server Error: /api/models/
+Traceback (most recent call last):
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\views\decorators\csrf.py", line 56, in wrapper_view
+    return view_func(*args, **kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\views\generic\base.py", line 105, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "D:\traepg\gp\voice_access_control\backend\api\views\admin.py", line 246, in get
+    current_path = get_model_path()
+  File "D:\traepg\gp\voice_access_control\backend\api\model_loader.py", line 43, in get_model_path
+    service = get_service()
+  File "D:\traepg\gp\voice_access_control\backend\api\model_loader.py", line 29, in get_service
+    _service = VoiceService.get_instance()
+  File "D:\traepg\gp\voice_access_control\voice_engine\service.py", line 42, in get_instance
+    cls._instance = cls()
+  File "D:\traepg\gp\voice_access_control\voice_engine\service.py", line 37, in __init__
+    self._load()
+  File "D:\traepg\gp\voice_access_control\voice_engine\service.py", line 49, in _load
+    self.model, self.device, self.feature_type = load_model(
+  File "D:\traepg\gp\voice_access_control\voice_engine\enroll.py", line 39, in load_model
+    state = torch.load(model_path, map_location=device)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\torch\serialization.py", line 1479, in load
+    with _open_file_like(f, "rb") as opened_file:
+  File "D:\anaconda\envs\voice_access\lib\site-packages\torch\serialization.py", line 759, in _open_file_like
+    return _open_file(name_or_buffer, mode)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\torch\serialization.py", line 740, in __init__
+    super().__init__(open(name, mode))
+FileNotFoundError: [Errno 2] No such file or directory: '/app/models\\ecapa_mfcc_delta_best.pth'
+[2026-02-20 03:53:24,595] ERROR django.server "GET /api/models/ HTTP/1.1" 500 142369
+[2026-02-20 03:53:49,918] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-02-20 03:54:13,387] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-20 03:54:13,771] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-20 03:54:13,802] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6458
+[2026-02-20 03:54:13,802] INFO django.server "GET /api/users/?page=1&is_staff=false HTTP/1.1" 200 624
+[2026-02-20 03:54:13,803] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 483
+[2026-02-20 03:54:13,830] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 154
+[2026-02-20 03:54:13,835] INFO django.server "GET /api/admin-access-logs/ HTTP/1.1" 200 2266
+[2026-02-20 03:54:13,904] INFO django.server "GET /api/roc/ HTTP/1.1" 200 299476
+[2026-02-20 03:54:13,926] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6458
+[2026-02-20 03:54:14,074] ERROR django.request Internal Server Error: /api/models/
+Traceback (most recent call last):
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\views\decorators\csrf.py", line 56, in wrapper_view
+    return view_func(*args, **kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\views\generic\base.py", line 105, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "D:\traepg\gp\voice_access_control\backend\api\views\admin.py", line 246, in get
+    current_path = get_model_path()
+  File "D:\traepg\gp\voice_access_control\backend\api\model_loader.py", line 43, in get_model_path
+    service = get_service()
+  File "D:\traepg\gp\voice_access_control\backend\api\model_loader.py", line 29, in get_service
+    _service = VoiceService.get_instance()
+  File "D:\traepg\gp\voice_access_control\voice_engine\service.py", line 42, in get_instance
+    cls._instance = cls()
+  File "D:\traepg\gp\voice_access_control\voice_engine\service.py", line 37, in __init__
+    self._load()
+  File "D:\traepg\gp\voice_access_control\voice_engine\service.py", line 49, in _load
+    self.model, self.device, self.feature_type = load_model(
+  File "D:\traepg\gp\voice_access_control\voice_engine\enroll.py", line 39, in load_model
+    state = torch.load(model_path, map_location=device)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\torch\serialization.py", line 1479, in load
+    with _open_file_like(f, "rb") as opened_file:
+  File "D:\anaconda\envs\voice_access\lib\site-packages\torch\serialization.py", line 759, in _open_file_like
+    return _open_file(name_or_buffer, mode)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\torch\serialization.py", line 740, in __init__
+    super().__init__(open(name, mode))
+FileNotFoundError: [Errno 2] No such file or directory: '/app/models\\ecapa_mfcc_delta_best.pth'
+[2026-02-20 03:54:14,079] ERROR django.server "GET /api/models/ HTTP/1.1" 500 142634
+[2026-02-20 03:54:14,108] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 859
+[2026-02-20 03:54:16,464] INFO django.server "GET /api/roc/ HTTP/1.1" 200 299476
+[2026-02-20 03:54:16,546] ERROR django.request Internal Server Error: /api/models/
+Traceback (most recent call last):
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\views\decorators\csrf.py", line 56, in wrapper_view
+    return view_func(*args, **kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\views\generic\base.py", line 105, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "D:\traepg\gp\voice_access_control\backend\api\views\admin.py", line 246, in get
+    current_path = get_model_path()
+  File "D:\traepg\gp\voice_access_control\backend\api\model_loader.py", line 43, in get_model_path
+    service = get_service()
+  File "D:\traepg\gp\voice_access_control\backend\api\model_loader.py", line 29, in get_service
+    _service = VoiceService.get_instance()
+  File "D:\traepg\gp\voice_access_control\voice_engine\service.py", line 42, in get_instance
+    cls._instance = cls()
+  File "D:\traepg\gp\voice_access_control\voice_engine\service.py", line 37, in __init__
+    self._load()
+  File "D:\traepg\gp\voice_access_control\voice_engine\service.py", line 49, in _load
+    self.model, self.device, self.feature_type = load_model(
+  File "D:\traepg\gp\voice_access_control\voice_engine\enroll.py", line 39, in load_model
+    state = torch.load(model_path, map_location=device)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\torch\serialization.py", line 1479, in load
+    with _open_file_like(f, "rb") as opened_file:
+  File "D:\anaconda\envs\voice_access\lib\site-packages\torch\serialization.py", line 759, in _open_file_like
+    return _open_file(name_or_buffer, mode)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\torch\serialization.py", line 740, in __init__
+    super().__init__(open(name, mode))
+FileNotFoundError: [Errno 2] No such file or directory: '/app/models\\ecapa_mfcc_delta_best.pth'
+[2026-02-20 03:54:16,547] ERROR django.server "GET /api/models/ HTTP/1.1" 500 142369
+[2026-02-20 03:54:26,802] ERROR django.request Internal Server Error: /api/models/
+Traceback (most recent call last):
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\views\decorators\csrf.py", line 56, in wrapper_view
+    return view_func(*args, **kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\views\generic\base.py", line 105, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "D:\traepg\gp\voice_access_control\backend\api\views\admin.py", line 246, in get
+    current_path = get_model_path()
+  File "D:\traepg\gp\voice_access_control\backend\api\model_loader.py", line 43, in get_model_path
+    service = get_service()
+  File "D:\traepg\gp\voice_access_control\backend\api\model_loader.py", line 29, in get_service
+    _service = VoiceService.get_instance()
+  File "D:\traepg\gp\voice_access_control\voice_engine\service.py", line 42, in get_instance
+    cls._instance = cls()
+  File "D:\traepg\gp\voice_access_control\voice_engine\service.py", line 37, in __init__
+    self._load()
+  File "D:\traepg\gp\voice_access_control\voice_engine\service.py", line 49, in _load
+    self.model, self.device, self.feature_type = load_model(
+  File "D:\traepg\gp\voice_access_control\voice_engine\enroll.py", line 39, in load_model
+    state = torch.load(model_path, map_location=device)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\torch\serialization.py", line 1479, in load
+    with _open_file_like(f, "rb") as opened_file:
+  File "D:\anaconda\envs\voice_access\lib\site-packages\torch\serialization.py", line 759, in _open_file_like
+    return _open_file(name_or_buffer, mode)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\torch\serialization.py", line 740, in __init__
+    super().__init__(open(name, mode))
+FileNotFoundError: [Errno 2] No such file or directory: '/app/models\\ecapa_mfcc_delta_best.pth'
+[2026-02-20 03:54:26,803] ERROR django.server "GET /api/models/ HTTP/1.1" 500 142369
+[2026-02-20 03:54:38,907] ERROR django.request Internal Server Error: /api/models/
+Traceback (most recent call last):
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\views\decorators\csrf.py", line 56, in wrapper_view
+    return view_func(*args, **kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\views\generic\base.py", line 105, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "D:\traepg\gp\voice_access_control\backend\api\views\admin.py", line 246, in get
+    current_path = get_model_path()
+  File "D:\traepg\gp\voice_access_control\backend\api\model_loader.py", line 43, in get_model_path
+    service = get_service()
+  File "D:\traepg\gp\voice_access_control\backend\api\model_loader.py", line 29, in get_service
+    _service = VoiceService.get_instance()
+  File "D:\traepg\gp\voice_access_control\voice_engine\service.py", line 42, in get_instance
+    cls._instance = cls()
+  File "D:\traepg\gp\voice_access_control\voice_engine\service.py", line 37, in __init__
+    self._load()
+  File "D:\traepg\gp\voice_access_control\voice_engine\service.py", line 49, in _load
+    self.model, self.device, self.feature_type = load_model(
+  File "D:\traepg\gp\voice_access_control\voice_engine\enroll.py", line 39, in load_model
+    state = torch.load(model_path, map_location=device)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\torch\serialization.py", line 1479, in load
+    with _open_file_like(f, "rb") as opened_file:
+  File "D:\anaconda\envs\voice_access\lib\site-packages\torch\serialization.py", line 759, in _open_file_like
+    return _open_file(name_or_buffer, mode)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\torch\serialization.py", line 740, in __init__
+    super().__init__(open(name, mode))
+FileNotFoundError: [Errno 2] No such file or directory: '/app/models\\ecapa_mfcc_delta_best.pth'
+[2026-02-20 03:54:38,910] ERROR django.server "GET /api/models/ HTTP/1.1" 500 142369
+[2026-02-20 03:55:56,544] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\voice_engine\config.py changed, reloading.
+[2026-02-20 03:55:57,806] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-02-20 03:57:16,410] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-20 03:57:16,827] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-20 03:57:16,841] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6458
+[2026-02-20 03:57:16,875] INFO django.server "GET /api/users/?page=1&is_staff=false HTTP/1.1" 200 624
+[2026-02-20 03:57:16,883] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 483
+[2026-02-20 03:57:16,945] INFO django.server "GET /api/roc/ HTTP/1.1" 200 299476
+[2026-02-20 03:57:16,945] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 154
+[2026-02-20 03:57:16,973] INFO django.server "GET /api/admin-access-logs/ HTTP/1.1" 200 2266
+[2026-02-20 03:57:16,975] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6458
+[2026-02-20 03:57:17,134] ERROR django.request Internal Server Error: /api/models/
+Traceback (most recent call last):
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\views\decorators\csrf.py", line 56, in wrapper_view
+    return view_func(*args, **kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\views\generic\base.py", line 105, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "D:\traepg\gp\voice_access_control\backend\api\views\admin.py", line 246, in get
+    current_path = get_model_path()
+  File "D:\traepg\gp\voice_access_control\backend\api\model_loader.py", line 43, in get_model_path
+    service = get_service()
+  File "D:\traepg\gp\voice_access_control\backend\api\model_loader.py", line 29, in get_service
+    _service = VoiceService.get_instance()
+  File "D:\traepg\gp\voice_access_control\voice_engine\service.py", line 42, in get_instance
+    cls._instance = cls()
+  File "D:\traepg\gp\voice_access_control\voice_engine\service.py", line 37, in __init__
+    self._load()
+  File "D:\traepg\gp\voice_access_control\voice_engine\service.py", line 49, in _load
+    self.model, self.device, self.feature_type = load_model(
+  File "D:\traepg\gp\voice_access_control\voice_engine\enroll.py", line 39, in load_model
+    state = torch.load(model_path, map_location=device)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\torch\serialization.py", line 1479, in load
+    with _open_file_like(f, "rb") as opened_file:
+  File "D:\anaconda\envs\voice_access\lib\site-packages\torch\serialization.py", line 759, in _open_file_like
+    return _open_file(name_or_buffer, mode)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\torch\serialization.py", line 740, in __init__
+    super().__init__(open(name, mode))
+FileNotFoundError: [Errno 2] No such file or directory: '/app/models\\ecapa_mfcc_delta_best.pth'
+[2026-02-20 03:57:17,140] ERROR django.server "GET /api/models/ HTTP/1.1" 500 142634
+[2026-02-20 03:57:17,187] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 859
+[2026-02-20 03:57:18,225] INFO django.server "GET /api/roc/ HTTP/1.1" 200 299476
+[2026-02-20 03:57:18,317] ERROR django.request Internal Server Error: /api/models/
+Traceback (most recent call last):
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\views\decorators\csrf.py", line 56, in wrapper_view
+    return view_func(*args, **kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\views\generic\base.py", line 105, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "D:\traepg\gp\voice_access_control\backend\api\views\admin.py", line 246, in get
+    current_path = get_model_path()
+  File "D:\traepg\gp\voice_access_control\backend\api\model_loader.py", line 43, in get_model_path
+    service = get_service()
+  File "D:\traepg\gp\voice_access_control\backend\api\model_loader.py", line 29, in get_service
+    _service = VoiceService.get_instance()
+  File "D:\traepg\gp\voice_access_control\voice_engine\service.py", line 42, in get_instance
+    cls._instance = cls()
+  File "D:\traepg\gp\voice_access_control\voice_engine\service.py", line 37, in __init__
+    self._load()
+  File "D:\traepg\gp\voice_access_control\voice_engine\service.py", line 49, in _load
+    self.model, self.device, self.feature_type = load_model(
+  File "D:\traepg\gp\voice_access_control\voice_engine\enroll.py", line 39, in load_model
+    state = torch.load(model_path, map_location=device)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\torch\serialization.py", line 1479, in load
+    with _open_file_like(f, "rb") as opened_file:
+  File "D:\anaconda\envs\voice_access\lib\site-packages\torch\serialization.py", line 759, in _open_file_like
+    return _open_file(name_or_buffer, mode)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\torch\serialization.py", line 740, in __init__
+    super().__init__(open(name, mode))
+FileNotFoundError: [Errno 2] No such file or directory: '/app/models\\ecapa_mfcc_delta_best.pth'
+[2026-02-20 03:57:18,319] ERROR django.server "GET /api/models/ HTTP/1.1" 500 142369
+[2026-02-20 03:57:21,122] ERROR django.request Internal Server Error: /api/models/
+Traceback (most recent call last):
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\views\decorators\csrf.py", line 56, in wrapper_view
+    return view_func(*args, **kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\views\generic\base.py", line 105, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "D:\traepg\gp\voice_access_control\backend\api\views\admin.py", line 246, in get
+    current_path = get_model_path()
+  File "D:\traepg\gp\voice_access_control\backend\api\model_loader.py", line 43, in get_model_path
+    service = get_service()
+  File "D:\traepg\gp\voice_access_control\backend\api\model_loader.py", line 29, in get_service
+    _service = VoiceService.get_instance()
+  File "D:\traepg\gp\voice_access_control\voice_engine\service.py", line 42, in get_instance
+    cls._instance = cls()
+  File "D:\traepg\gp\voice_access_control\voice_engine\service.py", line 37, in __init__
+    self._load()
+  File "D:\traepg\gp\voice_access_control\voice_engine\service.py", line 49, in _load
+    self.model, self.device, self.feature_type = load_model(
+  File "D:\traepg\gp\voice_access_control\voice_engine\enroll.py", line 39, in load_model
+    state = torch.load(model_path, map_location=device)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\torch\serialization.py", line 1479, in load
+    with _open_file_like(f, "rb") as opened_file:
+  File "D:\anaconda\envs\voice_access\lib\site-packages\torch\serialization.py", line 759, in _open_file_like
+    return _open_file(name_or_buffer, mode)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\torch\serialization.py", line 740, in __init__
+    super().__init__(open(name, mode))
+FileNotFoundError: [Errno 2] No such file or directory: '/app/models\\ecapa_mfcc_delta_best.pth'
+[2026-02-20 03:57:21,124] ERROR django.server "GET /api/models/ HTTP/1.1" 500 142369
+[2026-02-20 03:57:21,247] ERROR django.request Internal Server Error: /api/models/
+Traceback (most recent call last):
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\views\decorators\csrf.py", line 56, in wrapper_view
+    return view_func(*args, **kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\views\generic\base.py", line 105, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "D:\traepg\gp\voice_access_control\backend\api\views\admin.py", line 246, in get
+    current_path = get_model_path()
+  File "D:\traepg\gp\voice_access_control\backend\api\model_loader.py", line 43, in get_model_path
+    service = get_service()
+  File "D:\traepg\gp\voice_access_control\backend\api\model_loader.py", line 29, in get_service
+    _service = VoiceService.get_instance()
+  File "D:\traepg\gp\voice_access_control\voice_engine\service.py", line 42, in get_instance
+    cls._instance = cls()
+  File "D:\traepg\gp\voice_access_control\voice_engine\service.py", line 37, in __init__
+    self._load()
+  File "D:\traepg\gp\voice_access_control\voice_engine\service.py", line 49, in _load
+    self.model, self.device, self.feature_type = load_model(
+  File "D:\traepg\gp\voice_access_control\voice_engine\enroll.py", line 39, in load_model
+    state = torch.load(model_path, map_location=device)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\torch\serialization.py", line 1479, in load
+    with _open_file_like(f, "rb") as opened_file:
+  File "D:\anaconda\envs\voice_access\lib\site-packages\torch\serialization.py", line 759, in _open_file_like
+    return _open_file(name_or_buffer, mode)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\torch\serialization.py", line 740, in __init__
+    super().__init__(open(name, mode))
+FileNotFoundError: [Errno 2] No such file or directory: '/app/models\\ecapa_mfcc_delta_best.pth'
+[2026-02-20 03:57:21,249] ERROR django.server "GET /api/models/ HTTP/1.1" 500 142369
+[2026-02-20 03:59:38,647] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\voice_engine\config.py changed, reloading.
+[2026-02-20 03:59:39,925] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-02-20 04:01:25,259] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-20 04:01:25,666] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-20 04:01:25,694] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6458
+[2026-02-20 04:01:25,695] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 483
+[2026-02-20 04:01:25,697] INFO django.server "GET /api/users/?page=1&is_staff=false HTTP/1.1" 200 624
+[2026-02-20 04:01:25,724] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 154
+[2026-02-20 04:01:25,738] INFO django.server "GET /api/admin-access-logs/ HTTP/1.1" 200 2266
+[2026-02-20 04:01:25,761] INFO django.server "GET /api/roc/ HTTP/1.1" 200 299476
+[2026-02-20 04:01:25,811] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6458
+[2026-02-20 04:01:25,937] ERROR django.request Internal Server Error: /api/models/
+Traceback (most recent call last):
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\views\decorators\csrf.py", line 56, in wrapper_view
+    return view_func(*args, **kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\views\generic\base.py", line 105, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "D:\traepg\gp\voice_access_control\backend\api\views\admin.py", line 246, in get
+    current_path = get_model_path()
+  File "D:\traepg\gp\voice_access_control\backend\api\model_loader.py", line 43, in get_model_path
+    service = get_service()
+  File "D:\traepg\gp\voice_access_control\backend\api\model_loader.py", line 29, in get_service
+    _service = VoiceService.get_instance()
+  File "D:\traepg\gp\voice_access_control\voice_engine\service.py", line 42, in get_instance
+    cls._instance = cls()
+  File "D:\traepg\gp\voice_access_control\voice_engine\service.py", line 37, in __init__
+    self._load()
+  File "D:\traepg\gp\voice_access_control\voice_engine\service.py", line 49, in _load
+    self.model, self.device, self.feature_type = load_model(
+  File "D:\traepg\gp\voice_access_control\voice_engine\enroll.py", line 39, in load_model
+    state = torch.load(model_path, map_location=device)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\torch\serialization.py", line 1479, in load
+    with _open_file_like(f, "rb") as opened_file:
+  File "D:\anaconda\envs\voice_access\lib\site-packages\torch\serialization.py", line 759, in _open_file_like
+    return _open_file(name_or_buffer, mode)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\torch\serialization.py", line 740, in __init__
+    super().__init__(open(name, mode))
+FileNotFoundError: [Errno 2] No such file or directory: '/app\\models\\ecapa_mfcc_delta_best.pth'
+[2026-02-20 04:01:25,943] ERROR django.server "GET /api/models/ HTTP/1.1" 500 142641
+[2026-02-20 04:01:25,975] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 859
+[2026-02-20 04:01:26,686] INFO django.server "GET /api/roc/ HTTP/1.1" 200 299476
+[2026-02-20 04:01:26,778] ERROR django.request Internal Server Error: /api/models/
+Traceback (most recent call last):
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\views\decorators\csrf.py", line 56, in wrapper_view
+    return view_func(*args, **kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\views\generic\base.py", line 105, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "D:\traepg\gp\voice_access_control\backend\api\views\admin.py", line 246, in get
+    current_path = get_model_path()
+  File "D:\traepg\gp\voice_access_control\backend\api\model_loader.py", line 43, in get_model_path
+    service = get_service()
+  File "D:\traepg\gp\voice_access_control\backend\api\model_loader.py", line 29, in get_service
+    _service = VoiceService.get_instance()
+  File "D:\traepg\gp\voice_access_control\voice_engine\service.py", line 42, in get_instance
+    cls._instance = cls()
+  File "D:\traepg\gp\voice_access_control\voice_engine\service.py", line 37, in __init__
+    self._load()
+  File "D:\traepg\gp\voice_access_control\voice_engine\service.py", line 49, in _load
+    self.model, self.device, self.feature_type = load_model(
+  File "D:\traepg\gp\voice_access_control\voice_engine\enroll.py", line 39, in load_model
+    state = torch.load(model_path, map_location=device)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\torch\serialization.py", line 1479, in load
+    with _open_file_like(f, "rb") as opened_file:
+  File "D:\anaconda\envs\voice_access\lib\site-packages\torch\serialization.py", line 759, in _open_file_like
+    return _open_file(name_or_buffer, mode)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\torch\serialization.py", line 740, in __init__
+    super().__init__(open(name, mode))
+FileNotFoundError: [Errno 2] No such file or directory: '/app\\models\\ecapa_mfcc_delta_best.pth'
+[2026-02-20 04:01:26,780] ERROR django.server "GET /api/models/ HTTP/1.1" 500 142376
+[2026-02-20 04:01:52,918] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-02-20 04:02:21,977] INFO api 用户登录: admin
+[2026-02-20 04:02:21,982] INFO django.server "POST /api/login/ HTTP/1.1" 200 99
+[2026-02-20 04:02:22,019] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-20 04:02:22,218] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6458
+[2026-02-20 04:02:22,231] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-20 04:02:22,231] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 483
+[2026-02-20 04:02:22,260] INFO django.server "GET /api/users/?page=1&is_staff=false HTTP/1.1" 200 624
+[2026-02-20 04:02:22,272] INFO django.server "GET /api/admin-access-logs/ HTTP/1.1" 200 2266
+[2026-02-20 04:02:22,315] INFO django.server "GET /api/roc/ HTTP/1.1" 200 299476
+[2026-02-20 04:02:22,340] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 154
+[2026-02-20 04:02:22,371] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6458
+[2026-02-20 04:02:22,488] ERROR django.request Internal Server Error: /api/models/
+Traceback (most recent call last):
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\views\decorators\csrf.py", line 56, in wrapper_view
+    return view_func(*args, **kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\views\generic\base.py", line 105, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "D:\traepg\gp\voice_access_control\backend\api\views\admin.py", line 246, in get
+    current_path = get_model_path()
+  File "D:\traepg\gp\voice_access_control\backend\api\model_loader.py", line 43, in get_model_path
+    service = get_service()
+  File "D:\traepg\gp\voice_access_control\backend\api\model_loader.py", line 29, in get_service
+    _service = VoiceService.get_instance()
+  File "D:\traepg\gp\voice_access_control\voice_engine\service.py", line 42, in get_instance
+    cls._instance = cls()
+  File "D:\traepg\gp\voice_access_control\voice_engine\service.py", line 37, in __init__
+    self._load()
+  File "D:\traepg\gp\voice_access_control\voice_engine\service.py", line 49, in _load
+    self.model, self.device, self.feature_type = load_model(
+  File "D:\traepg\gp\voice_access_control\voice_engine\enroll.py", line 39, in load_model
+    state = torch.load(model_path, map_location=device)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\torch\serialization.py", line 1479, in load
+    with _open_file_like(f, "rb") as opened_file:
+  File "D:\anaconda\envs\voice_access\lib\site-packages\torch\serialization.py", line 759, in _open_file_like
+    return _open_file(name_or_buffer, mode)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\torch\serialization.py", line 740, in __init__
+    super().__init__(open(name, mode))
+FileNotFoundError: [Errno 2] No such file or directory: '/app\\models\\ecapa_mfcc_delta_best.pth'
+[2026-02-20 04:02:22,495] ERROR django.server "GET /api/models/ HTTP/1.1" 500 142376
+[2026-02-20 04:02:22,528] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 859
+[2026-02-20 04:02:23,749] INFO django.server "GET /api/roc/ HTTP/1.1" 200 299476
+[2026-02-20 04:02:23,831] ERROR django.request Internal Server Error: /api/models/
+Traceback (most recent call last):
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\views\decorators\csrf.py", line 56, in wrapper_view
+    return view_func(*args, **kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\views\generic\base.py", line 105, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "D:\traepg\gp\voice_access_control\backend\api\views\admin.py", line 246, in get
+    current_path = get_model_path()
+  File "D:\traepg\gp\voice_access_control\backend\api\model_loader.py", line 43, in get_model_path
+    service = get_service()
+  File "D:\traepg\gp\voice_access_control\backend\api\model_loader.py", line 29, in get_service
+    _service = VoiceService.get_instance()
+  File "D:\traepg\gp\voice_access_control\voice_engine\service.py", line 42, in get_instance
+    cls._instance = cls()
+  File "D:\traepg\gp\voice_access_control\voice_engine\service.py", line 37, in __init__
+    self._load()
+  File "D:\traepg\gp\voice_access_control\voice_engine\service.py", line 49, in _load
+    self.model, self.device, self.feature_type = load_model(
+  File "D:\traepg\gp\voice_access_control\voice_engine\enroll.py", line 39, in load_model
+    state = torch.load(model_path, map_location=device)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\torch\serialization.py", line 1479, in load
+    with _open_file_like(f, "rb") as opened_file:
+  File "D:\anaconda\envs\voice_access\lib\site-packages\torch\serialization.py", line 759, in _open_file_like
+    return _open_file(name_or_buffer, mode)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\torch\serialization.py", line 740, in __init__
+    super().__init__(open(name, mode))
+FileNotFoundError: [Errno 2] No such file or directory: '/app\\models\\ecapa_mfcc_delta_best.pth'
+[2026-02-20 04:02:23,833] ERROR django.server "GET /api/models/ HTTP/1.1" 500 142376
+[2026-02-20 04:04:24,825] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\voice_engine\config.py changed, reloading.
+[2026-02-20 04:04:25,817] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-02-20 04:05:36,517] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-20 04:05:36,901] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-20 04:05:36,929] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 483
+[2026-02-20 04:05:36,936] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6458
+[2026-02-20 04:05:36,942] INFO django.server "GET /api/users/?page=1&is_staff=false HTTP/1.1" 200 624
+[2026-02-20 04:05:36,959] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 154
+[2026-02-20 04:05:36,980] INFO django.server "GET /api/admin-access-logs/ HTTP/1.1" 200 2266
+[2026-02-20 04:05:37,008] INFO django.server "GET /api/roc/ HTTP/1.1" 200 299476
+[2026-02-20 04:05:37,031] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6458
+[2026-02-20 04:05:37,155] ERROR django.request Internal Server Error: /api/models/
+Traceback (most recent call last):
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\views\decorators\csrf.py", line 56, in wrapper_view
+    return view_func(*args, **kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\views\generic\base.py", line 105, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "D:\traepg\gp\voice_access_control\backend\api\views\admin.py", line 246, in get
+    current_path = get_model_path()
+  File "D:\traepg\gp\voice_access_control\backend\api\model_loader.py", line 43, in get_model_path
+    service = get_service()
+  File "D:\traepg\gp\voice_access_control\backend\api\model_loader.py", line 29, in get_service
+    _service = VoiceService.get_instance()
+  File "D:\traepg\gp\voice_access_control\voice_engine\service.py", line 42, in get_instance
+    cls._instance = cls()
+  File "D:\traepg\gp\voice_access_control\voice_engine\service.py", line 37, in __init__
+    self._load()
+  File "D:\traepg\gp\voice_access_control\voice_engine\service.py", line 49, in _load
+    self.model, self.device, self.feature_type = load_model(
+  File "D:\traepg\gp\voice_access_control\voice_engine\enroll.py", line 39, in load_model
+    state = torch.load(model_path, map_location=device)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\torch\serialization.py", line 1479, in load
+    with _open_file_like(f, "rb") as opened_file:
+  File "D:\anaconda\envs\voice_access\lib\site-packages\torch\serialization.py", line 759, in _open_file_like
+    return _open_file(name_or_buffer, mode)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\torch\serialization.py", line 740, in __init__
+    super().__init__(open(name, mode))
+FileNotFoundError: [Errno 2] No such file or directory: '/app\\models\\ecapa_mfcc_delta_best.pth'
+[2026-02-20 04:05:37,161] ERROR django.server "GET /api/models/ HTTP/1.1" 500 142641
+[2026-02-20 04:05:37,191] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 859
+[2026-02-20 04:05:37,752] INFO django.server "GET /api/roc/ HTTP/1.1" 200 299476
+[2026-02-20 04:05:37,863] ERROR django.request Internal Server Error: /api/models/
+Traceback (most recent call last):
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\views\decorators\csrf.py", line 56, in wrapper_view
+    return view_func(*args, **kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\views\generic\base.py", line 105, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "D:\traepg\gp\voice_access_control\backend\api\views\admin.py", line 246, in get
+    current_path = get_model_path()
+  File "D:\traepg\gp\voice_access_control\backend\api\model_loader.py", line 43, in get_model_path
+    service = get_service()
+  File "D:\traepg\gp\voice_access_control\backend\api\model_loader.py", line 29, in get_service
+    _service = VoiceService.get_instance()
+  File "D:\traepg\gp\voice_access_control\voice_engine\service.py", line 42, in get_instance
+    cls._instance = cls()
+  File "D:\traepg\gp\voice_access_control\voice_engine\service.py", line 37, in __init__
+    self._load()
+  File "D:\traepg\gp\voice_access_control\voice_engine\service.py", line 49, in _load
+    self.model, self.device, self.feature_type = load_model(
+  File "D:\traepg\gp\voice_access_control\voice_engine\enroll.py", line 39, in load_model
+    state = torch.load(model_path, map_location=device)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\torch\serialization.py", line 1479, in load
+    with _open_file_like(f, "rb") as opened_file:
+  File "D:\anaconda\envs\voice_access\lib\site-packages\torch\serialization.py", line 759, in _open_file_like
+    return _open_file(name_or_buffer, mode)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\torch\serialization.py", line 740, in __init__
+    super().__init__(open(name, mode))
+FileNotFoundError: [Errno 2] No such file or directory: '/app\\models\\ecapa_mfcc_delta_best.pth'
+[2026-02-20 04:05:37,865] ERROR django.server "GET /api/models/ HTTP/1.1" 500 142376
+[2026-02-20 04:08:46,666] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\voice_engine\config.py changed, reloading.
+[2026-02-20 04:08:47,951] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-02-20 04:13:50,430] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-20 04:13:50,837] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-20 04:13:50,861] INFO django.server "GET /api/users/?page=1&is_staff=false HTTP/1.1" 200 624
+[2026-02-20 04:13:50,871] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6458
+[2026-02-20 04:13:50,876] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 483
+[2026-02-20 04:13:50,897] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 154
+[2026-02-20 04:13:50,912] INFO django.server "GET /api/admin-access-logs/ HTTP/1.1" 200 2266
+[2026-02-20 04:13:50,938] INFO django.server "GET /api/roc/ HTTP/1.1" 200 299476
+[2026-02-20 04:13:50,963] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6458
+[2026-02-20 04:13:51,147] ERROR django.request Internal Server Error: /api/models/
+Traceback (most recent call last):
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\views\decorators\csrf.py", line 56, in wrapper_view
+    return view_func(*args, **kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\views\generic\base.py", line 105, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "D:\traepg\gp\voice_access_control\backend\api\views\admin.py", line 246, in get
+    current_path = get_model_path()
+  File "D:\traepg\gp\voice_access_control\backend\api\model_loader.py", line 43, in get_model_path
+    service = get_service()
+  File "D:\traepg\gp\voice_access_control\backend\api\model_loader.py", line 29, in get_service
+    _service = VoiceService.get_instance()
+  File "D:\traepg\gp\voice_access_control\voice_engine\service.py", line 42, in get_instance
+    cls._instance = cls()
+  File "D:\traepg\gp\voice_access_control\voice_engine\service.py", line 37, in __init__
+    self._load()
+  File "D:\traepg\gp\voice_access_control\voice_engine\service.py", line 49, in _load
+    self.model, self.device, self.feature_type = load_model(
+  File "D:\traepg\gp\voice_access_control\voice_engine\enroll.py", line 39, in load_model
+    state = torch.load(model_path, map_location=device)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\torch\serialization.py", line 1479, in load
+    with _open_file_like(f, "rb") as opened_file:
+  File "D:\anaconda\envs\voice_access\lib\site-packages\torch\serialization.py", line 759, in _open_file_like
+    return _open_file(name_or_buffer, mode)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\torch\serialization.py", line 740, in __init__
+    super().__init__(open(name, mode))
+FileNotFoundError: [Errno 2] No such file or directory: '/app\\models\\ecapa_mfcc_delta_best.pth'
+[2026-02-20 04:13:51,153] ERROR django.server "GET /api/models/ HTTP/1.1" 500 142641
+[2026-02-20 04:13:51,201] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 859
+[2026-02-20 04:13:51,712] INFO django.server "GET /api/roc/ HTTP/1.1" 200 299476
+[2026-02-20 04:13:51,792] ERROR django.request Internal Server Error: /api/models/
+Traceback (most recent call last):
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\views\decorators\csrf.py", line 56, in wrapper_view
+    return view_func(*args, **kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\views\generic\base.py", line 105, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "D:\traepg\gp\voice_access_control\backend\api\views\admin.py", line 246, in get
+    current_path = get_model_path()
+  File "D:\traepg\gp\voice_access_control\backend\api\model_loader.py", line 43, in get_model_path
+    service = get_service()
+  File "D:\traepg\gp\voice_access_control\backend\api\model_loader.py", line 29, in get_service
+    _service = VoiceService.get_instance()
+  File "D:\traepg\gp\voice_access_control\voice_engine\service.py", line 42, in get_instance
+    cls._instance = cls()
+  File "D:\traepg\gp\voice_access_control\voice_engine\service.py", line 37, in __init__
+    self._load()
+  File "D:\traepg\gp\voice_access_control\voice_engine\service.py", line 49, in _load
+    self.model, self.device, self.feature_type = load_model(
+  File "D:\traepg\gp\voice_access_control\voice_engine\enroll.py", line 39, in load_model
+    state = torch.load(model_path, map_location=device)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\torch\serialization.py", line 1479, in load
+    with _open_file_like(f, "rb") as opened_file:
+  File "D:\anaconda\envs\voice_access\lib\site-packages\torch\serialization.py", line 759, in _open_file_like
+    return _open_file(name_or_buffer, mode)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\torch\serialization.py", line 740, in __init__
+    super().__init__(open(name, mode))
+FileNotFoundError: [Errno 2] No such file or directory: '/app\\models\\ecapa_mfcc_delta_best.pth'
+[2026-02-20 04:13:51,793] ERROR django.server "GET /api/models/ HTTP/1.1" 500 142376
+[2026-02-20 04:18:12,228] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\voice_engine\config.py changed, reloading.
+[2026-02-20 04:18:13,608] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-02-20 04:19:14,739] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\voice_engine\config.py changed, reloading.
+[2026-02-20 04:19:16,012] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-02-20 04:20:20,648] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-20 04:20:21,047] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-20 04:20:21,080] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6458
+[2026-02-20 04:20:21,080] INFO django.server "GET /api/users/?page=1&is_staff=false HTTP/1.1" 200 624
+[2026-02-20 04:20:21,083] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 483
+[2026-02-20 04:20:21,110] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 154
+[2026-02-20 04:20:21,123] INFO django.server "GET /api/admin-access-logs/ HTTP/1.1" 200 2266
+[2026-02-20 04:20:21,130] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6458
+[2026-02-20 04:20:21,158] INFO django.server "GET /api/roc/ HTTP/1.1" 200 299476
+[2026-02-20 04:20:21,299] INFO django.server "GET /api/models/ HTTP/1.1" 200 55757
+[2026-02-20 04:20:21,317] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 859
+[2026-02-20 04:20:21,883] INFO django.server "GET /api/roc/ HTTP/1.1" 200 299476
+[2026-02-20 04:20:21,920] INFO django.server "GET /api/models/ HTTP/1.1" 200 55757
+[2026-02-20 04:20:28,779] INFO django.server "POST /api/models/switch/ HTTP/1.1" 200 39
+[2026-02-20 04:20:29,688] INFO django.server "POST /api/roc/evaluate/ HTTP/1.1" 200 137
+[2026-02-20 04:20:31,207] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-02-20 04:20:32,700] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-02-20 04:20:34,200] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-02-20 04:20:35,699] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-02-20 04:20:37,207] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 160
+[2026-02-20 04:20:37,249] INFO django.server "GET /api/roc/ HTTP/1.1" 200 299482
+[2026-02-20 04:30:17,078] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-20 04:30:17,784] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-20 04:30:17,799] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6458
+[2026-02-20 04:30:17,820] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 483
+[2026-02-20 04:30:17,838] INFO django.server "GET /api/users/?page=1&is_staff=false HTTP/1.1" 200 624
+[2026-02-20 04:30:17,853] INFO django.server "GET /api/admin-access-logs/ HTTP/1.1" 200 2266
+[2026-02-20 04:30:17,871] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 160
+[2026-02-20 04:30:17,906] INFO django.server "GET /api/roc/?t=1771533017753 HTTP/1.1" 200 299482
+[2026-02-20 04:30:17,916] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6458
+[2026-02-20 04:30:17,945] INFO django.server "GET /api/models/ HTTP/1.1" 200 55757
+[2026-02-20 04:30:17,991] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 859
+[2026-02-20 04:30:36,944] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\backend\api\views\roc.py changed, reloading.
+[2026-02-20 04:30:38,024] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-02-20 04:31:56,862] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 483
+[2026-02-20 04:31:56,877] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6458
+[2026-02-20 04:31:56,887] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-20 04:31:56,907] INFO django.server "GET /api/users/?page=1&is_staff=false HTTP/1.1" 200 624
+[2026-02-20 04:31:56,932] INFO django.server "GET /api/admin-access-logs/ HTTP/1.1" 200 2266
+[2026-02-20 04:31:57,003] INFO django.server "GET /api/models/ HTTP/1.1" 200 55757
+[2026-02-20 04:31:57,005] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 859
+[2026-02-20 04:31:57,021] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 160
+[2026-02-20 04:31:57,065] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6458
+[2026-02-20 04:31:57,079] INFO django.server "GET /api/roc/?t=1771533116831 HTTP/1.1" 200 299482
+[2026-02-20 04:33:17,068] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-20 04:33:17,458] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-20 04:33:17,478] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6458
+[2026-02-20 04:33:17,489] INFO django.server "GET /api/users/?page=1&is_staff=false HTTP/1.1" 200 624
+[2026-02-20 04:33:17,498] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 483
+[2026-02-20 04:33:17,520] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 160
+[2026-02-20 04:33:17,539] INFO django.server "GET /api/admin-access-logs/ HTTP/1.1" 200 2266
+[2026-02-20 04:33:17,565] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6458
+[2026-02-20 04:33:17,566] INFO django.server "GET /api/roc/?t=1771533197425 HTTP/1.1" 200 299482
+[2026-02-20 04:33:17,592] INFO django.server "GET /api/models/ HTTP/1.1" 200 55757
+[2026-02-20 04:33:17,633] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 859
+[2026-02-20 04:33:17,899] INFO django.server "GET /api/roc/?t=1771533197865 HTTP/1.1" 200 299482
+[2026-02-20 04:33:17,925] INFO django.server "GET /api/models/ HTTP/1.1" 200 55757
+[2026-02-20 04:33:20,430] INFO django.server "POST /api/models/switch/ HTTP/1.1" 200 39
+[2026-02-20 04:33:21,989] INFO django.server "POST /api/roc/evaluate/ HTTP/1.1" 200 137
+[2026-02-20 04:33:23,511] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-02-20 04:33:25,001] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-02-20 04:33:26,513] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 160
+[2026-02-20 04:33:26,551] INFO django.server "GET /api/roc/?t=1771533206516 HTTP/1.1" 200 299482
+[2026-02-20 04:33:32,671] INFO django.server "POST /api/roc/evaluate/ HTTP/1.1" 200 137
+[2026-02-20 04:33:34,196] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-02-20 04:33:35,687] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-02-20 04:33:37,197] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 160
+[2026-02-20 04:33:37,234] INFO django.server "GET /api/roc/?t=1771533217200 HTTP/1.1" 200 299482
+[2026-02-20 04:43:23,122] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-20 04:43:23,520] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-20 04:43:23,543] INFO django.server "GET /api/users/?page=1&is_staff=false HTTP/1.1" 200 624
+[2026-02-20 04:43:23,543] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 483
+[2026-02-20 04:43:23,549] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6458
+[2026-02-20 04:43:23,568] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 160
+[2026-02-20 04:43:23,573] INFO django.server "GET /api/admin-access-logs/ HTTP/1.1" 200 2266
+[2026-02-20 04:43:23,586] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6458
+[2026-02-20 04:43:23,613] INFO django.server "GET /api/roc/?t=1771533803484 HTTP/1.1" 200 299482
+[2026-02-20 04:43:23,638] INFO django.server "GET /api/models/ HTTP/1.1" 200 55757
+[2026-02-20 04:43:23,680] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 859
+[2026-02-20 04:43:24,092] INFO django.server "GET /api/roc/?t=1771533804056 HTTP/1.1" 200 299482
+[2026-02-20 04:43:24,116] INFO django.server "GET /api/models/ HTTP/1.1" 200 55757
+[2026-02-20 04:43:26,110] INFO django.server "POST /api/roc/evaluate/ HTTP/1.1" 200 137
+[2026-02-20 04:43:27,632] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-02-20 04:43:29,127] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-02-20 04:43:30,621] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-02-20 04:43:32,122] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-02-20 04:43:33,622] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-02-20 04:43:35,122] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-02-20 04:43:36,623] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-02-20 04:43:38,123] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-02-20 04:43:39,622] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-02-20 04:43:41,122] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-02-20 04:43:42,631] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 741
+[2026-02-20 04:48:16,347] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-02-20 04:49:03,511] INFO api 用户登录: admin
+[2026-02-20 04:49:03,515] INFO django.server "POST /api/login/ HTTP/1.1" 200 99
+[2026-02-20 04:49:03,548] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-20 04:49:03,723] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-20 04:49:03,739] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6458
+[2026-02-20 04:49:03,762] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 483
+[2026-02-20 04:49:03,768] INFO django.server "GET /api/users/?page=1&is_staff=false HTTP/1.1" 200 624
+[2026-02-20 04:49:03,809] INFO django.server "GET /api/admin-access-logs/ HTTP/1.1" 200 2266
+[2026-02-20 04:49:03,822] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 741
+[2026-02-20 04:49:03,842] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6458
+[2026-02-20 04:49:03,888] ERROR django.request Internal Server Error: /api/roc/
+Traceback (most recent call last):
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\views\decorators\csrf.py", line 56, in wrapper_view
+    return view_func(*args, **kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\views\generic\base.py", line 105, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "D:\traepg\gp\voice_access_control\backend\api\views\roc.py", line 84, in get
+    metrics = json.load(f)
+  File "D:\anaconda\envs\voice_access\lib\json\__init__.py", line 293, in load
+    return loads(fp.read(),
+  File "D:\anaconda\envs\voice_access\lib\json\__init__.py", line 346, in loads
+    return _default_decoder.decode(s)
+  File "D:\anaconda\envs\voice_access\lib\json\decoder.py", line 337, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+  File "D:\anaconda\envs\voice_access\lib\json\decoder.py", line 355, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+[2026-02-20 04:49:03,895] ERROR django.server "GET /api/roc/?t=1771534143699 HTTP/1.1" 500 116300
+[2026-02-20 04:49:04,028] INFO django.server "GET /api/models/ HTTP/1.1" 200 55757
+[2026-02-20 04:49:04,124] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 858
+[2026-02-20 04:49:04,988] ERROR django.request Internal Server Error: /api/roc/
+Traceback (most recent call last):
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\views\decorators\csrf.py", line 56, in wrapper_view
+    return view_func(*args, **kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\views\generic\base.py", line 105, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "D:\traepg\gp\voice_access_control\backend\api\views\roc.py", line 84, in get
+    metrics = json.load(f)
+  File "D:\anaconda\envs\voice_access\lib\json\__init__.py", line 293, in load
+    return loads(fp.read(),
+  File "D:\anaconda\envs\voice_access\lib\json\__init__.py", line 346, in loads
+    return _default_decoder.decode(s)
+  File "D:\anaconda\envs\voice_access\lib\json\decoder.py", line 337, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+  File "D:\anaconda\envs\voice_access\lib\json\decoder.py", line 355, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+[2026-02-20 04:49:04,992] ERROR django.server "GET /api/roc/?t=1771534144941 HTTP/1.1" 500 116300
+[2026-02-20 04:49:05,009] INFO django.server "GET /api/models/ HTTP/1.1" 200 55757
+[2026-02-20 04:49:07,184] INFO django.server "POST /api/roc/evaluate/ HTTP/1.1" 200 137
+[2026-02-20 04:49:08,705] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-02-20 04:49:10,196] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-02-20 04:49:11,696] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-02-20 04:49:13,199] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-02-20 04:49:14,696] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-02-20 04:49:16,195] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-02-20 04:49:17,695] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-02-20 04:49:19,196] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-02-20 04:49:20,696] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-02-20 04:49:22,218] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 1176
+[2026-02-20 04:49:22,303] INFO django.server "GET /api/roc/?t=1771534162222 HTTP/1.1" 200 243437
+[2026-02-20 04:51:46,771] INFO django.server "POST /api/models/switch/ HTTP/1.1" 200 35
+[2026-02-20 04:51:47,046] INFO django.server "POST /api/roc/evaluate/ HTTP/1.1" 200 129
+[2026-02-20 04:51:48,568] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 148
+[2026-02-20 04:51:50,059] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 148
+[2026-02-20 04:51:51,559] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 148
+[2026-02-20 04:51:53,059] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 148
+[2026-02-20 04:51:54,557] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 148
+[2026-02-20 04:51:56,060] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 148
+[2026-02-20 04:51:57,558] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 148
+[2026-02-20 04:51:59,058] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 148
+[2026-02-20 04:52:00,559] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 148
+[2026-02-20 04:52:02,068] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 1172
+[2026-02-20 04:52:02,174] INFO django.server "GET /api/roc/?t=1771534322071 HTTP/1.1" 200 299477
+[2026-02-20 04:52:29,975] INFO django.server "POST /api/models/switch/ HTTP/1.1" 200 33
+[2026-02-20 04:52:31,050] INFO django.server "POST /api/roc/evaluate/ HTTP/1.1" 200 125
+[2026-02-20 04:52:32,570] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 146
+[2026-02-20 04:52:34,062] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 146
+[2026-02-20 04:52:35,562] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 146
+[2026-02-20 04:52:37,062] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 146
+[2026-02-20 04:52:38,563] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 146
+[2026-02-20 04:52:40,062] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 146
+[2026-02-20 04:52:41,561] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 146
+[2026-02-20 04:52:43,064] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 146
+[2026-02-20 04:52:44,565] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 146
+[2026-02-20 04:52:46,068] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 1170
+[2026-02-20 04:52:46,171] INFO django.server "GET /api/roc/?t=1771534366073 HTTP/1.1" 200 245838
+[2026-02-20 04:54:47,484] INFO django.server "GET /api/admin-access-logs/ HTTP/1.1" 200 2266
+[2026-02-20 04:54:52,580] INFO django.server "POST /api/maintenance/logs-clean/ HTTP/1.1" 200 83
+[2026-02-20 04:54:53,467] INFO django.server "GET /api/maintenance/models-check/ HTTP/1.1" 200 104
+[2026-02-20 04:54:54,494] INFO django.server "POST /api/maintenance/cache-clean/ HTTP/1.1" 200 49
+[2026-02-20 04:55:20,751] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6458
+[2026-02-20 04:55:21,359] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6458
+[2026-02-20 04:55:28,571] INFO api 声纹验证: xxyhh score=0.1573 => REJECT
+[2026-02-20 04:55:28,571] INFO django.server "POST /api/verify/ HTTP/1.1" 200 127
+[2026-02-20 04:55:35,399] INFO api 声纹验证: xxyhh score=0.9772 => ACCEPT
+[2026-02-20 04:55:35,400] INFO django.server "POST /api/verify/ HTTP/1.1" 200 175
+[2026-02-20 04:55:43,553] INFO api 声纹验证: xxyhh score=0.8819 => ACCEPT
+[2026-02-20 04:55:43,554] INFO django.server "POST /api/verify/ HTTP/1.1" 200 175
+[2026-02-20 04:55:51,818] INFO api 声纹验证: guo score=0.9579 => ACCEPT
+[2026-02-20 04:55:51,819] INFO django.server "POST /api/verify/ HTTP/1.1" 200 171
+[2026-02-20 04:58:44,844] INFO api 用户登录: admin
+[2026-02-20 04:58:44,849] INFO django.server "POST /api/login/ HTTP/1.1" 200 99
+[2026-02-20 04:58:44,871] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-20 04:58:45,139] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6488
+[2026-02-20 04:58:45,152] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 481
+[2026-02-20 04:58:45,156] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-20 04:58:45,176] INFO django.server "GET /api/users/?page=1&is_staff=false HTTP/1.1" 200 624
+[2026-02-20 04:58:45,190] INFO django.server "GET /api/admin-access-logs/ HTTP/1.1" 200 2266
+[2026-02-20 04:58:45,225] INFO django.server "GET /api/roc/?t=1771534725039 HTTP/1.1" 200 245838
+[2026-02-20 04:58:45,236] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 1170
+[2026-02-20 04:58:45,252] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6488
+[2026-02-20 04:58:45,264] INFO django.server "GET /api/models/ HTTP/1.1" 200 55751
+[2026-02-20 04:58:45,301] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 858
+[2026-02-20 04:58:46,515] INFO django.server "GET /api/roc/?t=1771534726485 HTTP/1.1" 200 245838
+[2026-02-20 04:58:46,541] INFO django.server "GET /api/models/ HTTP/1.1" 200 55751
+[2026-02-20 04:58:53,060] INFO django.server "POST /api/models/switch/ HTTP/1.1" 200 39
+[2026-02-20 04:58:53,731] INFO django.server "POST /api/roc/evaluate/ HTTP/1.1" 200 137
+[2026-02-20 04:58:55,252] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-02-20 04:58:56,742] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-02-20 04:58:58,265] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-02-20 04:59:00,263] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-02-20 04:59:01,265] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-02-20 04:59:03,265] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-02-20 04:59:04,264] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-02-20 04:59:06,268] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-02-20 04:59:07,267] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-02-20 04:59:09,265] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-02-20 04:59:10,277] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 1176
+[2026-02-20 04:59:10,348] INFO django.server "GET /api/roc/?t=1771534750280 HTTP/1.1" 200 243437
+[2026-02-20 04:59:26,039] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6488
+[2026-02-20 04:59:27,135] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6488
+[2026-02-20 04:59:33,597] INFO api 声纹验证: xxyhh score=-0.0278 => REJECT
+[2026-02-20 04:59:33,599] INFO django.server "POST /api/verify/ HTTP/1.1" 200 129
+[2026-02-20 04:59:40,095] INFO api 声纹验证: xxyhh score=-0.0223 => REJECT
+[2026-02-20 04:59:40,097] INFO django.server "POST /api/verify/ HTTP/1.1" 200 129
+[2026-02-20 04:59:49,696] INFO api 声纹验证: xxyhh score=-0.0670 => REJECT
+[2026-02-20 04:59:49,697] INFO django.server "POST /api/verify/ HTTP/1.1" 200 128

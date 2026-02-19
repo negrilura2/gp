@@ -9,15 +9,13 @@ from rest_framework.response import Response
 from rest_framework import permissions
 
 from ..models import VoiceTemplate, EnrollLog, VerifyLog
-from ..model_loader import get_model, get_feature_type, get_feat_dim, get_n_mels, get_device, get_model_path
+from ..model_loader import get_service # Use the new service accessor
 from ..serializers import get_effective_threshold
 from ..view_utils import (
     get_client_ip,
     validate_audio_file,
     get_default_feature_dir_for_eval,
 )
-from voice_engine.enroll import enroll as model_enroll
-from voice_engine.verify_demo import verify as model_verify
 
 logger = logging.getLogger("api")
 
@@ -54,15 +52,12 @@ class EnrollView(APIView):
             saved_paths.append(path)
 
         try:
-            model_path = get_model_path()
-            model, device, feature_type, n_mels = get_model()
-            model_enroll(
-                user_id,
-                saved_paths,
-                model_path=model_path,
-                feature_type=feature_type,
-                n_mels=n_mels,
-            )
+            # Use VoiceService for enrollment
+            service = get_service()
+            result = service.enroll(user_id, saved_paths)
+            
+            if result.get("status") == "error":
+                raise RuntimeError(result.get("error"))
 
             VoiceTemplate.objects.update_or_create(
                 user=request.user,
@@ -138,22 +133,22 @@ class VerifyView(APIView):
                 out.write(chunk)
 
         try:
-            model, device, feature_type, n_mels = get_model()
-            # 临时修正：直接调用模型进行推理，而不是使用封装好的 model_verify，因为 model_verify 内部可能没有传递所有参数
-            # 或者我们需要检查 model_verify 的实现。
-            # 这里我们假设 model_verify 是正确的，但需要确保传递所有参数。
+            # Use VoiceService for verification
+            service = get_service()
+            verify_result = service.verify(path, threshold=thr)
             
-            # 检查 voice_engine.verify_demo.verify 的签名
-            # def verify(wav_path, threshold=0.25, model_path=None, model=None, device=None, feature_type=None, n_mels=80):
-            
-            best_spk, best_score, result = model_verify(
-                path,
-                threshold=thr,
-                model=model,
-                device=device,
-                feature_type=feature_type,
-                n_mels=n_mels,
-            )
+            if verify_result.get("status") == "error":
+                # Handle specific error cases if needed, e.g. FileNotFound
+                # For now we propagate the error message
+                error_msg = verify_result.get("error")
+                if "FileNotFound" in error_msg or "模板不存在" in error_msg:
+                     raise FileNotFoundError(error_msg)
+                raise RuntimeError(error_msg)
+
+            best_spk = verify_result["predicted_user"]
+            best_score = verify_result["score"]
+            result = verify_result["result"]
+
         except FileNotFoundError as e:
             logger.warning(f"验证失败 — 模板不存在: {e}")
             VerifyLog.objects.create(
@@ -183,9 +178,13 @@ class VerifyView(APIView):
             )
             return Response({"error": str(e)}, status=500)
 
-        door_state = "OPEN" if result == "ACCEPT" else "CLOSED"
         matched_user = User.objects.filter(username=str(best_spk)).first()
         user_info = None
+        # 如果 result 是布尔值 True/False，转换为 "ACCEPT"/"REJECT"
+        if isinstance(result, bool):
+            result = "ACCEPT" if result else "REJECT"
+        door_state = "OPEN" if result == "ACCEPT" else "CLOSED"
+
         if matched_user and result == "ACCEPT":
             user_info = {
                 "id": matched_user.id,
