@@ -2,7 +2,7 @@ from django.urls import path
 from .views.auth import RegisterView, LoginView, CurrentUserView
 from .views.voice import EnrollView, VerifyView, VoiceprintStatusView
 from .views.logs import VerifyLogListView, VerifyLogBulkDeleteView, MyVerifyLogListView, EnrollLogListView
-from .views.users import UserListView, UserDetailView, UserResetPasswordView, UserVoiceprintResetView
+from .views.users import UserListView, UserDetailView, UserResetPasswordView, UserVoiceprintResetView, MyVoiceprintView
 from .views.admin import (
     AdminSecretStatusView,
     AdminSecretSetView,

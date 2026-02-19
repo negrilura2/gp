@@ -14,8 +14,10 @@ FEATURES_DIR = os.path.join(DATA_DIR, "features")
 VOICEPRINTS_DIR = os.path.join(DATA_DIR, "voiceprints")
 
 # 默认模型路径
-DEFAULT_MODEL_PATH = os.path.join(MODELS_DIR, "ecapa_best.pth")
+DEFAULT_MODEL_PATH = os.path.join(MODELS_DIR, "ecapa_mfcc_delta_best.pth")
 DEFAULT_TEMPLATE_PATH = os.path.join(VOICEPRINTS_DIR, "user_templates.npy")
+MODEL_PATH = DEFAULT_MODEL_PATH
+TEMPLATE_PATH = DEFAULT_TEMPLATE_PATH
 
 # -----------------------------------------------------------------------------
 # 2. 音频与特征参数

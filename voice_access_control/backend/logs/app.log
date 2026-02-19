@@ -5894,3 +5894,19 @@ NameError: name 'os' is not defined
 [2026-02-19 20:39:31,418] INFO django.server "POST /api/verify/ HTTP/1.1" 200 171
 [2026-02-19 20:39:36,618] INFO api 声纹验证: guo score=0.9739 => ACCEPT
 [2026-02-19 20:39:36,619] INFO django.server "POST /api/verify/ HTTP/1.1" 200 171
+[2026-02-20 01:18:57,647] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-02-20 01:22:49,260] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-02-20 01:25:29,331] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\backend\api\views\voice.py changed, reloading.
+[2026-02-20 01:25:30,626] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-02-20 01:26:40,567] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-02-20 01:28:09,229] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\voice_engine\config.py changed, reloading.
+[2026-02-20 01:28:10,430] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-02-20 01:29:57,824] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\voice_engine\config.py changed, reloading.
+[2026-02-20 01:29:59,543] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-02-20 01:30:06,148] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\voice_engine\config.py changed, reloading.
+[2026-02-20 01:30:07,543] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-02-20 01:30:47,629] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-02-20 01:33:00,215] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\backend\api\urls.py changed, reloading.
+[2026-02-20 01:33:01,432] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-02-20 01:33:08,042] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\backend\api\views\__init__.py changed, reloading.
+[2026-02-20 01:33:09,183] INFO django.utils.autoreload Watching for file changes with StatReloader

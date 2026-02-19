@@ -9,8 +9,8 @@ from rest_framework.response import Response
 from rest_framework import permissions
 
 from ..models import VoiceTemplate, EnrollLog, VerifyLog
-from ..model_loader import get_model, get_feature_type, get_feat_dim, get_n_mels, get_device
-from ..serializers import EnrollSerializer, VerifySerializer, get_effective_threshold
+from ..model_loader import get_model, get_feature_type, get_feat_dim, get_n_mels, get_device, get_model_path
+from ..serializers import get_effective_threshold
 from ..view_utils import (
     get_client_ip,
     validate_audio_file,
@@ -139,6 +139,13 @@ class VerifyView(APIView):
 
         try:
             model, device, feature_type, n_mels = get_model()
+            # 临时修正：直接调用模型进行推理，而不是使用封装好的 model_verify，因为 model_verify 内部可能没有传递所有参数
+            # 或者我们需要检查 model_verify 的实现。
+            # 这里我们假设 model_verify 是正确的，但需要确保传递所有参数。
+            
+            # 检查 voice_engine.verify_demo.verify 的签名
+            # def verify(wav_path, threshold=0.25, model_path=None, model=None, device=None, feature_type=None, n_mels=80):
+            
             best_spk, best_score, result = model_verify(
                 path,
                 threshold=thr,

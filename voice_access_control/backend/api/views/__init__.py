@@ -1,7 +1,7 @@
 from .auth import RegisterView, LoginView, CurrentUserView
 from .voice import EnrollView, VerifyView, VoiceprintStatusView
 from .logs import VerifyLogListView, VerifyLogBulkDeleteView, MyVerifyLogListView, EnrollLogListView
-from .users import UserListView, UserDetailView, UserResetPasswordView, UserVoiceprintResetView
+from .users import UserListView, UserDetailView, UserResetPasswordView, UserVoiceprintResetView, MyVoiceprintView
 from .admin import (
     AdminSecretStatusView,
     AdminSecretSetView,

@@ -99,3 +99,33 @@ def set_model_path(model_path):
     _feat_dim = None
     _n_mels = None
     _model_path = model_path
+    print(f"[ModelLoader] 更新模型路径: {model_path}，已重置单例。")
+
+
+def get_feature_type():
+    global _feature_type
+    if _feature_type is None:
+        get_model()  # 触发加载
+    return _feature_type
+
+
+def get_feat_dim():
+    global _feat_dim
+    if _feat_dim is None:
+        get_model()
+    return _feat_dim
+
+
+def get_n_mels():
+    global _n_mels
+    if _n_mels is None:
+        get_model()
+    return _n_mels
+
+
+def get_device():
+    global _device
+    if _device is None:
+        get_model()
+    return _device
+    _model_path = model_path
