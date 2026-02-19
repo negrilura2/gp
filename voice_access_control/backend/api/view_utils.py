@@ -57,6 +57,44 @@ def count_files(root, exts=None):
     return total
 
 
+def get_default_feature_dir_for_eval():
+    root = os.fspath(settings.FEATURES_DIR)
+    if not os.path.isdir(root):
+        return root
+    candidates = []
+    for name in sorted(os.listdir(root)):
+        path = os.path.join(root, name)
+        if not os.path.isdir(path):
+            continue
+        if count_files(path, {".npy"}) > 0:
+            candidates.append(path)
+    if not candidates:
+        return root
+    preferred = ("logmel", "mfcc_delta", "mfcc")
+    for pref in preferred:
+        for path in candidates:
+            if os.path.basename(path) == pref:
+                return path
+    return candidates[0]
+
+
+def get_feature_dir_for_model(model_path):
+    root = os.fspath(settings.FEATURES_DIR)
+    name = os.path.basename(model_path).lower()
+    type_name = None
+    if "logmel" in name:
+        type_name = "logmel"
+    elif "mfcc_delta" in name:
+        type_name = "mfcc_delta"
+    elif "mfcc" in name:
+        type_name = "mfcc"
+    if type_name:
+        cand = os.path.join(root, type_name)
+        if os.path.isdir(cand) and count_files(cand, {".npy"}) > 0:
+            return cand
+    return get_default_feature_dir_for_eval()
+
+
 def get_latest_file_path(root, exts=None):
     if not os.path.exists(root):
         return None
@@ -114,7 +152,7 @@ class IsAdminUser(permissions.BasePermission):
         return request.user and request.user.is_staff
 
 
-EVAL_STATUS_FILE = os.path.join(os.fspath(settings.REPORTS_DIR), "roc_status.json")
+EVAL_STATUS_FILE = os.path.join(os.fspath(settings.REPORTS_DIR), "archive", "backend_responses", "roc_status.json")
 EVAL_STATUS_LOCK = threading.RLock()
 EVAL_THREAD = None
 
@@ -135,7 +173,7 @@ def _read_eval_status():
 
 def _write_eval_status(payload):
     with EVAL_STATUS_LOCK:
-        os.makedirs(os.fspath(settings.REPORTS_DIR), exist_ok=True)
+        os.makedirs(os.path.dirname(EVAL_STATUS_FILE), exist_ok=True)
         with open(EVAL_STATUS_FILE, "w", encoding="utf-8") as f:
             json.dump(payload, f, ensure_ascii=False)
 
@@ -152,13 +190,12 @@ def get_eval_thread():
     return EVAL_THREAD
 
 
-def _start_eval_thread(model_path):
+def _start_eval_thread(model_path, feature_dir):
     global EVAL_THREAD
 
     def _run():
         model_name = os.path.basename(model_path)
         _set_eval_status("running", model=model_name, started_at=timezone.now().isoformat())
-        feature_dir = os.fspath(settings.FEATURES_DIR)
         cmd = [
             sys.executable,
             "-m",

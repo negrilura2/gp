@@ -23,8 +23,8 @@ if ROOT not in sys.path:
 
 from scripts import FEATURES_DIR, MODELS_DIR, REPORTS_DIR
 
-from model.ecapa_tdnn import LightECAPA
-from model.dataset import SpeakerDataset, pad_collate
+from voice_engine.ecapa_tdnn import LightECAPA
+from voice_engine.dataset import SpeakerDataset, pad_collate
 from torch.utils.data import DataLoader
 
 def extract_all_embeddings(model, device, feature_dir, batch_size=32, num_workers=2):
@@ -187,11 +187,31 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     os.makedirs(args.out_dir, exist_ok=True)
+    backend_dir = os.path.join(args.out_dir, "archive", "backend_responses")
+    roc_dir = os.path.join(args.out_dir, "archive", "plots", "roc")
+    os.makedirs(backend_dir, exist_ok=True)
+    os.makedirs(roc_dir, exist_ok=True)
+    
     device = "cuda" if torch.cuda.is_available() else "cpu"
 
+    ds_tmp = SpeakerDataset(args.feature_dir)
+    if len(ds_tmp) == 0:
+        raise ValueError("feature_dir 内没有可用特征文件")
+    sample_feat, _ = ds_tmp[0]
+    feat_dim_data = int(sample_feat.shape[0])
+
     print("加载模型...")
-    model = LightECAPA(feat_dim=39, emb_dim=192, n_speakers=None).to(device)
     state = torch.load(args.model, map_location=device)
+    ckpt_feat_dim = None
+    w = state.get("layer1.conv.weight")
+    if w is not None:
+        ckpt_feat_dim = int(w.shape[1])
+    if ckpt_feat_dim is not None and ckpt_feat_dim != feat_dim_data:
+        raise RuntimeError(
+            f"模型参数的特征维度为 {ckpt_feat_dim}，但当前特征目录 {args.feature_dir} 的维度为 {feat_dim_data}，请检查是否使用了对应的特征目录或模型文件"
+        )
+    feat_dim = ckpt_feat_dim or feat_dim_data
+    model = LightECAPA(feat_dim=feat_dim, emb_dim=192, n_speakers=None).to(device)
     model.load_state_dict(state, strict=False)
 
     print("正在提取所有utterance embedding（可能较慢）...")
@@ -204,22 +224,22 @@ if __name__ == "__main__":
     unique_labels = np.unique(y)
     if len(unique_labels) < 2 or len(scores) == 0:
         print("评估数据不足，无法计算 ROC/EER，已输出空指标")
-        out_json = os.path.join(args.out_dir, "eer_threshold.json")
+        out_json = os.path.join(backend_dir, "eer_threshold.json")
         with open(out_json, "w") as f:
             json.dump({"auc": None, "eer": None, "threshold": None}, f, indent=2)
-        roc_points_json = os.path.join(args.out_dir, "roc_points.json")
+        roc_points_json = os.path.join(backend_dir, "roc_points.json")
         with open(roc_points_json, "w") as f:
             json.dump({"fpr": [], "tpr": [], "thresholds": []}, f, indent=2)
-        det_points_json = os.path.join(args.out_dir, "det_points.json")
+        det_points_json = os.path.join(backend_dir, "det_points.json")
         with open(det_points_json, "w") as f:
             json.dump({"fpr": [], "fnr": []}, f, indent=2)
-        mindcf_json = os.path.join(args.out_dir, "mindcf.json")
+        mindcf_json = os.path.join(backend_dir, "mindcf.json")
         with open(mindcf_json, "w") as f:
             json.dump({"threshold": None, "min_dcf": None, "dcf": [], "thresholds": []}, f, indent=2)
-        score_dist_json = os.path.join(args.out_dir, "score_dist.json")
+        score_dist_json = os.path.join(backend_dir, "score_dist.json")
         with open(score_dist_json, "w") as f:
             json.dump({"bins": [], "same": [], "diff": []}, f, indent=2)
-        calib_json = os.path.join(args.out_dir, "calibration.json")
+        calib_json = os.path.join(backend_dir, "calibration.json")
         with open(calib_json, "w") as f:
             json.dump({"bins": [], "accuracy": [], "confidence": [], "count": [], "ece": None}, f, indent=2)
         sys.exit(0)
@@ -231,22 +251,22 @@ if __name__ == "__main__":
         rec_thr, rec_youden = recommend_threshold(fpr, tpr, thresholds)
     except ValueError as exc:
         print(f"ROC 计算失败：{exc}")
-        out_json = os.path.join(args.out_dir, "eer_threshold.json")
+        out_json = os.path.join(backend_dir, "eer_threshold.json")
         with open(out_json, "w") as f:
             json.dump({"auc": None, "eer": None, "threshold": None}, f, indent=2)
-        roc_points_json = os.path.join(args.out_dir, "roc_points.json")
+        roc_points_json = os.path.join(backend_dir, "roc_points.json")
         with open(roc_points_json, "w") as f:
             json.dump({"fpr": [], "tpr": [], "thresholds": []}, f, indent=2)
-        det_points_json = os.path.join(args.out_dir, "det_points.json")
+        det_points_json = os.path.join(backend_dir, "det_points.json")
         with open(det_points_json, "w") as f:
             json.dump({"fpr": [], "fnr": []}, f, indent=2)
-        mindcf_json = os.path.join(args.out_dir, "mindcf.json")
+        mindcf_json = os.path.join(backend_dir, "mindcf.json")
         with open(mindcf_json, "w") as f:
             json.dump({"threshold": None, "min_dcf": None, "dcf": [], "thresholds": []}, f, indent=2)
-        score_dist_json = os.path.join(args.out_dir, "score_dist.json")
+        score_dist_json = os.path.join(backend_dir, "score_dist.json")
         with open(score_dist_json, "w") as f:
             json.dump({"bins": [], "same": [], "diff": []}, f, indent=2)
-        calib_json = os.path.join(args.out_dir, "calibration.json")
+        calib_json = os.path.join(backend_dir, "calibration.json")
         with open(calib_json, "w") as f:
             json.dump({"bins": [], "accuracy": [], "confidence": [], "count": [], "ece": None}, f, indent=2)
         sys.exit(0)
@@ -264,12 +284,12 @@ if __name__ == "__main__":
     plt.title("ROC")
     plt.legend()
     plt.grid(True)
-    out_png = os.path.join(args.out_dir, "roc.png")
+    out_png = os.path.join(roc_dir, "roc.png")
     plt.savefig(out_png)
     plt.close()
     print("Saved ROC to", out_png)
 
-    out_json = os.path.join(args.out_dir, "eer_threshold.json")
+    out_json = os.path.join(backend_dir, "eer_threshold.json")
     with open(out_json, "w") as f:
         json.dump(
             {
@@ -290,7 +310,7 @@ if __name__ == "__main__":
         )
     print("Saved metrics to", out_json)
 
-    roc_points_json = os.path.join(args.out_dir, "roc_points.json")
+    roc_points_json = os.path.join(backend_dir, "roc_points.json")
     with open(roc_points_json, "w") as f:
         json.dump(
             {
@@ -303,7 +323,7 @@ if __name__ == "__main__":
         )
     print("Saved ROC points to", roc_points_json)
 
-    det_points_json = os.path.join(args.out_dir, "det_points.json")
+    det_points_json = os.path.join(backend_dir, "det_points.json")
     with open(det_points_json, "w") as f:
         json.dump(
             {
@@ -315,17 +335,17 @@ if __name__ == "__main__":
         )
     print("Saved DET points to", det_points_json)
 
-    mindcf_json = os.path.join(args.out_dir, "mindcf.json")
+    mindcf_json = os.path.join(backend_dir, "mindcf.json")
     with open(mindcf_json, "w") as f:
         json.dump(mindcf, f, indent=2)
     print("Saved minDCF to", mindcf_json)
 
-    score_dist_json = os.path.join(args.out_dir, "score_dist.json")
+    score_dist_json = os.path.join(backend_dir, "score_dist.json")
     with open(score_dist_json, "w") as f:
         json.dump(compute_score_hist(same_scores, diff_scores), f, indent=2)
     print("Saved score distribution to", score_dist_json)
 
-    calib_json = os.path.join(args.out_dir, "calibration.json")
+    calib_json = os.path.join(backend_dir, "calibration.json")
     with open(calib_json, "w") as f:
         json.dump(compute_calibration(scores, y), f, indent=2)
     print("Saved calibration to", calib_json)

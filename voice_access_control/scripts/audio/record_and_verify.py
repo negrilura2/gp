@@ -23,8 +23,8 @@ if ROOT not in sys.path:
     sys.path.insert(0, ROOT)
 
 from scripts import RECORDINGS_DIR, MODELS_DIR
-from model.enroll import enroll as model_enroll
-from model.verify_demo import verify as model_verify
+from voice_engine.enroll import enroll as model_enroll
+from voice_engine.verify_demo import verify as model_verify
 
 
 SAMPLE_RATE = 16000

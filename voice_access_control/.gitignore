@@ -36,3 +36,9 @@ Thumbs.db
 # Node dependencies
 node_modules/
 frontend/node_modules/
+
+# Models
+*.pth
+*.pt
+*.onnx
+*.pth

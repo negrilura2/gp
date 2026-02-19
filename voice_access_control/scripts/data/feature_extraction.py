@@ -13,74 +13,37 @@ os.environ.setdefault("NUMEXPR_NUM_THREADS", "1")
 
 import numpy as np
 import soundfile as sf
-from python_speech_features import mfcc, delta, logfbank
+# 移除冗余的 import
+# from python_speech_features import mfcc, delta, logfbank
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 if ROOT not in sys.path:
     sys.path.insert(0, ROOT)
 
 from scripts import PROCESSED_DIR, FEATURES_DIR
-
-SAMPLE_RATE = 16000
-N_MFCC = 13
-
-def extract_mfcc(wav_path, with_delta=True):
-    y, sr = sf.read(wav_path)
-
-    # 转单声道
-    if len(y.shape) > 1:
-        y = y.mean(axis=1)
-
-    # 保证采样率 16k
-    if sr != SAMPLE_RATE:
-        raise ValueError(f"采样率不是16k: {wav_path}")
-
-    # MFCC
-    mfcc_feat = mfcc(
-        y,
-        samplerate=SAMPLE_RATE,
-        numcep=N_MFCC,
-        winlen=0.025,
-        winstep=0.01,
-        nfft=512
-    )
-
-    if not with_delta:
-        return mfcc_feat
-
-    d1 = delta(mfcc_feat, 2)
-    d2 = delta(d1, 2)
-    return np.hstack([mfcc_feat, d1, d2])
-
-
-def extract_logmel(wav_path, n_mels=40):
-    y, sr = sf.read(wav_path)
-    if len(y.shape) > 1:
-        y = y.mean(axis=1)
-    if sr != SAMPLE_RATE:
-        raise ValueError(f"采样率不是16k: {wav_path}")
-    feat = logfbank(
-        y,
-        samplerate=SAMPLE_RATE,
-        nfilt=n_mels,
-        winlen=0.025,
-        winstep=0.01,
-        nfft=512,
-    )
-    return feat
-
+from voice_engine.config import (
+    FEATURE_TYPE_MFCC,
+    FEATURE_TYPE_MFCC_DELTA,
+    FEATURE_TYPE_LOGMEL,
+    DEFAULT_N_MELS
+)
+from voice_engine.features import extract_feature_numpy
 
 def process_one(args):
     wav_path, out_dir, feature_type, n_mels = args
     out_path = os.path.join(out_dir, f"{Path(wav_path).stem}.npy")
     if os.path.exists(out_path):
         return os.path.basename(wav_path), None, True
-    if feature_type == "mfcc":
-        feat = extract_mfcc(wav_path, with_delta=False)
-    elif feature_type == "logmel":
-        feat = extract_logmel(wav_path, n_mels=n_mels)
-    else:
-        feat = extract_mfcc(wav_path, with_delta=True)
+    
+    # 使用统一的提取逻辑，不再重复造轮子
+    try:
+        feat = extract_feature_numpy(wav_path, feature_type=feature_type, n_mels=n_mels)
+        # 注意: extract_feature_numpy 返回 (T, dim)
+        # 如果需要保持旧版格式一致性，这里应该就是 (T, dim)
+    except Exception as e:
+        print(f"Extraction failed for {wav_path}: {e}")
+        return os.path.basename(wav_path), None, False
+
     np.save(out_path, feat)
     return os.path.basename(wav_path), feat.shape, False
 
@@ -89,8 +52,8 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--in_root", default=str(PROCESSED_DIR))
     parser.add_argument("--out_root", default=str(FEATURES_DIR))
-    parser.add_argument("--feature_type", choices=["mfcc", "mfcc_delta", "logmel"], default="mfcc_delta")
-    parser.add_argument("--n_mels", type=int, default=40)
+    parser.add_argument("--feature_type", choices=[FEATURE_TYPE_MFCC, FEATURE_TYPE_MFCC_DELTA, FEATURE_TYPE_LOGMEL], default=FEATURE_TYPE_MFCC_DELTA)
+    parser.add_argument("--n_mels", type=int, default=DEFAULT_N_MELS)
     parser.add_argument("--workers", type=int, default=0)
     parser.add_argument("--feature_subdir", default="")
     args = parser.parse_args()
