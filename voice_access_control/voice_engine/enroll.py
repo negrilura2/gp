@@ -8,22 +8,13 @@ average them and save/update data/voiceprints/user_templates.npy
 import os
 import numpy as np
 import torch
-import soundfile as sf
-import librosa
-import scipy.signal
-import torchaudio
 
 from .ecapa_tdnn import LightECAPA
 from .config import (
     MODEL_PATH,
     TEMPLATE_PATH,
-    SAMPLE_RATE,
-    N_MFCC,
     DEFAULT_N_MELS,
-    FEATURE_TYPE_MFCC,
     FEATURE_TYPE_MFCC_DELTA,
-    FEATURE_TYPE_LOGMEL,
-    VALID_FEATURE_TYPES,
     DEFAULT_DEVICE
 )
 from .features import (

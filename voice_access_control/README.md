@@ -86,7 +86,7 @@ voice_access_control/
 * 数据处理脚本：`scripts.data.preprocess` 已实现去静音、重采样、预加重、保存到 `data/processed`。
 * 特征提取：`scripts.data.feature_extraction` / `extract_mfcc.py` 将每条 wav 提取 MFCC(13)+Δ+Δ² → 39d 并保存 `.npy` 到 `data/features`。
 * 轻量 ECAPA-TDNN 实现（`model/ecapa_tdnn.py`）、训练脚本（`model/train.py`）可运行并保存模型（你曾做过 `epoch3` 的训练）。
-* 模板生成（infer）及演示验证脚本（`model/infer.py`, `model/verify_demo.py`, `scripts.audio.record_and_verify`）已实现并能完成本地 enroll/verify 流程。
+* 模板生成（infer）及演示验证脚本（`model/infer.py`, `voice_engine/verify.py`, `scripts.audio.record_and_verify`）已实现并能完成本地 enroll/verify 流程。
 * 阈值评估：`scripts.eval.eval_threshold` 生成 ROC 图与 `reports/eer_threshold.json`（已得到 AUC, EER, suggested threshold）。
 * Django 后端骨架与 API（enroll/verify）已搭建并可运行（`backend/`，已处理包导入问题）。
 * 训练 / 验证一次性演示已完成（终端输出、ROC 图、模板生成）。

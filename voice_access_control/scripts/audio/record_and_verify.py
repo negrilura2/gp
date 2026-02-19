@@ -24,7 +24,7 @@ if ROOT not in sys.path:
 
 from scripts import RECORDINGS_DIR, MODELS_DIR
 from voice_engine.enroll import enroll as model_enroll
-from voice_engine.verify_demo import verify as model_verify
+from voice_engine.verify import verify as model_verify
 
 
 SAMPLE_RATE = 16000

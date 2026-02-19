@@ -8,7 +8,6 @@ import numpy as np
 import soundfile as sf
 import scipy.signal
 import torch
-import librosa
 from python_speech_features import mfcc, delta, logfbank
 
 from .config import (

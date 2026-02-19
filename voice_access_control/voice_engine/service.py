@@ -15,8 +15,7 @@ from .config import (
     DEFAULT_DEVICE
 )
 from .enroll import enroll as _engine_enroll, load_model
-from .verify_demo import verify as _engine_verify
-from .features import infer_feature_type_from_feat_dim
+from .verify import verify as _engine_verify
 
 logger = logging.getLogger("voice_engine")
 

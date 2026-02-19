@@ -45,6 +45,7 @@
 
 3.  **重构调用方**
     *   修改 `enroll.py`, `verify_demo.py`, `noise_robustness.py`, `train.py` 使用新的 `features.py`。
+    *   **Refactoring**: `verify_demo.py` -> `verify.py` (cleaner name).
 
 ### 阶段二：模型封装与元数据 (Metadata)
 目标：让模型“自描述”，不再靠猜。

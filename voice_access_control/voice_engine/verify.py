@@ -11,15 +11,13 @@ from .infer import cosine_score
 from .enroll import load_model
 from .features import (
     extract_feature_tensor,
-    infer_feature_type_from_feat_dim,
-    get_feature_dim
+    infer_feature_type_from_feat_dim
 )
 from .config import (
     MODEL_PATH,
     DEFAULT_TEMPLATE_PATH,
     DEFAULT_THRESHOLD,
-    DEFAULT_N_MELS,
-    FEATURE_TYPE_MFCC_DELTA
+    DEFAULT_N_MELS
 )
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
@@ -101,7 +99,7 @@ def verify(wav_path, model_path=MODEL_PATH, threshold=DEFAULT_THRESHOLD,
 if __name__ == "__main__":
     import sys
     if len(sys.argv) < 2:
-        print("用法: python -m voice_engine.verify_demo <wav_path> [--threshold 0.75]")
+        print("用法: python -m voice_engine.verify <wav_path> [--threshold 0.75]")
         sys.exit(1)
     wav = sys.argv[1]
     thr = float(sys.argv[3]) if len(sys.argv) > 3 and sys.argv[2] == "--threshold" else 0.75
