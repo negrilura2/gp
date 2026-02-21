@@ -152,7 +152,8 @@ class IsAdminUser(permissions.BasePermission):
         return request.user and request.user.is_staff
 
 
-EVAL_STATUS_FILE = os.path.join(os.fspath(settings.REPORTS_DIR), "archive", "backend_responses", "roc_status.json")
+EVAL_STATUS_FILE = os.path.join(os.fspath(settings.REPORTS_DIR), "backend_responses", "roc_status.json")
+LEGACY_EVAL_STATUS_FILE = os.path.join(os.fspath(settings.REPORTS_DIR), "archive", "backend_responses", "roc_status.json")
 EVAL_STATUS_LOCK = threading.RLock()
 EVAL_THREAD = None
 
@@ -160,6 +161,14 @@ EVAL_THREAD = None
 def _read_eval_status():
     with EVAL_STATUS_LOCK:
         if not os.path.exists(EVAL_STATUS_FILE):
+            if os.path.exists(LEGACY_EVAL_STATUS_FILE):
+                try:
+                    with open(LEGACY_EVAL_STATUS_FILE, "r", encoding="utf-8") as f:
+                        data = json.load(f)
+                    if isinstance(data, dict):
+                        return data
+                except Exception:
+                    pass
             return {"status": "idle"}
         try:
             with open(EVAL_STATUS_FILE, "r", encoding="utf-8") as f:

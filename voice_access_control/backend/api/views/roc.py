@@ -69,7 +69,11 @@ class RocView(APIView):
 
     def get(self, request):
         reports_dir = os.fspath(settings.REPORTS_DIR)
-        backend_dir = os.path.join(reports_dir, "archive", "backend_responses")
+        backend_dir = os.path.join(reports_dir, "backend_responses")
+        if not os.path.isdir(backend_dir):
+            legacy_dir = os.path.join(reports_dir, "archive", "backend_responses")
+            if os.path.isdir(legacy_dir):
+                backend_dir = legacy_dir
         eer_path = os.path.join(backend_dir, "eer_threshold.json")
         roc_points_path = os.path.join(backend_dir, "roc_points.json")
         det_points_path = os.path.join(backend_dir, "det_points.json")

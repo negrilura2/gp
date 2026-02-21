@@ -97,6 +97,12 @@ def main():
                 args.device = "cpu"
 
     os.makedirs(args.out_dir, exist_ok=True)
+    if os.path.isdir(args.feature_dir):
+        feature_type_names = {"mfcc", "mfcc_delta", "logmel"}
+        base_name = os.path.basename(os.path.normpath(args.feature_dir))
+        candidate = os.path.join(args.feature_dir, args.feature_type)
+        if base_name not in feature_type_names and os.path.isdir(candidate):
+            args.feature_dir = candidate
     ds = SpeakerDataset(args.feature_dir)
     if len(ds) == 0:
         raise ValueError("feature_dir 内没有可用特征文件")
@@ -126,7 +132,7 @@ def main():
     
     print("DEBUG: Starting build_templates...")
     try:
-        templates, spk2idx = build_templates(
+        templates_result = build_templates(
             model,
             args.feature_dir,
             args.device,
@@ -135,11 +141,18 @@ def main():
             max_utts_per_spk=args.max_utts_per_spk,
             seed=args.seed,
         )
+        if isinstance(templates_result, tuple):
+            if len(templates_result) >= 2:
+                templates, spk2idx = templates_result[0], templates_result[1]
+            else:
+                templates, spk2idx = templates_result[0], ds.spk2idx
+        else:
+            templates, spk2idx = templates_result, ds.spk2idx
     except RuntimeError as e:
         if "out of memory" in str(e):
-             print("ERROR: GPU OOM during build_templates. Reducing batch size and retrying...")
-             torch.cuda.empty_cache()
-             templates, spk2idx = build_templates(
+            print("ERROR: GPU OOM during build_templates. Reducing batch size and retrying...")
+            torch.cuda.empty_cache()
+            templates_result = build_templates(
                 model,
                 args.feature_dir,
                 args.device,
@@ -148,6 +161,13 @@ def main():
                 max_utts_per_spk=args.max_utts_per_spk,
                 seed=args.seed,
             )
+            if isinstance(templates_result, tuple):
+                if len(templates_result) >= 2:
+                    templates, spk2idx = templates_result[0], templates_result[1]
+                else:
+                    templates, spk2idx = templates_result[0], ds.spk2idx
+            else:
+                templates, spk2idx = templates_result, ds.spk2idx
         else:
             raise
 
@@ -235,13 +255,13 @@ def main():
 
     tag = args.feature_type
     
-    # Update paths to match new directory structure
-    json_dir = os.path.join(args.out_dir, "archive", "noise_tests")
-    plot_dir = os.path.join(args.out_dir, "archive", "plots", "noise")
+    json_dir = os.path.join(args.out_dir, "noise_tests")
+    plot_dir = os.path.join(args.out_dir, "plots", "noise")
     os.makedirs(json_dir, exist_ok=True)
     os.makedirs(plot_dir, exist_ok=True)
 
-    out_json = os.path.join(json_dir, f"noise_robustness_{tag}_{noise_tag}.json")
+    model_tag = os.path.splitext(os.path.basename(args.model_path))[0]
+    out_json = os.path.join(json_dir, f"noise_robustness_{tag}_{noise_tag}_{model_tag}.json")
     with open(out_json, "w", encoding="utf-8") as f:
         json.dump({"levels": levels, "accuracy": accs}, f, ensure_ascii=False, indent=2)
 
@@ -252,7 +272,7 @@ def main():
     except Exception:
         return
 
-    out_png = os.path.join(plot_dir, f"noise_robustness_{tag}_{noise_tag}.png")
+    out_png = os.path.join(plot_dir, f"noise_robustness_{tag}_{noise_tag}_{model_tag}.png")
     plt.figure(figsize=(7, 4))
     plt.plot(levels, accs, marker="o")
     plt.xlabel("Noise Level")

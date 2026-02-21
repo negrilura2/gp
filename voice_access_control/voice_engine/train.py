@@ -150,6 +150,10 @@ def main():
     parser.add_argument("--feature_dir", default="data/features")
     parser.add_argument("--save_dir", default="models")
     parser.add_argument("--log_dir", default="reports")
+    parser.add_argument("--model_name", default="ecapa_best.pth")
+    parser.add_argument("--noise_dir", default=None)
+    parser.add_argument("--feature_type", default="mfcc_delta")
+    parser.add_argument("--n_mels", type=int, default=40)
     parser.add_argument("--epochs", type=int, default=40)
     parser.add_argument("--batch_size", type=int, default=32)
     parser.add_argument("--lr", type=float, default=1e-3)
@@ -167,16 +171,38 @@ def main():
     parser.add_argument("--patience", type=int, default=3, help="Early stopping patience")
     args = parser.parse_args()
 
-    # Update paths to match new directory structure
-    if args.save_dir == "models":
+    augmentor = None
+    mode = 'feature'
+    
+    if args.noise_dir:
+        from .augmentation import NoiseAugmentor
+        augmentor = NoiseAugmentor(args.noise_dir)
+        print(f"Noise Augmentation Enabled: {args.noise_dir}")
+        # If noise_dir is set, switch to raw wav mode if feature_dir is still default
+        if args.feature_dir == "data/features":
+             print("Info: Switching data source to 'data/processed' for raw wav loading.")
+             args.feature_dir = "data/processed"
+        mode = 'raw'
+
+    # Update paths to match new directory structure if using default names and NOT noise training
+    # If noise training, user usually provides explicit save_dir or we use args.save_dir directly
+    if args.save_dir == "models" and not args.noise_dir:
         args.save_dir = os.path.join("models", "archive", args.feature_tag)
     
-    if args.log_dir == "reports":
-        args.log_dir = os.path.join("reports", "archive", "metrics")
+    if args.log_dir == "reports" and not args.noise_dir:
+        args.log_dir = os.path.join("reports", "metrics")
 
     os.makedirs(args.save_dir, exist_ok=True)
     os.makedirs(args.log_dir, exist_ok=True)
-    ds = SpeakerDataset(args.feature_dir)
+    
+    print(f"Dataset Mode: {mode}, Root: {args.feature_dir}")
+    ds = SpeakerDataset(
+        args.feature_dir,
+        mode=mode,
+        augmentor=augmentor,
+        feature_type=args.feature_type,
+        n_mels=args.n_mels,
+    )
     n_spk = len(ds.spk2idx)
     # split: simple random split
     from sklearn.model_selection import train_test_split
@@ -195,121 +221,66 @@ def main():
         else:
              num_workers = max(1, (_os.cpu_count() or 2) // 2)
     
-    # if _platform.system() == "Windows" and args.device.startswith("cuda") and args.loader_workers < 0:
-    #    num_workers = 0
-    pin = args.device.startswith("cuda")
-    persistent = num_workers > 0 and _platform.system() != "Windows"
-    print(f"DEBUG: DataLoader num_workers={num_workers}, pin_memory={pin}, persistent_workers={persistent}")
-    train_loader = DataLoader(
-        train_ds,
-        batch_size=args.batch_size,
-        shuffle=True,
-        collate_fn=pad_collate,
-        num_workers=num_workers,
-        pin_memory=pin,
-        persistent_workers=persistent,
-    )
-    val_loader = DataLoader(
-        val_ds,
-        batch_size=args.batch_size,
-        shuffle=False,
-        collate_fn=pad_collate,
-        num_workers=num_workers,
-        pin_memory=pin,
-        persistent_workers=persistent,
-    )
+    train_loader = DataLoader(train_ds, batch_size=args.batch_size, shuffle=True, collate_fn=pad_collate, num_workers=num_workers)
+    val_loader = DataLoader(val_ds, batch_size=args.batch_size, shuffle=False, collate_fn=pad_collate, num_workers=num_workers)
 
-    feat_dim = 39 # default
-    # peek first batch to check dim
-    tmp_loader = DataLoader(train_ds, batch_size=1, collate_fn=pad_collate)
-    for f, _, _ in tmp_loader:
-        feat_dim = f.shape[1]
-        break
-    
-    print(f"Feature dim: {feat_dim}, Num speakers: {n_spk}")
+    # Model
+    # Need to determine feat_dim
+    # We can peek at one sample
+    sample_feat, _ = ds[0]
+    feat_dim = int(sample_feat.shape[0])
+    print(f"Feature dim: {feat_dim}, n_speakers: {n_spk}")
+
     model = LightECAPA(feat_dim=feat_dim, emb_dim=192, n_speakers=n_spk).to(args.device)
     
-    if args.optimizer == "adam":
-        opt = optim.Adam(model.parameters(), lr=args.lr)
+    if args.optimizer == "adamw":
+        optimizer = optim.AdamW(model.parameters(), lr=args.lr, weight_decay=1e-4)
     else:
-        opt = optim.AdamW(model.parameters(), lr=args.lr, weight_decay=1e-4)
+        optimizer = optim.Adam(model.parameters(), lr=args.lr)
 
-    loss_fn = nn.CrossEntropyLoss()
     if args.loss == "aam":
-        loss_fn = AAMSoftmaxLoss(args.aam_s, args.aam_m)
+        loss_fn = AAMSoftmaxLoss(s=args.aam_s, m=args.aam_m).to(args.device)
+    else:
+        loss_fn = nn.CrossEntropyLoss().to(args.device)
 
-    log_path = os.path.join(args.log_dir, f"train_metrics_{args.feature_tag}.json")
-    metrics = {"train_loss": [], "train_acc": [], "val_loss": [], "val_acc": [], "eer": [], "time_sec": []}
-
-    best_eer = 999.0
     best_acc = 0.0
+    best_eer = 1.0
+    no_improve = 0
     
-    # Level 4: Early Stopping 状态
-    no_improve_epochs = 0
-
+    save_path = os.path.join(args.save_dir, args.model_name)
+    
     for epoch in range(1, args.epochs + 1):
-        start = time.time()
-        t_loss, t_acc = train_epoch(model, train_loader, opt, args.device, args.loss, loss_fn)
-        v_loss, v_acc = evaluate(model, val_loader, args.device, args.loss, loss_fn)
+        t0 = time.time()
+        train_loss, train_acc = train_epoch(model, train_loader, optimizer, args.device, args.loss, loss_fn)
+        val_loss, val_acc = evaluate(model, val_loader, args.device, args.loss, loss_fn)
         
-        # calc EER on val
-        eer_val = 0.0
-        # 每 eer_interval 个 epoch 或最后 epoch 或 early stopping 启用时更频繁检查? 
-        # 为了 early stopping 准确，最好每个 epoch 都看验证集指标(acc 或 loss 或 eer)
-        # 这里用 val_loss 或 val_acc 作为 early stopping 依据比较快，EER 计算慢
-        # 我们用 val_loss 做 early stopping 监控指标
-        if epoch % args.eer_interval == 0 or epoch == args.epochs:
+        print(f"Epoch {epoch}: Train Loss={train_loss:.4f} Acc={train_acc:.4f} | Val Loss={val_loss:.4f} Acc={val_acc:.4f} | T={time.time()-t0:.1f}s")
+
+        # EER Check
+        if epoch % args.eer_interval == 0:
+            print("Computing EER...")
             embs, labs = collect_embeddings(model, val_loader, args.device)
-            if embs is not None:
-                eer = compute_eer_from_embeddings(embs, labs, max_pairs=args.eer_pairs)
-                if eer is not None:
-                    eer_val = eer
+            eer = compute_eer_from_embeddings(embs, labs, max_pairs=args.eer_pairs)
+            if eer is not None:
+                print(f"  Val EER: {eer:.4f}")
+                if eer < best_eer:
+                    best_eer = eer
             else:
-                pass
-        
-        dur = time.time() - start
-        eer_str = f"{eer_val:.4f}" if eer_val > 0 else "N/A"
-        print(f"Epoch {epoch}/{args.epochs} [{dur:.1f}s]: T-Loss={t_loss:.4f} T-Acc={t_acc:.4f} V-Loss={v_loss:.4f} V-Acc={v_acc:.4f} EER={eer_str}")
-        
-        metrics["train_loss"].append(t_loss)
-        metrics["train_acc"].append(t_acc)
-        metrics["val_loss"].append(v_loss)
-        metrics["val_acc"].append(v_acc)
-        metrics["eer"].append(eer_val)
-        metrics["time_sec"].append(dur)
+                print("  Val EER: skipped (not enough pairs)")
 
-        # save best (by acc or eer?)
-        # save last
-        torch.save(model.state_dict(), os.path.join(args.save_dir, f"ecapa_{args.feature_tag}_epoch{epoch}.pth"))
-        
-        improved = False
-        if eer_val > 0 and eer_val < best_eer:
-            best_eer = eer_val
-            torch.save(model.state_dict(), os.path.join(args.save_dir, f"ecapa_{args.feature_tag}_best.pth"))
-            improved = True
-        elif v_acc > best_acc:
-            best_acc = v_acc
-            if best_eer == 999.0: # if eer not computed
-                 torch.save(model.state_dict(), os.path.join(args.save_dir, f"ecapa_{args.feature_tag}_best.pth"))
-                 improved = True
-        
-        # Level 4: Early Stopping Check
-        if args.early_stop:
-            # 策略调整：仅当计算了 EER (eer_val > 0) 且未改善时，才增加计数
-            # 如果本轮没算 EER，直接跳过 Early Stopping 检查（保持 patience 不变）
+        if val_acc > best_acc:
+            best_acc = val_acc
+            no_improve = 0
+            torch.save(model.state_dict(), save_path)
+            print(f"  Saved best model to {save_path}")
+        else:
+            no_improve += 1
             
-            if eer_val > 0:
-                if improved:
-                    no_improve_epochs = 0
-                else:
-                    no_improve_epochs += 1
-            
-            if no_improve_epochs >= args.patience:
-                print(f"Early stopping triggered after {epoch} epochs (Patience: {args.patience})")
-                break
+        if args.early_stop and no_improve >= args.patience:
+            print(f"Early stopping at epoch {epoch}")
+            break
 
-    with open(log_path, "w") as f:
-        json.dump(metrics, f, indent=2)
+    print(f"Done. Best Val Acc={best_acc:.4f}")
 
 if __name__ == "__main__":
     main()

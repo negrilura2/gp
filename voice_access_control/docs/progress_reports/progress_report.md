@@ -66,6 +66,15 @@
 
 ---
 
+## 🧾 补充更新 (2026-02-21)
+
+### 已完成与修复
+*   **噪声测试路径兼容**: `noise_robustness.py` 自动识别 `data/features/<feature_type>`，修复 `feature_dir 内没有可用特征文件`。
+*   **模板构建解包异常**: 兼容 `build_templates` 返回值变化，修复 `ValueError: too many values to unpack`。
+*   **结果覆盖问题**: 噪声测试输出文件名加入模型名，避免干净模型与噪声训练模型互相覆盖。
+*   **输出目录简化**: 噪声测试结果默认输出至 `reports/noise_tests` 和 `reports/plots/noise`，训练指标默认输出至 `reports/metrics`。
+*   **后端读取兼容**: ROC 指标读取支持 `reports/backend_responses` 与历史 `reports/archive/backend_responses` 双路径。
+
 ## 🚀 下一步行动 (Next Steps)
 
 1.  **执行 Level 4 对比实验**: 运行 Baseline vs Early Stopping 训练，收集数据。

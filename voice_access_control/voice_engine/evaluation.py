@@ -2,22 +2,22 @@ import torch
 import numpy as np
 from torch.utils.data import DataLoader, Subset
 from .dataset import SpeakerDataset, pad_collate
+import os
 
-def extract_all_embeddings(model, device, feature_dir, batch_size=32, num_workers=2):
+def extract_all_embeddings(model, device, feature_dir, batch_size=32, num_workers=0, mode='feature', augmentor=None):
     """
     Extract embeddings for an entire dataset directory.
     
     Returns:
         tuple: (embeddings, labels, spk2idx)
     """
-    ds = SpeakerDataset(feature_dir)
+    ds = SpeakerDataset(feature_dir, mode=mode, augmentor=augmentor)
     # Ensure num_workers is safe (0 on Windows sometimes avoids issues, or stick to low number)
-    # Since we are likely in a script, caller controls num_workers, but we default to 2.
     loader = DataLoader(ds, batch_size=batch_size, shuffle=False, collate_fn=pad_collate, num_workers=num_workers)
     
     model.eval()
     embs = []
-    labels = []
+    all_labels = []
     
     with torch.no_grad():
         for feats, lengths, lbs in loader:
@@ -25,14 +25,14 @@ def extract_all_embeddings(model, device, feature_dir, batch_size=32, num_worker
             lengths = lengths.to(device)
             emb = model(feats, lengths, return_embedding=True)
             embs.append(emb.cpu().numpy())
-            labels.append(lbs.numpy())
+            all_labels.append(lbs.numpy())
             
     if not embs:
         return np.array([]), np.array([]), ds.spk2idx
         
     embs = np.vstack(embs)
-    labels = np.hstack(labels)
-    return embs, labels, ds.spk2idx
+    all_labels = np.hstack(all_labels)
+    return embs, all_labels, ds.spk2idx
 
 def build_templates(model, feature_dir, device, batch_size=32, max_speakers=0, max_utts_per_spk=0, seed=42):
     """
