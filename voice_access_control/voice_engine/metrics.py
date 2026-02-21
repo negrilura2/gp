@@ -1,6 +1,10 @@
 import numpy as np
 
-def compute_pairs_scores(embs, labels, max_pairs=20000, seed=42):
+def _normalize_embeddings(embs):
+    norms = np.linalg.norm(embs, axis=1, keepdims=True) + 1e-9
+    return embs / norms
+
+def compute_pairs_scores(embs, labels, max_pairs=20000, seed=42, return_indices=False):
     """
     Sample positive and negative pairs from embeddings and compute cosine scores.
     
@@ -11,7 +15,7 @@ def compute_pairs_scores(embs, labels, max_pairs=20000, seed=42):
         seed (int): Random seed.
         
     Returns:
-        tuple: (y_true, y_scores, same_scores, diff_scores)
+        tuple: (y_true, y_scores, same_scores, diff_scores[, pair_indices])
             y_true: 1 for same, 0 for diff
             y_scores: cosine similarities
     """
@@ -19,6 +23,8 @@ def compute_pairs_scores(embs, labels, max_pairs=20000, seed=42):
     rng = np.random.RandomState(seed)
     same_scores = []
     diff_scores = []
+    same_pairs = []
+    diff_pairs = []
     
     # Create indices grouped by label
     idx_by_label = {}
@@ -38,6 +44,7 @@ def compute_pairs_scores(embs, labels, max_pairs=20000, seed=42):
         i1, i2 = rng.choice(idxs, size=2, replace=False)
         s = np.dot(embs[i1], embs[i2]) / (np.linalg.norm(embs[i1]) * np.linalg.norm(embs[i2]) + 1e-9)
         same_scores.append(s)
+        same_pairs.append((int(i1), int(i2)))
         attempts += 1
 
     # Sample diff pairs
@@ -48,11 +55,67 @@ def compute_pairs_scores(embs, labels, max_pairs=20000, seed=42):
         i2 = rng.choice(idx_by_label[spk2])
         s = np.dot(embs[i1], embs[i2]) / (np.linalg.norm(embs[i1]) * np.linalg.norm(embs[i2]) + 1e-9)
         diff_scores.append(s)
+        diff_pairs.append((int(i1), int(i2)))
         attempts += 1
 
     y = np.hstack([np.ones(len(same_scores)), np.zeros(len(diff_scores))])
     scores = np.hstack([same_scores, diff_scores])
+    if return_indices:
+        pair_indices = same_pairs + diff_pairs
+        return y, scores, np.array(same_scores), np.array(diff_scores), pair_indices
     return y, scores, np.array(same_scores), np.array(diff_scores)
+
+def compute_cohort_stats(embs, labels, cohort_embs, cohort_labels, batch_size=256):
+    if embs.size == 0 or cohort_embs.size == 0:
+        return None, None
+    embs = _normalize_embeddings(embs.astype(np.float32))
+    cohort_embs = _normalize_embeddings(cohort_embs.astype(np.float32))
+    cohort_labels = np.asarray(cohort_labels)
+    n = embs.shape[0]
+    mu = np.zeros(n, dtype=np.float32)
+    sigma = np.zeros(n, dtype=np.float32)
+    for start in range(0, n, batch_size):
+        end = min(n, start + batch_size)
+        batch = embs[start:end]
+        scores = np.dot(batch, cohort_embs.T)
+        batch_labels = labels[start:end]
+        for i in range(scores.shape[0]):
+            mask = cohort_labels != batch_labels[i]
+            row = scores[i][mask]
+            if row.size == 0:
+                row = scores[i]
+            mean = float(np.mean(row))
+            std = float(np.std(row))
+            if std < 1e-6:
+                std = 1e-6
+            mu[start + i] = mean
+            sigma[start + i] = std
+    return mu, sigma
+
+def apply_score_norm(scores, pair_indices, mu, sigma, method="snorm"):
+    if method not in {"znorm", "tnorm", "snorm"}:
+        raise ValueError(f"Unsupported score_norm: {method}")
+    scores = np.asarray(scores, dtype=np.float32)
+    mu = np.asarray(mu, dtype=np.float32)
+    sigma = np.asarray(sigma, dtype=np.float32)
+    out = np.zeros_like(scores)
+    for idx, (i, j) in enumerate(pair_indices):
+        s = scores[idx]
+        z = (s - mu[i]) / sigma[i]
+        t = (s - mu[j]) / sigma[j]
+        if method == "znorm":
+            val = z
+        elif method == "tnorm":
+            val = t
+        else:
+            val = 0.5 * (z + t)
+        
+        # Sigmoid mapping to bring scores to (0, 1) range
+        # Shift by +2.0 to make Z=2.0 (typical good match) map to 0.5
+        # Scale by 2.0 to spread the distribution reasonably
+        # 1 / (1 + exp(-(val - 2.0)))
+        out[idx] = 1.0 / (1.0 + np.exp(-(val - 2.0)))
+    return out
 
 def eer_from_roc(fpr, tpr, thresholds):
     """

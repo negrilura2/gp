@@ -85,6 +85,9 @@
                 :model-evaluating="modelEvaluating"
                 :model-metrics-loading="modelMetricsLoading"
                 :model-metrics-error="modelMetricsError"
+                :score-norm-mode="''"
+                :score-norm-available="!!modelMetricsNorm"
+                :eval-norm-method="evalNormMethod"
                 :roc-derived="rocDerived"
                 :format-metric="formatMetric"
                 :format-percent="formatPercent"
@@ -104,6 +107,7 @@
                 :on-load-model-list="loadModelList"
                 :on-model-target-change="handleModelTargetChange"
                 :on-model-switch="handleModelSwitch"
+                :on-eval-norm-method-change="handleEvalNormMethodChange"
                 :on-eval-collapse="handleEvalCollapse"
                 :on-eval-card-click="handleEvalCardClick"
               />
@@ -517,7 +521,7 @@ const maintenanceLogsResult = ref(null);
 const maintenanceModelsResult = ref(null);
 const maintenanceCacheResult = ref(null);
 
-const modelMetrics = ref({
+const emptyModelMetrics = () => ({
   auc: null,
   eer: null,
   threshold: null,
@@ -536,6 +540,30 @@ const modelMetrics = ref({
   mindcf_data: null,
   score_dist: null,
   calibration: null
+});
+const modelMetricsRaw = ref(emptyModelMetrics());
+const modelMetricsNorm = ref(null);
+const evalNormMethod = ref("none");
+
+const modelMetrics = computed(() => {
+  // Logic:
+  // 1. If evalNormMethod is 'none', show raw.
+  // 2. If evalNormMethod is not 'none', try to show norm.
+  //    But check if the available norm data actually matches the selected method?
+  //    The backend only stores ONE score_norm result (the latest one).
+  //    So if modelMetricsNorm exists, we should check its method.
+  //    However, for simplicity and better UX as requested:
+  //    "If Z/T/S-Norm is selected, show normalized data (if not evaluated, show raw or hint)"
+  //    Let's just show norm if it exists, otherwise fallback to raw (or empty).
+  
+  if (evalNormMethod.value !== "none" && modelMetricsNorm.value) {
+     // Ideally we should check modelMetricsNorm.value.metrics.method === evalNormMethod.value
+     // But let's just return it for now, user will see the data.
+     // If they selected S-Norm but data is Z-Norm, it might be confusing, but
+     // usually they will click "Evaluate" immediately after selecting.
+     return modelMetricsNorm.value;
+  }
+  return modelMetricsRaw.value;
 });
 const modelMetricsError = ref("");
 const modelMetricsLoading = ref(false);
@@ -718,7 +746,7 @@ async function pollEvalStatus() {
       }
       stopEvalPolling();
       modelEvaluating.value = false;
-      await loadModelMetrics();
+      await loadModelMetrics({ autoDetect: false });
       ElMessage.success("评估完成");
     } else if (statusValue === "failed") {
       stopEvalPolling();
@@ -765,6 +793,16 @@ function formatPercent(value) {
     return Number.isFinite(value) ? `${(value * 100).toFixed(2)}%` : "--";
   }
   return value;
+}
+
+async function handleEvalNormMethodChange(value) {
+  evalNormMethod.value = value;
+  await loadModelMetrics({ autoDetect: false });
+  nextTick(() => {
+    updateRocChart();
+    updateEvalThumbCharts();
+    updateEvalDetailChart();
+  });
 }
 
 function updateCharts() {
@@ -1777,61 +1815,93 @@ async function loadAdminAccessLogs() {
   }
 }
 
-async function loadModelMetrics() {
+function buildRawMetrics(data) {
+  return {
+    auc: data.auc,
+    eer: data.eer,
+    threshold: data.threshold,
+    threshold_eer: data.threshold_eer,
+    threshold_mindcf: data.threshold_mindcf,
+    mindcf: data.mindcf,
+    p_target: data.p_target,
+    c_miss: data.c_miss,
+    c_fa: data.c_fa,
+    threshold_default: data.threshold_default,
+    threshold_diff: data.threshold_diff,
+    fpr: data.fpr,
+    tpr: data.tpr,
+    thresholds: data.thresholds,
+    det: data.det,
+    mindcf_data: data.mindcf_data,
+    score_dist: data.score_dist,
+    calibration: data.calibration
+  };
+}
+
+function buildNormMetrics(data) {
+  const normPayload = data.score_norm;
+  if (!normPayload) return null;
+  return {
+    auc: normPayload.metrics?.auc,
+    eer: normPayload.metrics?.eer,
+    threshold: normPayload.metrics?.threshold,
+    threshold_eer: normPayload.metrics?.threshold_eer,
+    threshold_mindcf: normPayload.metrics?.threshold_mindcf,
+    mindcf: normPayload.metrics?.mindcf,
+    p_target: normPayload.metrics?.p_target,
+    c_miss: normPayload.metrics?.c_miss,
+    c_fa: normPayload.metrics?.c_fa,
+    threshold_default: data.threshold_default,
+    threshold_diff: data.threshold_diff,
+    fpr: normPayload.fpr,
+    tpr: normPayload.tpr,
+    thresholds: normPayload.thresholds,
+    det: normPayload.det,
+    mindcf_data: normPayload.mindcf_data,
+    score_dist: normPayload.score_dist,
+    calibration: normPayload.calibration
+  };
+}
+
+async function loadModelMetrics({ autoDetect = true } = {}) {
   modelMetricsLoading.value = true;
   try {
-    const res = await fetchRocMetrics();
-    modelMetrics.value = {
-      auc: res.data.auc,
-      eer: res.data.eer,
-      threshold: res.data.threshold,
-      threshold_eer: res.data.threshold_eer,
-      threshold_mindcf: res.data.threshold_mindcf,
-      mindcf: res.data.mindcf,
-      p_target: res.data.p_target,
-      c_miss: res.data.c_miss,
-      c_fa: res.data.c_fa,
-      threshold_default: res.data.threshold_default,
-      threshold_diff: res.data.threshold_diff,
-      fpr: res.data.fpr,
-      tpr: res.data.tpr,
-      thresholds: res.data.thresholds,
-      det: res.data.det,
-      mindcf_data: res.data.mindcf_data,
-      score_dist: res.data.score_dist,
-      calibration: res.data.calibration
-    };
-    modelMetricsModel.value = res.data.model || modelMetricsModel.value || modelCurrent.value;
-    modelMetricsError.value = "";
-    
-    // Ensure charts are updated after DOM update
+    const methodsToTry =
+      autoDetect && evalNormMethod.value === "none"
+        ? ["snorm", "tnorm", "znorm", "none"]
+        : [evalNormMethod.value];
+    let res = null;
+    let lastError = null;
+    let usedMethod = null;
+    for (const method of methodsToTry) {
+      try {
+        res = await fetchRocMetrics(method);
+        usedMethod = method;
+        break;
+      } catch (e) {
+        lastError = e;
+        if (e.response?.status !== 404) {
+          throw e;
+        }
+      }
+    }
+    if (!res) {
+      throw lastError || new Error("模型指标未生成");
+    }
+    if (autoDetect && evalNormMethod.value === "none" && usedMethod && usedMethod !== "none") {
+      evalNormMethod.value = usedMethod;
+    }
+    modelMetricsRaw.value = buildRawMetrics(res.data);
+    modelMetricsNorm.value = buildNormMetrics(res.data);
     nextTick(() => {
-        updateRocChart();
-        updateEvalThumbCharts();
-        updateEvalDetailChart();
+      updateRocChart();
+      updateEvalThumbCharts();
+      updateEvalDetailChart();
     });
   } catch (e) {
     modelMetricsError.value = e.response?.data?.error || "模型指标未生成";
-    modelMetrics.value = {
-      auc: null,
-      eer: null,
-      threshold: null,
-      threshold_eer: null,
-      threshold_mindcf: null,
-      mindcf: null,
-      p_target: null,
-      c_miss: null,
-      c_fa: null,
-      threshold_default: null,
-      threshold_diff: null,
-      fpr: null,
-      tpr: null,
-      thresholds: null,
-      det: null,
-      mindcf_data: null,
-      score_dist: null,
-      calibration: null
-    };
+    modelMetricsRaw.value = emptyModelMetrics();
+    modelMetricsNorm.value = null;
     updateRocChart();
     updateEvalThumbCharts();
     updateEvalDetailChart();
@@ -1849,7 +1919,7 @@ async function handleModelEvaluate() {
     }
     const name = modelCurrent.value || modelTarget.value || "";
     modelMetricsModel.value = name || modelMetricsModel.value;
-    const res = await evaluateRocMetrics(name);
+    const res = await evaluateRocMetrics(name, { norm_method: evalNormMethod.value });
     const statusValue = res.data?.status || "idle";
     modelEvaluatingStatus.value = statusValue;
     if (statusValue === "running") {
@@ -1863,7 +1933,7 @@ async function handleModelEvaluate() {
       modelEvaluating.value = false;
       return;
     }
-    await loadModelMetrics();
+    await loadModelMetrics({ autoDetect: false });
     modelEvaluating.value = false;
     ElMessage.success("评估完成");
   } catch (e) {

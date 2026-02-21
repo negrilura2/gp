@@ -42,3 +42,10 @@ frontend/node_modules/
 *.pt
 *.onnx
 *.pth
+frontend/dist/
+reports/backend_responses/
+reports/plots/
+reports/noise_tests/
+reports/metrics/
+reports/*.png
+reports/*.json

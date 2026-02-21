@@ -133,12 +133,16 @@ export function bulkResetAdminPassword(ids, password) {
   return api.post("/admins/bulk-reset-password/", { ids, password });
 }
 
-export function fetchRocMetrics() {
-  return api.get("/roc/", { params: { t: Date.now() } });
+export function fetchRocMetrics(norm_method) {
+  const params = { t: Date.now() };
+  if (norm_method) {
+    params.norm_method = norm_method;
+  }
+  return api.get("/roc/", { params });
 }
 
-export function evaluateRocMetrics(name) {
-  return api.post("/roc/evaluate/", name ? { name } : {});
+export function evaluateRocMetrics(name, params = {}) {
+  return api.post("/roc/evaluate/", { ...(name ? { name } : {}), ...params });
 }
 
 export function fetchRocEvaluateStatus() {

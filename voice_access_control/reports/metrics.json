@@ -1,14 +1,21 @@
 {
-  "auc": 0.9282165400000001,
-  "eer": 0.14559999999999998,
-  "threshold_eer": 0.7245212786105006,
-  "threshold_mindcf": 0.9829595675175592,
-  "mindcf": 0.009817000000000001,
-  "threshold_youden": 0.7250615678854196,
-  "youden": 0.7095,
-  "threshold": 0.7250615678854196,
+  "auc": 0.99602214,
+  "eer": 0.02080000000000002,
+  "threshold_eer": 0.560152530670166,
+  "threshold_mindcf": 0.9128718376159668,
+  "mindcf": 0.0015349999999999995,
+  "threshold_youden": 0.6821553707122803,
+  "youden": 0.9673,
+  "threshold": 0.6821553707122803,
   "p_target": 0.01,
   "c_miss": 1.0,
   "c_fa": 1.0,
-  "augment": false
+  "augment": false,
+  "method": "znorm",
+  "score_norm": {
+    "method": "znorm",
+    "cohort_size": 100,
+    "cohort_speakers": 20,
+    "cohort_utts_per_spk": 5
+  }
 }

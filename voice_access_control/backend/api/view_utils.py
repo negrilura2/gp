@@ -199,7 +199,7 @@ def get_eval_thread():
     return EVAL_THREAD
 
 
-def _start_eval_thread(model_path, feature_dir):
+def _start_eval_thread(model_path, feature_dir, norm_method="none"):
     global EVAL_THREAD
 
     def _run():
@@ -218,6 +218,12 @@ def _start_eval_thread(model_path, feature_dir):
             "--max_pairs",
             "20000",
         ]
+        if norm_method and norm_method != "none":
+            cmd.extend([
+                "--score_norm", norm_method,
+                "--cohort_speakers", "20",
+                "--cohort_utts_per_spk", "5"
+            ])
         try:
             result = subprocess.run(
                 cmd,

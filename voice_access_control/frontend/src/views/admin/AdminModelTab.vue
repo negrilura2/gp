@@ -12,6 +12,18 @@
               </div>
             </div>
             <div class="settings-actions">
+              <span class="norm-label">选择归一化策略：</span>
+              <el-select
+                :model-value="evalNormMethod"
+                @update:model-value="onEvalNormMethodChange"
+                size="small"
+                style="width: 110px; margin-right: 8px"
+              >
+                <el-option label="无 (None)" value="none" />
+                <el-option label="Z-Norm" value="znorm" />
+                <el-option label="T-Norm" value="tnorm" />
+                <el-option label="S-Norm" value="snorm" />
+              </el-select>
               <el-button :loading="modelMetricsLoading" @click="onLoadModelMetrics">刷新</el-button>
               <el-button type="primary" :loading="modelEvaluating" @click="onModelEvaluate">
                 立即评估
@@ -163,6 +175,7 @@ defineProps({
   modelEvaluating: { type: Boolean, required: true },
   modelMetricsLoading: { type: Boolean, required: true },
   modelMetricsError: { type: String, required: true },
+  evalNormMethod: { type: String, required: true },
   rocDerived: { type: Object, required: true },
   formatMetric: { type: Function, required: true },
   formatPercent: { type: Function, required: true },
@@ -182,7 +195,25 @@ defineProps({
   onLoadModelList: { type: Function, required: true },
   onModelTargetChange: { type: Function, required: true },
   onModelSwitch: { type: Function, required: true },
+  onEvalNormMethodChange: { type: Function, required: true },
   onEvalCollapse: { type: Function, required: true },
   onEvalCardClick: { type: Function, required: true }
 });
 </script>
+
+<style scoped>
+.model-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.norm-label {
+  font-size: 13px;
+  color: #606266;
+  margin-right: 4px;
+}
+.settings-title {
+  font-weight: 600;
+  font-size: 16px;
+}
+</style>
