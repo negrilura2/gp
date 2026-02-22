@@ -21,9 +21,12 @@ from voice_engine.config import (
     FEATURE_TYPE_LOGMEL,
     VALID_FEATURE_TYPES
 )
-from voice_engine.features import extract_feature_from_signal, load_and_resample
-from voice_engine.augmentation import add_noise
-from voice_engine.evaluation import build_templates
+from voice_engine.dataset import (
+    extract_feature_from_signal,
+    load_and_resample,
+    add_noise
+)
+from voice_engine.trainer import build_templates
 from voice_engine.config import SAMPLE_RATE
 import soundfile as sf
 import librosa
@@ -65,82 +68,122 @@ def evaluate_noise(model, templates, spk2idx, processed_root, feature_type, snr_
         return 0.0
     return correct / total
 
+import yaml
+
+def load_config(path):
+    with open(path, "r", encoding="utf-8") as f:
+        return yaml.safe_load(f)
+
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--model_path", default="models/ecapa_best.pth")
-    parser.add_argument("--feature_dir", default=str(FEATURES_DIR))
-    parser.add_argument("--processed_dir", default=str(PROCESSED_DIR))
-    parser.add_argument("--out_dir", default=str(REPORTS_DIR))
-    parser.add_argument("--feature_type", choices=["mfcc", "mfcc_delta", "logmel"], default="mfcc_delta")
-    parser.add_argument("--n_mels", type=int, default=40)
-    parser.add_argument("--snr_list", default="clean,20,10")
-    parser.add_argument("--noise_wav", default="")
-    parser.add_argument("--batch_size", type=int, default=32)
-    parser.add_argument("--device", default="cuda" if torch.cuda.is_available() else "cpu")
-    parser.add_argument("--seed", type=int, default=42)
-    parser.add_argument("--max_speakers", type=int, default=10)
-    parser.add_argument("--max_utts_per_spk", type=int, default=3)
+    parser.add_argument("--config", "-c", help="Path to config yaml file")
+    parser.add_argument("--model_path", default=None)
+    parser.add_argument("--feature_dir", default=None)
+    parser.add_argument("--processed_dir", default=None)
+    parser.add_argument("--out_dir", default=None)
+    parser.add_argument("--feature_type", choices=["mfcc", "mfcc_delta", "logmel"], default=None)
+    parser.add_argument("--n_mels", type=int, default=None)
+    parser.add_argument("--snr_list", default=None)
+    parser.add_argument("--noise_wav", default=None)
+    parser.add_argument("--batch_size", type=int, default=None)
+    parser.add_argument("--device", default=None)
+    parser.add_argument("--seed", type=int, default=None)
+    parser.add_argument("--max_speakers", type=int, default=None)
+    parser.add_argument("--max_utts_per_spk", type=int, default=None)
     args = parser.parse_args()
 
-    if str(args.device).lower().startswith("cuda"):
+    cfg = {}
+    if args.config:
+        cfg = load_config(args.config)
+        print(f"Loading config from {args.config}")
+
+    # Priority: CLI > Config > Default
+    model_path = args.model_path or cfg.get("model", {}).get("path") or "checkpoints/ecapa_best.pth"
+    feature_dir = args.feature_dir or cfg.get("dataset", {}).get("feature_dir") or str(FEATURES_DIR)
+    processed_dir = args.processed_dir or cfg.get("dataset", {}).get("processed_dir") or str(PROCESSED_DIR)
+    out_dir = args.out_dir or cfg.get("analysis", {}).get("out_dir") or str(REPORTS_DIR)
+    
+    analysis_cfg = cfg.get("analysis", {})
+    noise_cfg = analysis_cfg.get("noise", {})
+    
+    feature_type = args.feature_type or noise_cfg.get("feature_type", "mfcc_delta")
+    n_mels = args.n_mels or noise_cfg.get("n_mels", 40)
+    
+    # snr_list handling: config might be list, cli is string
+    snr_val = args.snr_list or noise_cfg.get("snr_list", "clean,20,10")
+    if isinstance(snr_val, list):
+        snr_list = snr_val
+    else:
+        snr_list = str(snr_val).split(",")
+    
+    noise_wav = args.noise_wav or noise_cfg.get("noise_wav", "")
+    batch_size = args.batch_size or analysis_cfg.get("batch_size", 32)
+    device = args.device or analysis_cfg.get("device", "cuda" if torch.cuda.is_available() else "cpu")
+    seed = args.seed or analysis_cfg.get("seed", 42)
+    max_speakers = args.max_speakers or noise_cfg.get("max_speakers", 10)
+    max_utts_per_spk = args.max_utts_per_spk or noise_cfg.get("max_utts_per_spk", 3)
+
+
+    if str(device).lower().startswith("cuda"):
         if not torch.cuda.is_available():
             print("WARNING: CUDA not available, switching to CPU")
-            args.device = "cpu"
+            device = "cpu"
         else:
             try:
                 # Try to allocate a small tensor to check memory
-                t = torch.zeros(1).to(args.device)
+                t = torch.zeros(1).to(device)
                 del t
                 torch.cuda.empty_cache()
             except RuntimeError as e:
                 print(f"WARNING: CUDA memory check failed ({e}), switching to CPU")
-                args.device = "cpu"
+                device = "cpu"
 
-    os.makedirs(args.out_dir, exist_ok=True)
-    if os.path.isdir(args.feature_dir):
+    os.makedirs(out_dir, exist_ok=True)
+    if os.path.isdir(feature_dir):
         feature_type_names = {"mfcc", "mfcc_delta", "logmel"}
-        base_name = os.path.basename(os.path.normpath(args.feature_dir))
-        candidate = os.path.join(args.feature_dir, args.feature_type)
+        base_name = os.path.basename(os.path.normpath(feature_dir))
+        candidate = os.path.join(feature_dir, feature_type)
         if base_name not in feature_type_names and os.path.isdir(candidate):
-            args.feature_dir = candidate
-    ds = SpeakerDataset(args.feature_dir)
+            feature_dir = candidate
+    ds = SpeakerDataset(feature_dir)
     if len(ds) == 0:
         raise ValueError("feature_dir 内没有可用特征文件")
     sample_feat, _ = ds[0]
     feat_dim = int(sample_feat.shape[0])
     n_spk = len(ds.spk2idx)
     
-    print(f"DEBUG: Initializing model with feat_dim={feat_dim}, n_spk={n_spk}, device={args.device}")
+    print(f"DEBUG: Initializing model with feat_dim={feat_dim}, n_spk={n_spk}, device={device}")
     try:
-        model = LightECAPA(feat_dim=feat_dim, emb_dim=192, n_speakers=n_spk).to(args.device)
+        model = LightECAPA(feat_dim=feat_dim, emb_dim=192, n_speakers=n_spk).to(device)
     except RuntimeError as e:
         if "out of memory" in str(e):
             print("ERROR: GPU OOM during model init. Switching to CPU.")
-            args.device = "cpu"
+            device = "cpu"
             torch.cuda.empty_cache()
-            model = LightECAPA(feat_dim=feat_dim, emb_dim=192, n_speakers=n_spk).to(args.device)
+            model = LightECAPA(feat_dim=feat_dim, emb_dim=192, n_speakers=n_spk).to(device)
         else:
             raise
     
-    print(f"DEBUG: Loading model state from {args.model_path}")
-    state = torch.load(args.model_path, map_location=args.device)
+    print(f"DEBUG: Loading model state from {model_path}")
+    state = torch.load(model_path, map_location=device)
     model.load_state_dict(state, strict=False)
     
     # Enable memory optimization
-    if args.device == "cuda":
+    if device == "cuda":
         torch.backends.cudnn.benchmark = True
     
     print("DEBUG: Starting build_templates...")
     try:
         templates_result = build_templates(
             model,
-            args.feature_dir,
-            args.device,
-            batch_size=args.batch_size,
-            max_speakers=args.max_speakers,
-            max_utts_per_spk=args.max_utts_per_spk,
-            seed=args.seed,
+            feature_dir,
+            device,
+            batch_size=batch_size,
+            max_speakers=max_speakers,
+            max_utts_per_spk=max_utts_per_spk,
+            seed=seed,
         )
+
         if isinstance(templates_result, tuple):
             if len(templates_result) >= 2:
                 templates, spk2idx = templates_result[0], templates_result[1]
@@ -175,19 +218,19 @@ def main():
 
     noise_y = None
     noise_tag = "white"
-    if args.noise_wav:
-        print(f"DEBUG: Checking noise file: {args.noise_wav}")
-        if not os.path.isfile(args.noise_wav):
-            print(f"DEBUG: Noise file not found: {args.noise_wav}")
-            raise FileNotFoundError(args.noise_wav)
+    if noise_wav:
+        print(f"DEBUG: Checking noise file: {noise_wav}")
+        if not os.path.isfile(noise_wav):
+            print(f"DEBUG: Noise file not found: {noise_wav}")
+            raise FileNotFoundError(noise_wav)
         
-        print(f"DEBUG: Reading noise file: {args.noise_wav}")
+        print(f"DEBUG: Reading noise file: {noise_wav}")
         # 使用统一的 load_and_resample (如果需要的话，但这里 noise 处理比较特殊，暂时保留部分逻辑)
         # 不过为了减少 scipy.signal.resample 的重复，可以尝试复用 features.py 中的逻辑
         # 但 features.py 主要针对语音，这里是噪声，且后续有归一化逻辑
         # 考虑到噪声文件处理也可能 hang，最好也用 scipy.signal.resample (原代码已用)
         # 暂时保持原逻辑，因为噪声处理比较特殊 (归一化方式不同)
-        noise_y, sr_n = sf.read(args.noise_wav)
+        noise_y, sr_n = sf.read(noise_wav)
         print(f"DEBUG: Noise file read. Shape: {noise_y.shape}, SR: {sr_n}")
         
         if len(noise_y.shape) > 1:
@@ -195,91 +238,54 @@ def main():
         if sr_n != SAMPLE_RATE:
             print(f"DEBUG: Resampling noise from {sr_n} to {SAMPLE_RATE}")
             try:
-                # 显式使用 scipy.signal.resample 以避免 librosa 问题
-                import scipy.signal
-                num_n = int(len(noise_y) * SAMPLE_RATE / sr_n)
-                noise_y = scipy.signal.resample(noise_y, num_n)
-                print(f"DEBUG: Resampling done. New shape: {noise_y.shape}")
+                # Use scipy.signal.resample for speed and avoiding librosa hangs
+                num_samples = int(len(noise_y) * SAMPLE_RATE / sr_n)
+                noise_y = scipy.signal.resample(noise_y, num_samples)
             except Exception as e:
-                print(f"ERROR: Noise resampling failed: {e}")
-                raise
-
-        max_len = SAMPLE_RATE * 30
-        if len(noise_y) > max_len:
-            noise_y = noise_y[:max_len]
-        noise_y = noise_y.astype(np.float32)
-        noise_y = noise_y - np.mean(noise_y)
-        noise_y = noise_y / (np.std(noise_y) + 1e-12)
-        noise_tag = os.path.splitext(os.path.basename(args.noise_wav))[0]
-    else:
-        print("DEBUG: No noise file provided. Using white noise if needed.")
-
-    snr_items = [s.strip() for s in args.snr_list.split(",") if s.strip()]
-    levels = []
-    accs = []
-    template_ids = set(templates.keys())
-    spk_subset = {spk: idx for spk, idx in spk2idx.items() if idx in template_ids}
-    
-    print(f"DEBUG: Evaluating {len(snr_items)} SNR levels on {len(spk_subset)} speakers.")
-
-    for s in snr_items:
-        if s.lower() == "clean":
-            snr = None
-            label = "clean"
-        else:
-            snr = float(s)
-            label = f"{snr:g}dB"
-        print(f"Evaluating noise level: {label}  (speakers={len(spk_subset)}, max_utts_per_spk={args.max_utts_per_spk})")
+                print(f"Warning: Scipy resample failed ({e}), fallback to librosa")
+                noise_y = librosa.resample(noise_y, orig_sr=sr_n, target_sr=SAMPLE_RATE)
         
-        try:
-            acc = evaluate_noise(
-                model,
-                templates,
-                spk_subset,
-                args.processed_dir,
-                args.feature_type,
-                snr,
-                args.device,
-                args.n_mels,
-                args.seed,
-                noise_y,
-                max_utts_per_spk=args.max_utts_per_spk,
-            )
-            print(f"DEBUG: Accuracy for {label}: {acc}")
-            levels.append(label)
-            accs.append(acc)
-        except Exception as e:
-            print(f"ERROR: Failed evaluating {label}: {e}")
-            import traceback
-            traceback.print_exc()
-
-    tag = args.feature_type
+        noise_tag = os.path.splitext(os.path.basename(noise_wav))[0]
     
-    json_dir = os.path.join(args.out_dir, "noise_tests")
-    plot_dir = os.path.join(args.out_dir, "plots", "noise")
-    os.makedirs(json_dir, exist_ok=True)
-    os.makedirs(plot_dir, exist_ok=True)
+    print(f"DEBUG: Starting evaluation loops. SNR list: {snr_list}")
+    
+    results = {}
+    
+    # Clean baseline
+    if "clean" in snr_list:
+        print(f"\nEvaluating CLEAN...")
+        acc = evaluate_noise(model, templates, spk2idx, processed_dir, feature_type, None, device, n_mels, seed, None, max_utts_per_spk)
+        results["clean"] = acc
+        print(f"Clean Acc: {acc:.4f}")
+        
+    for snr in snr_list:
+        if str(snr) == "clean": continue
+        snr_val = float(snr)
+        print(f"\nEvaluating SNR={snr_val}db...")
+        acc = evaluate_noise(model, templates, spk2idx, processed_dir, feature_type, snr_val, device, n_mels, seed, noise_y, max_utts_per_spk)
+        results[f"{snr_val}db"] = acc
+        print(f"SNR {snr_val}db Acc: {acc:.4f}")
 
-    model_tag = os.path.splitext(os.path.basename(args.model_path))[0]
-    out_json = os.path.join(json_dir, f"noise_robustness_{tag}_{noise_tag}_{model_tag}.json")
-    with open(out_json, "w", encoding="utf-8") as f:
-        json.dump({"levels": levels, "accuracy": accs}, f, ensure_ascii=False, indent=2)
-
-    try:
-        import matplotlib
-        matplotlib.use("Agg")
-        import matplotlib.pyplot as plt
-    except Exception:
-        return
-
-    out_png = os.path.join(plot_dir, f"noise_robustness_{tag}_{noise_tag}_{model_tag}.png")
-    plt.figure(figsize=(7, 4))
-    plt.plot(levels, accs, marker="o")
-    plt.xlabel("Noise Level")
+    # Plot
+    model_name = os.path.splitext(os.path.basename(model_path))[0]
+    out_png = os.path.join(out_dir, "plots", "noise", f"noise_robustness_{feature_type}_{noise_tag}_{model_name}.png")
+    os.makedirs(os.path.dirname(out_png), exist_ok=True)
+    
+    plt.figure(figsize=(8, 6))
+    x_labels = [k for k in results.keys()]
+    y_values = [v for v in results.values()]
+    plt.plot(x_labels, y_values, marker='o', linestyle='-')
+    plt.title(f"Noise Robustness ({noise_tag}) - {feature_type}")
+    plt.xlabel("SNR (db)")
     plt.ylabel("Accuracy")
+    plt.grid(True)
+    plt.ylim(0, 1.05)
+    for i, v in enumerate(y_values):
+        plt.text(i, v + 0.01, f"{v:.2f}", ha='center')
     plt.tight_layout()
     plt.savefig(out_png)
     plt.close()
+    print(f"Saved plot to {out_png}")
 
 if __name__ == "__main__":
     main()

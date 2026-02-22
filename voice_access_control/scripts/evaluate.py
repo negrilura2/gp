@@ -1,15 +1,18 @@
 # scripts/eval/eval_threshold.py
 """
 Usage:
+python -m scripts.eval.eval_threshold --config configs/eval.yaml
 python -m scripts.eval.eval_threshold --model models/ecapa_best.pth --feature_dir data/features --out_dir reports --max_pairs 20000
 
 Outputs:
 reports/roc.png
 reports/eer_threshold.json  ({"eer":..., "threshold":...})
 """
+import argparse
 import os
 import sys
 import json
+import yaml
 import numpy as np
 import torch
 import matplotlib
@@ -26,8 +29,8 @@ from scripts import FEATURES_DIR, MODELS_DIR, REPORTS_DIR
 from voice_engine.ecapa_tdnn import LightECAPA
 from voice_engine.dataset import SpeakerDataset, pad_collate
 from torch.utils.data import DataLoader
-from voice_engine.evaluation import extract_all_embeddings
-from voice_engine.metrics import (
+from voice_engine.trainer import (
+    extract_all_embeddings,
     compute_pairs_scores,
     eer_from_roc,
     compute_mindcf,
@@ -37,6 +40,10 @@ from voice_engine.metrics import (
     compute_cohort_stats,
     apply_score_norm,
 )
+
+def load_config(path):
+    with open(path, "r", encoding="utf-8") as f:
+        return yaml.safe_load(f)
 
 def build_eval_bundle(y, scores, same_scores, diff_scores):
     fpr, tpr, thresholds = roc_curve(y, scores, pos_label=1)
@@ -101,21 +108,45 @@ def build_cohort_indices(labels, max_speakers, max_utts_per_spk, seed):
         indices.extend(idxs)
     return indices
 
-def main():
-
-    import argparse
+def build_arg_parser():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--model", required=True)
-    parser.add_argument("--feature_dir", default=str(FEATURES_DIR))
-    parser.add_argument("--out_dir", default=str(REPORTS_DIR))
-    parser.add_argument("--max_pairs", type=int, default=20000)
-    parser.add_argument("--noise_dir", default=None, help="Directory containing noise wavs for augmentation")
-    parser.add_argument("--score_norm", choices=["none", "znorm", "tnorm", "snorm"], default="none")
-    parser.add_argument("--cohort_speakers", type=int, default=20)
-    parser.add_argument("--cohort_utts_per_spk", type=int, default=5)
-    parser.add_argument("--cohort_seed", type=int, default=42)
-    args = parser.parse_args()
+    parser.add_argument("--config", "-c", help="Path to config yaml file")
+    
+    parser.add_argument("--model", help="Model path")
+    parser.add_argument("--feature_dir", help="Feature directory")
+    parser.add_argument("--out_dir", help="Output directory")
+    parser.add_argument("--max_pairs", type=int, help="Max pairs for EER")
+    parser.add_argument("--noise_dir", help="Noise directory for augmentation")
+    parser.add_argument("--score_norm", choices=["none", "znorm", "tnorm", "snorm"], help="Score normalization method")
+    parser.add_argument("--cohort_speakers", type=int, help="Number of speakers for cohort")
+    parser.add_argument("--cohort_utts_per_spk", type=int, help="Utterances per speaker for cohort")
+    parser.add_argument("--cohort_seed", type=int, help="Random seed for cohort")
+    return parser
 
+class EvalArgs:
+    def __init__(self, args, cfg):
+        # Priorities: CLI arg > Config value > Default
+        
+        # Model
+        self.model = args.model or cfg.get("model", {}).get("path") or str(MODELS_DIR / "ecapa_best.pth")
+        
+        # Data
+        self.feature_dir = args.feature_dir or cfg.get("dataset", {}).get("feature_dir") or str(FEATURES_DIR)
+        self.out_dir = args.out_dir or cfg.get("paths", {}).get("out_dir") or str(REPORTS_DIR)
+        self.noise_dir = args.noise_dir or cfg.get("dataset", {}).get("noise_dir")
+        
+        # Params
+        self.max_pairs = args.max_pairs or cfg.get("evaluation", {}).get("max_pairs", 20000)
+        
+        # Score Norm
+        self.score_norm = args.score_norm or cfg.get("evaluation", {}).get("score_norm", "none")
+        
+        # Cohort
+        self.cohort_speakers = args.cohort_speakers or cfg.get("evaluation", {}).get("cohort_speakers", 20)
+        self.cohort_utts_per_spk = args.cohort_utts_per_spk or cfg.get("evaluation", {}).get("cohort_utts_per_spk", 5)
+        self.cohort_seed = args.cohort_seed or cfg.get("evaluation", {}).get("cohort_seed", 42)
+
+def run(args):
     os.makedirs(args.out_dir, exist_ok=True)
     
     device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -123,7 +154,7 @@ def main():
     augmentor = None
     mode = 'feature'
     if args.noise_dir:
-        from voice_engine.augmentation import NoiseAugmentor
+        from voice_engine.dataset import NoiseAugmentor
         augmentor = NoiseAugmentor(args.noise_dir)
         print(f"Noise Augmentation Enabled for Evaluation: {args.noise_dir}")
         if args.feature_dir == str(FEATURES_DIR) or args.feature_dir == "data/features":
@@ -133,8 +164,6 @@ def main():
 
     # Check feature dimension
     # Create temp ds to check dimension
-    # Note: If mode='raw', we need to load a wav to check dim, which might be slow or fail if no wavs.
-    # But SpeakerDataset handles scanning.
     ds_tmp = SpeakerDataset(args.feature_dir, mode=mode, augmentor=augmentor, limit=1)
     if len(ds_tmp) == 0 and mode == 'feature':
         # Try finding subdirectory (e.g. mfcc_delta)
@@ -155,6 +184,9 @@ def main():
     print(f"Detected Feature Dim: {feat_dim_data}")
 
     print("加载模型...")
+    if not os.path.exists(args.model):
+        raise FileNotFoundError(f"Model file not found: {args.model}")
+        
     state = torch.load(args.model, map_location=device)
     ckpt_feat_dim = None
     w = state.get("layer1.conv.weight")
@@ -162,11 +194,6 @@ def main():
         ckpt_feat_dim = int(w.shape[1])
     if ckpt_feat_dim is not None and ckpt_feat_dim != feat_dim_data:
         print(f"Warning: Model expects {ckpt_feat_dim} but data has {feat_dim_data}. Proceeding if model handles it (e.g. strict=False load), but this might be an error.")
-        # Actually LightECAPA constructor needs feat_dim.
-        # If we use the model's feat_dim, and data provides different dim, forward pass will fail (channel mismatch).
-        # So we must match data.
-        # But if model weights are for 80-dim and we provide 40-dim, loading weights will fail or be partial.
-        # Let's trust model weights if available.
         pass
 
     # Use model's dim if known, else data's
@@ -214,8 +241,6 @@ def main():
     unique_labels = np.unique(y)
     if len(unique_labels) < 2 or len(scores) == 0:
         print("评估数据不足，无法计算 ROC/EER，已输出空指标")
-        # ... write empty jsons ...
-        # (Simplified for brevity, assuming standard run works)
         sys.exit(0)
         
     raw_bundle = build_eval_bundle(y, scores, same_scores, diff_scores)
@@ -231,8 +256,6 @@ def main():
     os.makedirs(backend_dir, exist_ok=True)
     
     # Save ROC plot (legacy location in reports root, also save to backend_responses for consistency if needed, but backend doesn't read png from there)
-    # Actually backend doesn't read roc.png, frontend might display it? No, frontend uses ECharts with roc_points.json.
-    # We keep saving roc.png in reports root for manual inspection.
     plt.figure()
     plt.plot(raw_bundle["fpr"], raw_bundle["tpr"], color='darkorange', lw=2, label=f'ROC curve (area = {raw_bundle["roc_auc"]:.2f})')
     plt.plot([0, 1], [0, 1], color='navy', lw=2, linestyle='--')
@@ -246,9 +269,6 @@ def main():
     print(f"Saved ROC to {os.path.join(backend_dir, 'roc.png')}")
     
     # Save results to the specific method directory
-    # If norm is enabled, we save the normalized metrics as the "main" metrics in this folder
-    # If norm is none, we save the raw metrics
-    
     final_bundle = norm_bundle if norm_scores is not None else raw_bundle
     
     # 1. Compute & Save MinDCF
@@ -286,6 +306,28 @@ def main():
         json.dump(metrics, f, indent=2)
     
     print(f"Saved backend responses to {backend_dir}")
+
+def main():
+    parser = build_arg_parser()
+    args = parser.parse_args()
+    
+    cfg = {}
+    if args.config:
+        if not os.path.exists(args.config):
+            print(f"Error: Config file not found: {args.config}")
+            sys.exit(1)
+        print(f"Loading config from {args.config}")
+        cfg = load_config(args.config)
+        
+    eval_args = EvalArgs(args, cfg)
+    
+    print(f"Starting evaluation...")
+    print(f"  Model: {eval_args.model}")
+    print(f"  Data: {eval_args.feature_dir}")
+    print(f"  Output: {eval_args.out_dir}")
+    print(f"  Norm: {eval_args.score_norm}")
+    
+    run(eval_args)
 
 if __name__ == "__main__":
     main()

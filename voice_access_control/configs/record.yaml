@@ -1,0 +1,14 @@
+# configs/record.yaml
+# Record and Verify configuration
+# Usage: python -m scripts.audio.record_and_verify --config configs/record.yaml verify
+
+audio:
+  sample_rate: 16000
+  duration: 3
+
+verification:
+  threshold: 0.75
+  model_path: "checkpoints/ecapa_best.pth"
+
+enrollment:
+  n_utterances: 3

@@ -10,7 +10,7 @@ FEATURES_DIR = DATA_DIR / "features"
 ENROLL_DIR = DATA_DIR / "enroll"
 RECORDINGS_DIR = DATA_DIR / "recordings"
 VOICEPRINTS_DIR = DATA_DIR / "voiceprints"
-MODELS_DIR = PROJECT_ROOT / "models"
+MODELS_DIR = PROJECT_ROOT / "checkpoints"
 REPORTS_DIR = PROJECT_ROOT / "reports"
 
 def ensure_project_root():

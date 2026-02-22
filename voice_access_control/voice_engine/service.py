@@ -5,6 +5,8 @@ This is the ONLY entry point the backend should use.
 """
 import os
 import logging
+import numpy as np
+import torch
 from typing import List, Tuple, Optional, Dict, Any
 
 from .config import (
@@ -12,12 +14,86 @@ from .config import (
     TEMPLATE_PATH,
     DEFAULT_N_MELS,
     DEFAULT_THRESHOLD,
-    DEFAULT_DEVICE
+    DEFAULT_DEVICE,
+    FEATURE_TYPE_MFCC_DELTA,
+    DEFAULT_TEMPLATE_PATH
 )
-from .enroll import enroll as _engine_enroll, load_model
-from .verify import verify as _engine_verify
+from .ecapa_tdnn import LightECAPA
+from .dataset import (
+    extract_feature_tensor,
+    infer_feature_type_from_feat_dim,
+    get_feature_dim
+)
 
 logger = logging.getLogger("voice_engine")
+
+# ==========================================
+# Helper Functions
+# ==========================================
+
+def load_templates(path=None):
+    """Load voiceprint templates dictionary {user_id: embedding}"""
+    path = path or TEMPLATE_PATH
+    if not os.path.exists(path):
+        # Return empty dict instead of raising error to allow first enrollment
+        return {} 
+    return np.load(path, allow_pickle=True).item()
+
+def save_templates(templates, path=None):
+    """Save voiceprint templates dictionary"""
+    path = path or TEMPLATE_PATH
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    np.save(path, templates)
+    logger.info(f"Templates saved to {path}")
+
+def cosine_score(a, b):
+    """Compute cosine similarity between two vectors"""
+    a = a / (np.linalg.norm(a) + 1e-9)
+    b = b / (np.linalg.norm(b) + 1e-9)
+    s = float(np.dot(a, b))
+    if s > 1.0:
+        s = 1.0
+    elif s < -1.0:
+        s = -1.0
+    return s
+
+def load_model(model_path=MODEL_PATH, device=None, feature_type=None, n_mels=DEFAULT_N_MELS):
+    """Load the ECAPA-TDNN model"""
+    if device is None:
+        device = DEFAULT_DEVICE if torch.cuda.is_available() else "cpu"
+    
+    if not os.path.exists(model_path):
+        raise FileNotFoundError(f"Model file not found: {model_path}")
+
+    state = torch.load(model_path, map_location=device)
+    
+    if feature_type is None:
+        # Try to infer from model weights if possible
+        w = state.get("layer1.conv.weight")
+        if w is not None and w.ndim == 3:
+            feat_dim_state = int(w.shape[1])
+            feature_type = infer_feature_type_from_feat_dim(feat_dim_state, n_mels)
+        else:
+            feature_type = FEATURE_TYPE_MFCC_DELTA
+            
+    feat_dim = get_feature_dim(feature_type, n_mels)
+    model = LightECAPA(feat_dim=feat_dim, emb_dim=192, n_speakers=None).to(device)
+    model.load_state_dict(state, strict=False)
+    model.eval()
+    return model, device, feature_type
+
+def extract_embedding(model, device, wav_path, feature_type=FEATURE_TYPE_MFCC_DELTA, n_mels=DEFAULT_N_MELS):
+    """Extract embedding from a single wav file"""
+    feat = extract_feature_tensor(wav_path, feature_type=feature_type, n_mels=n_mels, device=device)
+    lengths = torch.tensor([feat.shape[2]], device=device)
+    with torch.no_grad():
+        emb = model(feat, lengths, return_embedding=True)
+    emb = emb.detach().cpu().numpy()[0]
+    return emb
+
+# ==========================================
+# VoiceService Class
+# ==========================================
 
 class VoiceService:
     """
@@ -50,9 +126,8 @@ class VoiceService:
                 device=self.device,
                 n_mels=self.n_mels
             )
-            # Infer feat_dim from model structure if possible, or use config default
-            # Currently load_model returns (model, device, feature_type)
-            # We can get feat_dim from the first layer
+            
+            # Infer feat_dim from model structure
             if hasattr(self.model, 'layer1') and hasattr(self.model.layer1, 'conv'):
                 self.feat_dim = self.model.layer1.conv.weight.shape[1]
             
@@ -66,20 +141,34 @@ class VoiceService:
         Enroll a user with a list of wav files.
         """
         try:
-            _engine_enroll(
-                user_id=user_id,
-                wav_paths=wav_paths,
-                model_path=self.model_path, # Although engine_enroll loads model internally, passing it for consistency
-                # Optimisation: Refactor engine_enroll to accept loaded model instance to avoid reload
-                # For now, we rely on existing implementation but we should improve this.
-                # Actually, looking at enroll.py, it calls load_model. 
-                # Ideally we should pass self.model to avoid reloading.
-                # But current enroll signature is: 
-                # enroll(user_id, wav_paths, model_path=..., template_path=..., ...)
-                # It doesn't accept model instance. 
-                # TODO: Refactor enroll.py to accept model instance.
-            )
+            assert len(wav_paths) >= 1, "At least one wav file required for enrollment"
+            
+            embs = []
+            for p in wav_paths:
+                if not os.path.exists(p):
+                    raise FileNotFoundError(f"Wav file not found: {p}")
+                
+                e = extract_embedding(
+                    self.model, 
+                    self.device, 
+                    p, 
+                    feature_type=self.feature_type, 
+                    n_mels=self.n_mels
+                )
+                embs.append(e)
+
+            user_template = np.mean(np.stack(embs, axis=0), axis=0)
+
+            # Load existing templates
+            templates = load_templates(TEMPLATE_PATH)
+            templates[user_id] = user_template
+            
+            # Save updated templates
+            save_templates(templates, TEMPLATE_PATH)
+            
+            logger.info(f"Enrolled user {user_id} with {len(wav_paths)} samples.")
             return {"status": "success", "user_id": user_id, "wav_count": len(wav_paths)}
+            
         except Exception as e:
             logger.error(f"Enrollment failed for {user_id}: {e}")
             return {"status": "error", "error": str(e)}
@@ -91,32 +180,80 @@ class VoiceService:
         thr = threshold if threshold is not None else DEFAULT_THRESHOLD
         
         try:
-            # We pass self.model to verify to use the pre-loaded instance (Efficiency!)
-            best_spk, best_score, result = _engine_verify(
-                wav_path=wav_path,
-                threshold=thr,
-                model=self.model,
-                device=self.device,
-                feature_type=self.feature_type,
+            if not os.path.exists(wav_path):
+                raise FileNotFoundError(f"Wav file not found: {wav_path}")
+
+            # Extract embedding
+            emb = extract_embedding(
+                self.model, 
+                self.device, 
+                wav_path, 
+                feature_type=self.feature_type, 
                 n_mels=self.n_mels
             )
+
+            # Load templates
+            templates = load_templates(TEMPLATE_PATH)
+            if not templates:
+                return {"status": "reject", "score": 0.0, "speaker": None, "message": "No enrolled users"}
+
+            # Compare against all templates
+            best_spk, best_score = None, -1.0
+            
+            for spk, tmpl in templates.items():
+                # Support multi-shot templates (list of embeddings) or single (mean embedding)
+                if isinstance(tmpl, np.ndarray) and tmpl.ndim == 1:
+                    s = cosine_score(emb, tmpl)
+                elif isinstance(tmpl, (list, np.ndarray)):
+                    # If template is a list of embeddings, take max score
+                    scores = [cosine_score(emb, t) for t in tmpl]
+                    s = max(scores) if scores else -1.0
+                else:
+                    s = cosine_score(emb, tmpl)
+
+                if s > best_score:
+                    best_score = s
+                    best_spk = spk
+
+            result = "ACCEPT" if best_score >= thr else "REJECT"
+            logger.info(f"Verification: {wav_path} -> Best match: {best_spk} ({best_score:.4f}) => {result}")
             
             return {
                 "status": "success",
-                "predicted_user": best_spk,
-                "score": float(best_score),
                 "result": result,
+                "best_score": float(best_score),
+                "best_speaker": best_spk,
                 "threshold": thr
             }
+
         except Exception as e:
-            logger.error(f"Verification failed for {wav_path}: {e}")
+            logger.error(f"Verification failed: {e}")
             return {"status": "error", "error": str(e)}
 
-    def get_model_info(self) -> Dict[str, Any]:
-        return {
-            "model_path": self.model_path,
-            "device": self.device,
-            "feature_type": self.feature_type,
-            "n_mels": self.n_mels,
-            "feat_dim": self.feat_dim
-        }
+if __name__ == "__main__":
+    # Simple CLI for testing
+    import sys
+    if len(sys.argv) < 2:
+        print("Usage: python -m voice_engine.service [enroll|verify] ...")
+        sys.exit(1)
+        
+    cmd = sys.argv[1]
+    svc = VoiceService.get_instance()
+    
+    if cmd == "enroll":
+        if len(sys.argv) < 4:
+            print("Usage: enroll <user_id> <wav1> [wav2 ...]")
+            sys.exit(1)
+        uid = sys.argv[2]
+        wavs = sys.argv[3:]
+        print(svc.enroll(uid, wavs))
+        
+    elif cmd == "verify":
+        if len(sys.argv) < 3:
+            print("Usage: verify <wav_path> [threshold]")
+            sys.exit(1)
+        wav = sys.argv[2]
+        th = float(sys.argv[3]) if len(sys.argv) > 3 else None
+        print(svc.verify(wav, th))
+    else:
+        print(f"Unknown command: {cmd}")

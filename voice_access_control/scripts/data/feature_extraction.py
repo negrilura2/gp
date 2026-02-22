@@ -4,6 +4,7 @@ import sys
 import time
 import multiprocessing as mp
 import concurrent.futures as cf
+import yaml
 from pathlib import Path
 sys.dont_write_bytecode = True
 
@@ -27,7 +28,7 @@ from voice_engine.config import (
     FEATURE_TYPE_LOGMEL,
     DEFAULT_N_MELS
 )
-from voice_engine.features import extract_feature_numpy
+from voice_engine.dataset import extract_feature_numpy
 
 def process_one(args):
     wav_path, out_dir, feature_type, n_mels = args
@@ -48,19 +49,45 @@ def process_one(args):
     return os.path.basename(wav_path), feat.shape, False
 
 
+def load_config(path):
+    with open(path, "r", encoding="utf-8") as f:
+        return yaml.safe_load(f)
+
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--in_root", default=str(PROCESSED_DIR))
-    parser.add_argument("--out_root", default=str(FEATURES_DIR))
-    parser.add_argument("--feature_type", choices=[FEATURE_TYPE_MFCC, FEATURE_TYPE_MFCC_DELTA, FEATURE_TYPE_LOGMEL], default=FEATURE_TYPE_MFCC_DELTA)
-    parser.add_argument("--n_mels", type=int, default=DEFAULT_N_MELS)
-    parser.add_argument("--workers", type=int, default=0)
-    parser.add_argument("--feature_subdir", default="")
+    parser.add_argument("--config", "-c", help="Path to config yaml file")
+    parser.add_argument("--in_root", default=None)
+    parser.add_argument("--out_root", default=None)
+    parser.add_argument("--feature_type", choices=[FEATURE_TYPE_MFCC, FEATURE_TYPE_MFCC_DELTA, FEATURE_TYPE_LOGMEL], default=None)
+    parser.add_argument("--n_mels", type=int, default=None)
+    parser.add_argument("--workers", type=int, default=None)
+    parser.add_argument("--feature_subdir", default=None)
     args = parser.parse_args()
 
-    in_root = Path(args.in_root)
-    feature_subdir = args.feature_subdir or args.feature_type
-    out_root = Path(args.out_root) / feature_subdir
+    cfg = {}
+    if args.config:
+        if os.path.exists(args.config):
+            print(f"Loading config from {args.config}")
+            cfg = load_config(args.config)
+        else:
+            print(f"Warning: Config {args.config} not found")
+
+    dataset_cfg = cfg.get("dataset", {})
+    
+    # Priority: CLI > Config > Default
+    in_root_str = args.in_root or dataset_cfg.get("in_root") or str(PROCESSED_DIR)
+    out_root_str = args.out_root or dataset_cfg.get("out_root") or str(FEATURES_DIR)
+    feature_type = args.feature_type or dataset_cfg.get("feature_type") or FEATURE_TYPE_MFCC_DELTA
+    n_mels = args.n_mels or dataset_cfg.get("n_mels") or DEFAULT_N_MELS
+    workers = args.workers if args.workers is not None else dataset_cfg.get("workers", 0)
+    feature_subdir = args.feature_subdir or dataset_cfg.get("feature_subdir", "")
+
+    in_root = Path(in_root_str)
+    # feature_subdir = feature_subdir or feature_type # Logic below handles this
+    
+    # Logic from original script
+    final_subdir = feature_subdir or feature_type
+    out_root = Path(out_root_str) / final_subdir
     if not in_root.exists():
         raise FileNotFoundError(in_root)
 
@@ -71,10 +98,14 @@ def main():
         print(f"\n🎤 正在提取用户 {user_dir.name} ，共 {len(wav_list)} 条")
         out_dir = out_root / user_dir.name
         os.makedirs(out_dir, exist_ok=True)
-        tasks = [(str(w), str(out_dir), args.feature_type, args.n_mels) for w in wav_list]
+        tasks = [(str(w), str(out_dir), feature_type, n_mels) for w in wav_list]
         start_all = time.perf_counter()
-        workers = args.workers if args.workers > 0 else max(1, mp.cpu_count() - 1)
-        if workers == 1:
+        
+        # Determine workers
+        # workers arg: 0 -> auto
+        final_workers = workers if workers > 0 else max(1, mp.cpu_count() - 1)
+        
+        if final_workers == 1:
             for i, t in enumerate(tasks, 1):
                 name, shape, skipped = process_one(t)
                 if skipped:
@@ -84,7 +115,7 @@ def main():
         else:
             ctx = mp.get_context("spawn")
             try:
-                with cf.ProcessPoolExecutor(max_workers=workers, mp_context=ctx) as ex:
+                with cf.ProcessPoolExecutor(max_workers=final_workers, mp_context=ctx) as ex:
                     futures = [ex.submit(process_one, t) for t in tasks]
                     for i, fut in enumerate(cf.as_completed(futures), 1):
                         name, shape, skipped = fut.result()

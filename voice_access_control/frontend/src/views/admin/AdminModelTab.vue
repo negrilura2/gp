@@ -12,12 +12,12 @@
               </div>
             </div>
             <div class="settings-actions">
-              <span class="norm-label">选择归一化策略：</span>
+              <span class="norm-label">归一化:</span>
               <el-select
                 :model-value="evalNormMethod"
                 @update:model-value="onEvalNormMethodChange"
                 size="small"
-                style="width: 110px; margin-right: 8px"
+                style="width: 100px; margin-right: 8px"
               >
                 <el-option label="无 (None)" value="none" />
                 <el-option label="Z-Norm" value="znorm" />
@@ -206,11 +206,19 @@ defineProps({
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.settings-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 .norm-label {
   font-size: 13px;
   color: #606266;
-  margin-right: 4px;
+  white-space: nowrap;
 }
 .settings-title {
   font-weight: 600;

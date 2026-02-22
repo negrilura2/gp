@@ -55,7 +55,7 @@ _default_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 ROOT_DIR = get_path_env("PROJECT_ROOT", _default_root)
 
 # 子目录配置 (支持环境变量覆盖)
-MODELS_DIR = get_path_env("MODELS_DIR", os.path.join(ROOT_DIR, "models"))
+MODELS_DIR = get_path_env("MODELS_DIR", os.path.join(ROOT_DIR, "checkpoints"))
 DATA_DIR = get_path_env("DATA_DIR", os.path.join(ROOT_DIR, "data"))
 FEATURES_DIR = get_path_env("FEATURES_DIR", os.path.join(DATA_DIR, "features"))
 VOICEPRINTS_DIR = get_path_env("VOICEPRINTS_DIR", os.path.join(DATA_DIR, "voiceprints"))

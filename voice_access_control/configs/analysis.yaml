@@ -1,0 +1,35 @@
+# configs/analysis.yaml
+# Analysis configuration
+# Usage: 
+#   python -m scripts.analysis.plot_embedding --config configs/analysis.yaml
+#   python -m scripts.analysis.noise_robustness --config configs/analysis.yaml
+
+dataset:
+  feature_dir: "data/features"
+  processed_dir: "data/processed" # For noise analysis requiring raw wavs
+
+model:
+  path: "checkpoints/ecapa_best.pth"
+
+analysis:
+  # General
+  batch_size: 32
+  device: "cuda"
+  seed: 42
+  out_dir: "reports"
+
+  # Embedding Visualization
+  embedding:
+    max_speakers: 10
+    max_utts_per_spk: 10
+    method: "tsne" # tsne, pca
+    perplexity: 30
+
+  # Noise Robustness
+  noise:
+    snr_list: [0, 5, 10, 15, 20]
+    noise_wav: "" # Path to specific noise file, or empty for random white noise
+    feature_type: "mfcc_delta"
+    n_mels: 40
+    max_speakers: 10
+    max_utts_per_spk: 5

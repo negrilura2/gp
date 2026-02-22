@@ -1,0 +1,40 @@
+# configs/ecapa.yaml
+# 基础 ECAPA-TDNN 训练配置
+# Usage: python -m scripts.train --config configs/ecapa.yaml
+
+model:
+  name: "ecapa_tdnn"
+  emb_dim: 192
+  feat_dim: 39      # MFCC-Delta (13*3)
+  n_channels: 1024  # Base ECAPA channels
+
+dataset:
+  feature_dir: "data/features"
+  feature_type: "mfcc_delta"
+  n_mels: 40
+  loader_workers: 4 # Windows 下设为 0
+
+training:
+  batch_size: 32
+  epochs: 40
+  lr: 0.001
+  optimizer: "adam"  # adam, adamw
+  loss: "aam"         # ce (CrossEntropy), aam (AAMSoftmax)
+  device: "cuda"     # cuda, cpu
+  
+  # AAM-Softmax 参数
+  aam_s: 30.0
+  aam_m: 0.2
+
+  # Early Stopping
+  early_stop: true
+  patience: 5
+
+paths:
+  save_dir: "checkpoints"
+  log_dir: "reports/metrics"
+  feature_tag: "default"
+
+evaluation:
+  eer_interval: 5
+  eer_pairs: 20000

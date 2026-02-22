@@ -2,10 +2,12 @@ import os
 import sys
 import json
 import threading
-import subprocess
 import math
 import logging
 from datetime import datetime
+from argparse import Namespace
+from contextlib import redirect_stdout
+import io
 
 import soundfile as sf
 
@@ -205,38 +207,40 @@ def _start_eval_thread(model_path, feature_dir, norm_method="none"):
     def _run():
         model_name = os.path.basename(model_path)
         _set_eval_status("running", model=model_name, started_at=timezone.now().isoformat())
-        cmd = [
-            sys.executable,
-            "-m",
-            "scripts.eval.eval_threshold",
-            "--model",
-            model_path,
-            "--feature_dir",
-            feature_dir,
-            "--out_dir",
-            os.fspath(settings.REPORTS_DIR),
-            "--max_pairs",
-            "20000",
-        ]
-        if norm_method and norm_method != "none":
-            cmd.extend([
-                "--score_norm", norm_method,
-                "--cohort_speakers", "20",
-                "--cohort_utts_per_spk", "5"
-            ])
         try:
-            result = subprocess.run(
-                cmd,
-                cwd=os.fspath(settings.PROJECT_ROOT),
-                env={**os.environ, "MPLBACKEND": "Agg"},
-                capture_output=True,
-                text=True,
-                check=True,
+            from scripts import evaluate as evaluate_module
+            # Construct args object that matches what evaluate.run expects
+            # evaluate.run uses: args.out_dir, args.noise_dir, args.feature_dir, args.model, args.score_norm, etc.
+            # It also uses args.cohort_speakers, args.cohort_utts_per_spk, args.cohort_seed
+            args = Namespace(
+                model=model_path,
+                feature_dir=feature_dir,
+                out_dir=os.fspath(settings.REPORTS_DIR),
+                max_pairs=20000,
+                noise_dir=None,
+                score_norm=norm_method or "none",
+                cohort_speakers=20,
+                cohort_utts_per_spk=5,
+                cohort_seed=42,
+                # Add missing args that might be accessed
+                config=None,
             )
-            output = (result.stdout or "").strip()
+            buf = io.StringIO()
+            with redirect_stdout(buf):
+                # We need to wrap args in EvalArgs if evaluate.run expects it?
+                # No, evaluate.run(args) just accesses attributes on args.
+                # But wait, evaluate.main() does: eval_args = EvalArgs(args, cfg); run(eval_args)
+                # And EvalArgs.__init__ sets attributes.
+                # So if we pass a Namespace with all attributes, it should be fine.
+                # However, let's look at evaluate.py again.
+                # run(args) uses: args.out_dir, args.noise_dir, args.feature_dir, args.model, args.score_norm
+                # It also uses args.cohort_...
+                # So our Namespace is sufficient.
+                evaluate_module.run(args)
+            output = buf.getvalue().strip()
             _set_eval_status("ok", model=model_name, output=output, finished_at=timezone.now().isoformat())
-        except subprocess.CalledProcessError as e:
-            msg = (e.stderr or e.stdout or "评估失败").strip()
+        except Exception as e:
+            msg = str(e) or "评估失败"
             _set_eval_status("failed", model=model_name, error=msg, finished_at=timezone.now().isoformat())
 
     EVAL_THREAD = threading.Thread(target=_run, daemon=True)

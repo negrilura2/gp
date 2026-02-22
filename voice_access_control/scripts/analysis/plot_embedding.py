@@ -87,33 +87,64 @@ def plot_embeddings(points, labels, idx2spk, out_png, title):
     plt.close()
 
 
+import yaml
+
+def load_config(path):
+    with open(path, "r", encoding="utf-8") as f:
+        return yaml.safe_load(f)
+
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--model", default=DEFAULT_MODEL_PATH)
-    parser.add_argument("--feature_dir", default=str(FEATURES_DIR))
-    parser.add_argument("--out_dir", default=str(REPORTS_DIR))
-    parser.add_argument("--feature_type", choices=["mfcc", "mfcc_delta", "logmel"], default="mfcc_delta")
-    parser.add_argument("--batch_size", type=int, default=32)
-    parser.add_argument("--device", default="cuda" if torch.cuda.is_available() else "cpu")
-    parser.add_argument("--method", choices=["tsne", "pca"], default="tsne")
-    parser.add_argument("--perplexity", type=int, default=30)
-    parser.add_argument("--seed", type=int, default=42)
-    parser.add_argument("--max_speakers", type=int, default=10)
-    parser.add_argument("--max_utts_per_spk", type=int, default=10)
+    parser.add_argument("--config", "-c", help="Path to config yaml file")
+    parser.add_argument("--model", default=None)
+    parser.add_argument("--feature_dir", default=None)
+    parser.add_argument("--out_dir", default=None)
+    parser.add_argument("--feature_type", choices=["mfcc", "mfcc_delta", "logmel"], default=None)
+    parser.add_argument("--batch_size", type=int, default=None)
+    parser.add_argument("--device", default=None)
+    parser.add_argument("--method", choices=["tsne", "pca"], default=None)
+    parser.add_argument("--perplexity", type=int, default=None)
+    parser.add_argument("--seed", type=int, default=None)
+    parser.add_argument("--max_speakers", type=int, default=None)
+    parser.add_argument("--max_utts_per_spk", type=int, default=None)
     args = parser.parse_args()
 
-    if str(args.device).lower().startswith("cuda") and not torch.cuda.is_available():
-        print("WARNING: CUDA not available, switching to CPU")
-        args.device = "cpu"
+    cfg = {}
+    if args.config:
+        cfg = load_config(args.config)
+        print(f"Loading config from {args.config}")
 
-    feature_dir = resolve_feature_dir(args.feature_dir, args.feature_type)
+    # Priority: CLI > Config > Default
+    model_path = args.model or cfg.get("model", {}).get("path") or DEFAULT_MODEL_PATH
+    feature_dir = args.feature_dir or cfg.get("dataset", {}).get("feature_dir") or str(FEATURES_DIR)
+    out_dir = args.out_dir or cfg.get("analysis", {}).get("out_dir") or str(REPORTS_DIR)
+    
+    analysis_cfg = cfg.get("analysis", {})
+    emb_cfg = analysis_cfg.get("embedding", {})
+    
+    feature_type = args.feature_type or analysis_cfg.get("feature_type", "mfcc_delta")
+    batch_size = args.batch_size or analysis_cfg.get("batch_size", 32)
+    device = args.device or analysis_cfg.get("device", "cuda" if torch.cuda.is_available() else "cpu")
+    seed = args.seed or analysis_cfg.get("seed", 42)
+    
+    method = args.method or emb_cfg.get("method", "tsne")
+    perplexity = args.perplexity or emb_cfg.get("perplexity", 30)
+    max_speakers = args.max_speakers or emb_cfg.get("max_speakers", 10)
+    max_utts_per_spk = args.max_utts_per_spk or emb_cfg.get("max_utts_per_spk", 10)
+
+
+    if str(device).lower().startswith("cuda") and not torch.cuda.is_available():
+        print("WARNING: CUDA not available, switching to CPU")
+        device = "cpu"
+
+    feature_dir = resolve_feature_dir(feature_dir, feature_type)
     ds = SpeakerDataset(feature_dir)
     if len(ds) == 0:
         raise ValueError("feature_dir 内没有可用特征文件")
 
     sample_feat, _ = ds[0]
     feat_dim_data = int(sample_feat.shape[0])
-    state = torch.load(args.model, map_location=args.device)
+    state = torch.load(model_path, map_location=device)
     ckpt_feat_dim = None
     w = state.get("layer1.conv.weight")
     if w is not None:
@@ -121,20 +152,20 @@ def main():
     if ckpt_feat_dim is not None and ckpt_feat_dim != feat_dim_data:
         print(f"Warning: Model expects {ckpt_feat_dim} but data has {feat_dim_data}")
     feat_dim = ckpt_feat_dim or feat_dim_data
-    model = LightECAPA(feat_dim=feat_dim, emb_dim=192, n_speakers=None).to(args.device)
+    model = LightECAPA(feat_dim=feat_dim, emb_dim=192, n_speakers=None).to(device)
     model.load_state_dict(state, strict=False)
     model.eval()
 
-    indices = select_indices(ds, args.max_speakers, args.max_utts_per_spk, args.seed)
+    indices = select_indices(ds, max_speakers, max_utts_per_spk, seed)
     subset = Subset(ds, indices) if indices else ds
-    loader = DataLoader(subset, batch_size=args.batch_size, shuffle=False, collate_fn=pad_collate)
+    loader = DataLoader(subset, batch_size=batch_size, shuffle=False, collate_fn=pad_collate)
 
     all_embs = []
     all_labels = []
     with torch.no_grad():
         for feats, lengths, labels in loader:
-            feats = feats.to(args.device)
-            lengths = lengths.to(args.device)
+            feats = feats.to(device)
+            lengths = lengths.to(device)
             emb = model(feats, lengths, return_embedding=True)
             all_embs.append(emb.cpu().numpy())
             all_labels.append(labels.numpy())
@@ -144,15 +175,16 @@ def main():
     if embeddings.shape[0] < 3:
         raise ValueError("样本过少，无法进行降维可视化")
 
-    points = reduce_embeddings(embeddings, args.method, args.seed, args.perplexity)
-    out_root = os.path.join(args.out_dir, "plots", "embedding")
+    points = reduce_embeddings(embeddings, method, seed, perplexity)
+    out_root = os.path.join(out_dir, "plots", "embedding")
     os.makedirs(out_root, exist_ok=True)
-    stem = f"embedding_{args.method}"
+    stem = f"embedding_{method}"
     out_png = os.path.join(out_root, f"{stem}.png")
     out_json = os.path.join(out_root, f"{stem}.json")
 
     idx2spk = {v: k for k, v in ds.spk2idx.items()}
-    plot_embeddings(points, labels, idx2spk, out_png, f"Embedding {args.method.upper()} (n={len(labels)})")
+    plot_embeddings(points, labels, idx2spk, out_png, f"Embedding {method.upper()} (n={len(labels)})")
+
 
     payload = [
         {"x": float(x), "y": float(y), "label": int(lab), "spk": idx2spk.get(int(lab), str(lab))}
