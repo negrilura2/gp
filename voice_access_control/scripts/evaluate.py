@@ -29,16 +29,16 @@ from scripts import FEATURES_DIR, MODELS_DIR, REPORTS_DIR
 from voice_engine.ecapa_tdnn import LightECAPA
 from voice_engine.dataset import SpeakerDataset, pad_collate
 from torch.utils.data import DataLoader
-from voice_engine.trainer import (
-    extract_all_embeddings,
+from voice_engine.metrics import extract_all_embeddings
+from voice_engine.metrics import (
     compute_pairs_scores,
+    compute_cohort_stats,
+    apply_score_norm,
     eer_from_roc,
     compute_mindcf,
     recommend_threshold,
     compute_score_hist,
     compute_calibration,
-    compute_cohort_stats,
-    apply_score_norm,
 )
 
 def load_config(path):
@@ -303,6 +303,10 @@ def run(args):
     
     # Also save to legacy metrics.json in root for backward compatibility if needed
     with open(os.path.join(args.out_dir, "metrics.json"), "w") as f:
+        json.dump(metrics, f, indent=2)
+    score_norm_dir = os.path.join(args.out_dir, "score_norm")
+    os.makedirs(score_norm_dir, exist_ok=True)
+    with open(os.path.join(score_norm_dir, f"{args.score_norm}.json"), "w") as f:
         json.dump(metrics, f, indent=2)
     
     print(f"Saved backend responses to {backend_dir}")

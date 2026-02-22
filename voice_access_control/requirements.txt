@@ -57,6 +57,10 @@ frozenlist==1.8.0
 multidict==6.7.1
 propcache==0.4.1
 
+# ---- AI Service (FastAPI) ----
+fastapi==0.115.0
+uvicorn==0.30.6
+
 # ---- HuggingFace & Datasets ----
 huggingface_hub==1.4.1
 datasets==4.5.0

@@ -5,6 +5,8 @@
 import os
 import threading
 
+import httpx
+
 # 项目根目录
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 
@@ -13,7 +15,74 @@ if ROOT not in sys.path:
     sys.path.insert(0, ROOT)
 
 from voice_engine.service import VoiceService
-from voice_engine.config import DEFAULT_MODEL_PATH
+
+AI_SERVICE_URL = os.getenv("AI_SERVICE_URL", "").strip()
+
+
+class HttpVoiceService:
+    def __init__(self, base_url: str):
+        self.base_url = base_url.rstrip("/")
+        self.model_path = None
+
+    def _post_files(self, path, data, files):
+        url = f"{self.base_url}{path}"
+        with httpx.Client(timeout=60.0) as client:
+            resp = client.post(url, data=data, files=files)
+        resp.raise_for_status()
+        return resp.json()
+
+    def enroll(self, user_id, wav_paths):
+        files = []
+        try:
+            for p in wav_paths:
+                f = open(p, "rb")
+                files.append(
+                    ("files", (os.path.basename(p), f, "audio/wav"))
+                )
+            return self._post_files(
+                "/enroll",
+                {"user_id": user_id},
+                files,
+            )
+        finally:
+            for _, (_, f, _) in files:
+                try:
+                    f.close()
+                except Exception:
+                    pass
+
+    def verify(self, wav_path, threshold=None):
+        files = []
+        f = None
+        try:
+            f = open(wav_path, "rb")
+            files.append(
+                ("file", (os.path.basename(wav_path), f, "audio/wav"))
+            )
+            data = {}
+            if threshold is not None:
+                data["threshold"] = str(threshold)
+            return self._post_files("/verify", data, files)
+        finally:
+            if f is not None:
+                try:
+                    f.close()
+                except Exception:
+                    pass
+
+    def reload(self, model_path=None, device=None):
+        data = {}
+        if model_path:
+            data["model_path"] = model_path
+            self.model_path = model_path
+        if device:
+            data["device"] = device
+        url = f"{self.base_url}/reload"
+        with httpx.Client(timeout=60.0) as client:
+            resp = client.post(url, data=data)
+        resp.raise_for_status()
+        return resp.json()
+
 
 _service = None
 _lock = threading.Lock()
@@ -26,7 +95,10 @@ def get_service():
     if _service is None:
         with _lock:
             if _service is None:
-                _service = VoiceService.get_instance()
+                if AI_SERVICE_URL:
+                    _service = HttpVoiceService(AI_SERVICE_URL)
+                else:
+                    _service = VoiceService.get_instance()
     return _service
 
 def get_model(model_path=None, n_mels=None):
@@ -35,28 +107,30 @@ def get_model(model_path=None, n_mels=None):
     Maintained for backward compatibility with older views.
     """
     service = get_service()
-    # If model_path changed, we might need to reload, but VoiceService is singleton.
-    # For now, return exposed internals.
+    if isinstance(service, HttpVoiceService):
+        url = f"{AI_SERVICE_URL.rstrip('/')}/health"
+        with httpx.Client(timeout=10.0) as client:
+            resp = client.get(url)
+        resp.raise_for_status()
+        data = resp.json()
+        return None, data.get("device"), None, data.get("n_mels")
     return service.model, service.device, service.feature_type, service.n_mels
 
 def get_model_path():
     service = get_service()
+    if isinstance(service, HttpVoiceService):
+        return service.model_path
     return service.model_path
 
 def set_model_path(model_path):
-    # This is tricky with singleton. We should update the singleton.
-    # But VoiceService currently loads in __init__.
-    # We might need to force reload.
     global _service
     with _lock:
-        # Re-instantiate service with new path
-        # Note: This is a bit of a hack against the Singleton pattern of VoiceService.
-        # Ideally VoiceService should have a 'reload(path)' method.
-        # For now, we just reset the internal singleton of VoiceService if we could, 
-        # or we just create a new instance and assign it to _service.
-        # But VoiceService.get_instance() will still return the old one if we don't clear it.
-        VoiceService._instance = None 
-        _service = VoiceService(model_path=model_path)
+        if AI_SERVICE_URL:
+            if _service is None or not isinstance(_service, HttpVoiceService):
+                _service = HttpVoiceService(AI_SERVICE_URL)
+            _service.reload(model_path=model_path)
+        else:
+            _service = VoiceService.reload(model_path=model_path)
 
 def get_feature_type():
     service = get_service()

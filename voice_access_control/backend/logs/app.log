@@ -8317,3 +8317,23 @@ json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
 [2026-02-22 20:29:50,786] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\scripts\evaluate.py changed, reloading.
 [2026-02-22 20:29:53,047] INFO django.utils.autoreload Watching for file changes with StatReloader
 [2026-02-22 21:42:44,289] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6438
+[2026-02-22 22:28:38,161] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\voice_engine\service.py changed, reloading.
+[2026-02-22 22:28:40,823] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-02-22 22:29:25,832] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\backend\api\model_loader.py changed, reloading.
+[2026-02-22 22:29:27,112] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-02-22 23:41:12,449] INFO django.server "GET /api/roc/?t=1771774871797&norm_method=tnorm HTTP/1.1" 200 674965
+[2026-02-22 23:41:15,090] INFO django.server "POST /api/roc/evaluate/ HTTP/1.1" 200 137
+[2026-02-22 23:41:16,622] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-02-22 23:41:18,105] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-02-22 23:41:19,606] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-02-22 23:41:21,122] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-02-22 23:41:22,614] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 652
+[2026-02-22 23:41:22,757] INFO django.server "GET /api/roc/?t=1771774882617&norm_method=tnorm HTTP/1.1" 200 674965
+[2026-02-22 23:41:25,236] INFO django.server "GET /api/roc/?t=1771774885174&norm_method=znorm HTTP/1.1" 200 671527
+[2026-02-22 23:41:26,767] INFO django.server "GET /api/roc/?t=1771774886712&norm_method=snorm HTTP/1.1" 200 596567
+[2026-02-22 23:41:27,761] INFO django.server "GET /api/roc/?t=1771774887708&norm_method=none HTTP/1.1" 200 301970
+[2026-02-22 23:41:29,272] INFO django.server "GET /api/roc/?t=1771774889206&norm_method=tnorm HTTP/1.1" 200 674965
+[2026-02-22 23:58:38,032] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\voice_engine\trainer.py changed, reloading.
+[2026-02-22 23:58:41,770] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-02-23 00:27:19,211] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\backend\api\model_loader.py changed, reloading.
+[2026-02-23 00:27:20,881] INFO django.utils.autoreload Watching for file changes with StatReloader

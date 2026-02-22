@@ -18,6 +18,10 @@ def load_config(path):
 def main():
     parser = argparse.ArgumentParser(description="Train voice recognition model from config")
     parser.add_argument("--config", "-c", required=True, help="Path to config yaml file")
+    parser.add_argument("--epochs", type=int, default=None)
+    parser.add_argument("--early_stop", action="store_true")
+    parser.add_argument("--no_early_stop", action="store_true")
+    parser.add_argument("--patience", type=int, default=None)
     args = parser.parse_args()
 
     if not os.path.exists(args.config):
@@ -26,6 +30,15 @@ def main():
 
     print(f"Loading config from {args.config}")
     cfg = load_config(args.config)
+    training_cfg = cfg.setdefault("training", {})
+    if args.epochs is not None:
+        training_cfg["epochs"] = args.epochs
+    if args.patience is not None:
+        training_cfg["patience"] = args.patience
+    if args.early_stop:
+        training_cfg["early_stop"] = True
+    if args.no_early_stop:
+        training_cfg["early_stop"] = False
     
     trainer = Trainer(cfg)
     trainer.setup()

@@ -172,43 +172,43 @@ voice_access_control/
 * 数据预处理：
 
 ```bash
-python -m scripts.preprocess
+python -m scripts.data.preprocess --config configs/data.yaml
 ```
 
 * 特征提取：
 
 ```bash
-python -m scripts.feature_extraction
+python -m scripts.data.feature_extraction --config configs/data.yaml
 ```
 
 * 训练模型：
 
 ```bash
-python -m model.train --feature_dir data/features --save_dir models --epochs 30 --batch_size 32
+python -m scripts.train --config configs/ecapa.yaml
 ```
 
 * 生成模板（infer）：
 
 ```bash
-python -m model.infer --model_path models/ecapa_best.pth --feature_dir data/features
+python -m scripts.evaluate --config configs/eval.yaml --score_norm none
 ```
 
 * 评估 EER / 生成 ROC：
 
 ```bash
-python -m scripts.eval_threshold --model models/ecapa_best.pth --feature_dir data/features --out_dir reports --max_pairs 10000
+python -m scripts.analysis.plot_embedding --config configs/analysis.yaml
 ```
 
 * 注册（enroll）：
 
 ```bash
-python -m model.enroll alice data/enroll/alice/1.wav data/enroll/alice/2.wav data/enroll/alice/3.wav
+python -m scripts.audio.record_and_verify --config configs/record.yaml verify
 ```
 
 * 本地录音并验证（交互）：
 
 ```bash
-python -m scripts.record_and_verify verify --threshold 0.70
+python -m scripts.audio.record_and_verify --config configs/record.yaml verify
 ```
 
 * 启动后端：

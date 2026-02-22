@@ -9,7 +9,7 @@ dataset:
   processed_dir: "data/processed" # For noise analysis requiring raw wavs
 
 model:
-  path: "checkpoints/ecapa_best.pth"
+  path: "checkpoints/ecapa_mfcc_delta_best.pth"
 
 analysis:
   # General

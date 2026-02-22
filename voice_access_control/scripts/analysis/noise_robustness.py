@@ -26,7 +26,7 @@ from voice_engine.dataset import (
     load_and_resample,
     add_noise
 )
-from voice_engine.trainer import build_templates
+from voice_engine.metrics import build_templates
 from voice_engine.config import SAMPLE_RATE
 import soundfile as sf
 import librosa

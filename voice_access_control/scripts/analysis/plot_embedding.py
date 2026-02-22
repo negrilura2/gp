@@ -178,7 +178,8 @@ def main():
     points = reduce_embeddings(embeddings, method, seed, perplexity)
     out_root = os.path.join(out_dir, "plots", "embedding")
     os.makedirs(out_root, exist_ok=True)
-    stem = f"embedding_{method}"
+    model_name = os.path.splitext(os.path.basename(model_path))[0]
+    stem = f"{method}_{feature_type}_{model_name}"
     out_png = os.path.join(out_root, f"{stem}.png")
     out_json = os.path.join(out_root, f"{stem}.json")
 

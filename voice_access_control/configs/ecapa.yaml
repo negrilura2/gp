@@ -12,7 +12,7 @@ dataset:
   feature_dir: "data/features"
   feature_type: "mfcc_delta"
   n_mels: 40
-  loader_workers: 4 # Windows 下设为 0
+  loader_workers: 0 # Windows 下设为 0
 
 training:
   batch_size: 32

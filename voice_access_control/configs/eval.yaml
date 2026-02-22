@@ -3,7 +3,7 @@
 # Usage: python -m scripts.evaluate --config configs/eval.yaml
 
 model:
-  path: "checkpoints/ecapa_best.pth"
+  path: "checkpoints/ecapa_mfcc_delta_best.pth"
 
 dataset:
   feature_dir: "data/features"

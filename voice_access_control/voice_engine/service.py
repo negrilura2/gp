@@ -101,7 +101,7 @@ class VoiceService:
     Handles model loading, enrollment, and verification.
     """
     _instance = None
-    
+
     def __init__(self, model_path: str = None, device: str = None):
         self.model_path = model_path or MODEL_PATH
         self.device = device or DEFAULT_DEVICE
@@ -115,6 +115,11 @@ class VoiceService:
     def get_instance(cls):
         if cls._instance is None:
             cls._instance = cls()
+        return cls._instance
+
+    @classmethod
+    def reload(cls, model_path: str = None, device: str = None):
+        cls._instance = cls(model_path=model_path, device=device)
         return cls._instance
 
     def _load(self):
