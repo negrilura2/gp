@@ -4,7 +4,7 @@
       <div class="verify-wrapper">
         <el-card class="verify-card">
           <div class="verify-header">
-            <div class="verify-title">声纹识别</div>
+            <div class="verify-title">声纹识别 & 智能助手</div>
             <div class="verify-actions">
               <el-button size="small" @click="handleEntry">
                 {{ hasToken ? "个人中心" : "登录" }}
@@ -21,85 +21,88 @@
             </div>
           </div>
           <div class="record-section">
-            <div class="record-header">实时录音识别</div>
+            <div class="record-header">实时对话 (WebSocket)</div>
             <div class="record-main">
               <div class="wave-header">
                 <span class="wave-title">声波图</span>
-                <span class="wave-subtitle">播放时走过区域会高亮</span>
+                <span class="wave-subtitle">请清晰说话，系统将自动识别身份并执行指令</span>
               </div>
               <canvas ref="waveCanvasRef" class="wave-canvas"></canvas>
               <div class="record-actions">
                 <el-button
-                  :type="recording ? 'danger' : 'primary'"
-                  @click="toggleRecording"
+                  :type="isStreaming ? 'danger' : 'primary'"
+                  @click="toggleStreaming"
                 >
-                  {{ recording ? "停止录音" : "按下开始说话" }}
-                </el-button>
-                <el-button
-                  type="info"
-                  plain
-                  :disabled="!file && !audioUrl"
-                  @click="confirmClearRecording"
-                >
-                  清空全部录音/上传
+                  {{ isStreaming ? "停止对话" : "开始对话" }}
                 </el-button>
                 <span class="record-hint">
-                  建议在安静环境下录制 2~3 秒语音
+                  {{ statusMessage }}
                 </span>
               </div>
-              <div v-if="audioUrl" class="playback">
-                <audio
-                  ref="audioRef"
-                  :src="audioUrl"
-                  controls
-                  @play="handleAudioPlay"
-                  @pause="handleAudioPause"
-                  @ended="handleAudioEnded"
-                  @timeupdate="handleAudioTimeUpdate"
-                  @loadedmetadata="handleAudioLoaded"
+              
+              <!-- Agent 交互结果展示 -->
+              <div v-if="agentResult" class="agent-result-box">
+                <div class="agent-header">
+                  <span class="agent-title">助手回复</span>
+                  <el-tag size="small" :type="agentResult.identity.status === 'ACCEPT' ? 'success' : 'warning'">
+                    {{ agentResult.identity.user }} ({{ agentResult.identity.score?.toFixed(2) }})
+                  </el-tag>
+                </div>
+                <div class="agent-content">
+                  <p><strong>你说:</strong> {{ agentResult.text }}</p>
+                  <p v-if="agentResult.agent?.response">
+                    <strong>助手:</strong> {{ agentResult.agent.response }}
+                  </p>
+                  <p v-else-if="agentResult.agent?.message" class="error-text">
+                    <strong>错误:</strong> {{ agentResult.agent.message }}
+                  </p>
+                </div>
+              </div>
+
+            </div>
+          </div>
+          
+          <el-divider>旧版文件上传</el-divider>
+          
+          <el-collapse>
+            <el-collapse-item title="上传录音文件 (Legacy)" name="1">
+              <el-form label-width="80px">
+                <el-form-item label="音频文件">
+                  <input
+                    ref="fileInputRef"
+                    class="file-input"
+                    type="file"
+                    accept=".wav"
+                    @change="onFileChange"
+                  />
+                  <el-button size="small" @click="triggerFileSelect">选择文件</el-button>
+                  <span class="file-hint">{{ fileLabel }}</span>
+                </el-form-item>
+                <el-form-item>
+                  <el-button
+                    type="primary"
+                    :loading="loading"
+                    @click="handleVerify"
+                  >
+                    开始识别
+                  </el-button>
+                </el-form-item>
+              </el-form>
+              <div v-if="result" class="result-block">
+                <el-alert
+                  :title="resultTitle"
+                  :type="resultType"
+                  show-icon
                 />
+                <div class="result-detail">
+                  <div>预测用户：{{ result.predicted_user }}</div>
+                  <div>得分：{{ result.score }}</div>
+                  <div>阈值：{{ result.threshold }}</div>
+                </div>
               </div>
-            </div>
-          </div>
-          <el-divider>或</el-divider>
-          <el-form label-width="80px">
-            <el-form-item label="音频文件">
-              <input
-                ref="fileInputRef"
-                class="file-input"
-                type="file"
-                accept=".wav"
-                @change="onFileChange"
-              />
-              <el-button size="small" @click="triggerFileSelect">选择文件</el-button>
-              <span class="file-hint">{{ fileLabel }}</span>
-            </el-form-item>
-            <el-form-item>
-              <el-button
-                type="primary"
-                :loading="loading"
-                @click="handleVerify"
-              >
-                开始识别
-              </el-button>
-            </el-form-item>
-          </el-form>
-          <div v-if="result" class="result-block">
-            <el-alert
-              :title="resultTitle"
-              :type="resultType"
-              show-icon
-            />
-            <div class="result-detail">
-              <div v-if="resultSubtitle" class="result-subtitle">
-                {{ resultSubtitle }}
-              </div>
-              <div>预测用户：{{ result.predicted_user }}</div>
-              <div>得分：{{ result.score }}</div>
-              <div>阈值：{{ result.threshold }}</div>
-              <div>门状态：{{ result.door_state }}</div>
-            </div>
-          </div>
+            </el-collapse-item>
+          </el-collapse>
+
         </el-card>
       </div>
     </el-main>
@@ -137,6 +140,17 @@ const router = useRouter();
 const file = ref(null);
 const loading = ref(false);
 const result = ref(null);
+// WebSocket Streaming State
+const isStreaming = ref(false);
+const statusMessage = ref("点击开始对话以连接系统");
+const agentResult = ref(null);
+let ws = null;
+// Audio Context for Streaming
+let streamMediaStream = null;
+let streamAudioContext = null;
+let streamScriptProcessor = null;
+
+// Legacy Recording State (kept for now)
 const recording = ref(false);
 const waveCanvasRef = ref(null);
 const audioUrl = ref("");
@@ -541,22 +555,197 @@ async function startRecording() {
 }
 
 function stopRecording() {
-  if (mediaRecorder && recording.value) {
+  if (mediaRecorder && mediaRecorder.state !== "inactive") {
     mediaRecorder.stop();
   }
-  recording.value = false;
+  if (mediaStream) {
+    mediaStream.getTracks().forEach((track) => track.stop());
+    mediaStream = null;
+  }
   if (animationId) {
     cancelAnimationFrame(animationId);
     animationId = null;
   }
-  if (audioContext) {
-    audioContext.close();
-    audioContext = null;
+  recording.value = false;
+}
+
+// -----------------------------------------------------------------------------
+// WebSocket Streaming Logic
+// -----------------------------------------------------------------------------
+const TARGET_SAMPLE_RATE = 16000;
+const BUFFER_SIZE = 4096;
+
+function toggleStreaming() {
+  if (isStreaming.value) {
+    stopWebSocket();
+  } else {
+    startWebSocket();
   }
-  if (mediaStream) {
-    mediaStream.getTracks().forEach((t) => t.stop());
-    mediaStream = null;
+}
+
+async function startWebSocket() {
+  try {
+    statusMessage.value = "正在连接...";
+    // WebSocket URL (adjust if needed, assumes backend on port 9000)
+    // Note: If using proxy in vite.config.js, this might need to be ws://localhost:xxxx/api/ws/audio
+    // But backend ai_app.py runs on 9000. Let's try direct connection first.
+    const wsUrl = "ws://localhost:9000/ws/audio"; 
+    ws = new WebSocket(wsUrl);
+
+    ws.onopen = async () => {
+      console.log("WebSocket connected");
+      statusMessage.value = "已连接，请说话...";
+      isStreaming.value = true;
+      agentResult.value = null; // Clear previous result
+      await startAudioCapture();
+    };
+
+    ws.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        if (data.type === 'result') {
+          agentResult.value = data;
+          // Sync with legacy result format for compatibility
+          if (data.identity) {
+             result.value = {
+                predicted_user: data.identity.user,
+                score: data.identity.score,
+                threshold: "N/A",
+                result: data.identity.status,
+                door_state: data.identity.status === 'ACCEPT' ? 'OPEN' : 'CLOSED'
+             };
+          }
+        } else if (data.type === 'error') {
+          ElMessage.error(data.message);
+        }
+      } catch (e) {
+        console.error("Parse error", e);
+      }
+    };
+
+    ws.onclose = () => {
+      console.log("WebSocket closed");
+      if (isStreaming.value) {
+        stopWebSocket();
+      }
+      statusMessage.value = "连接已断开";
+    };
+
+    ws.onerror = (error) => {
+      console.error("WebSocket error:", error);
+      statusMessage.value = "连接错误";
+    };
+
+  } catch (e) {
+    console.error(e);
+    ElMessage.error("无法启动 WebSocket");
+    isStreaming.value = false;
   }
+}
+
+function stopWebSocket() {
+  isStreaming.value = false;
+  statusMessage.value = "会话结束";
+  
+  if (ws) {
+    ws.close();
+    ws = null;
+  }
+  stopAudioCapture();
+}
+
+async function startAudioCapture() {
+  try {
+    streamMediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    streamAudioContext = new (window.AudioContext || window.webkitAudioContext)();
+    const source = streamAudioContext.createMediaStreamSource(streamMediaStream);
+    
+    // Setup Analyzer for Visualization
+    analyser = streamAudioContext.createAnalyser();
+    analyser.fftSize = 2048;
+    source.connect(analyser);
+    
+    // Start visualization loop if not already running
+    if (!animationId) {
+      drawWave();
+    }
+    
+    // Use ScriptProcessor for wide compatibility (deprecated but simple for prototype)
+    streamScriptProcessor = streamAudioContext.createScriptProcessor(BUFFER_SIZE, 1, 1);
+    
+    source.connect(streamScriptProcessor);
+    streamScriptProcessor.connect(streamAudioContext.destination);
+
+    streamScriptProcessor.onaudioprocess = (e) => {
+      if (!ws || ws.readyState !== WebSocket.OPEN) return;
+      
+      const inputData = e.inputBuffer.getChannelData(0);
+      // Downsample and convert to int16
+      const pcm16 = downsampleBuffer(inputData, streamAudioContext.sampleRate, TARGET_SAMPLE_RATE);
+      ws.send(pcm16);
+    };
+  } catch (e) {
+    console.error("Audio capture error:", e);
+    ElMessage.error("无法访问麦克风");
+    stopWebSocket();
+  }
+}
+
+function stopAudioCapture() {
+  if (streamMediaStream) {
+    streamMediaStream.getTracks().forEach(track => track.stop());
+    streamMediaStream = null;
+  }
+  if (streamScriptProcessor) {
+    streamScriptProcessor.disconnect();
+    streamScriptProcessor = null;
+  }
+  if (analyser) {
+    analyser.disconnect();
+    analyser = null;
+  }
+  if (streamAudioContext) {
+    streamAudioContext.close();
+    streamAudioContext = null;
+  }
+  if (animationId) {
+    cancelAnimationFrame(animationId);
+    animationId = null;
+  }
+}
+
+function downsampleBuffer(buffer, sampleRate, outSampleRate) {
+    if (outSampleRate == sampleRate) {
+        // Convert float32 to int16 directly
+        const result = new Int16Array(buffer.length);
+        for (let i = 0; i < buffer.length; i++) {
+            const s = Math.max(-1, Math.min(1, buffer[i]));
+            result[i] = s < 0 ? s * 0x8000 : s * 0x7FFF;
+        }
+        return result;
+    }
+    if (outSampleRate > sampleRate) {
+        console.warn("Upsampling not supported");
+        return new Int16Array(0);
+    }
+    var sampleRateRatio = sampleRate / outSampleRate;
+    var newLength = Math.round(buffer.length / sampleRateRatio);
+    var result = new Int16Array(newLength);
+    var offsetResult = 0;
+    var offsetBuffer = 0;
+    while (offsetResult < result.length) {
+        var nextOffsetBuffer = Math.round((offsetResult + 1) * sampleRateRatio);
+        var accum = 0, count = 0;
+        for (var i = offsetBuffer; i < nextOffsetBuffer && i < buffer.length; i++) {
+            accum += buffer[i];
+            count++;
+        }
+        var s = Math.max(-1, Math.min(1, accum / count));
+        result[offsetResult] = s < 0 ? s * 0x8000 : s * 0x7FFF;
+        offsetResult++;
+        offsetBuffer = nextOffsetBuffer;
+    }
+    return result;
 }
 
 async function handleRecordedBlob(blob) {
@@ -790,10 +979,12 @@ onUnmounted(() => {
   stopRecording();
   if (playAnimationId) {
     cancelAnimationFrame(playAnimationId);
+    playAnimationId = null;
   }
   if (audioUrl.value) {
     URL.revokeObjectURL(audioUrl.value);
   }
+  stopWebSocket(); // Cleanup WebSocket
 });
 </script>
 

@@ -24,6 +24,7 @@ from .dataset import (
     infer_feature_type_from_feat_dim,
     get_feature_dim
 )
+from .vector_store import VectorStore
 
 logger = logging.getLogger("voice_engine")
 
@@ -33,9 +34,12 @@ logger = logging.getLogger("voice_engine")
 
 def load_templates(path=None):
     """Load voiceprint templates dictionary {user_id: embedding}"""
+    # Backward compatibility: Try loading from .npy if VectorStore fails or is empty?
+    # For now, we rely on VectorStore migration.
+    # But to keep code safe, we can leave this helper if needed by other modules,
+    # though VoiceService will use VectorStore.
     path = path or TEMPLATE_PATH
     if not os.path.exists(path):
-        # Return empty dict instead of raising error to allow first enrollment
         return {} 
     return np.load(path, allow_pickle=True).item()
 
@@ -110,6 +114,14 @@ class VoiceService:
         self.n_mels = DEFAULT_N_MELS
         self.feat_dim = None
         self._load()
+        
+        # Initialize VectorStore
+        try:
+            self.vector_store = VectorStore()
+            logger.info("VoiceService: VectorStore connected.")
+        except Exception as e:
+            logger.error(f"VoiceService: Failed to connect VectorStore: {e}")
+            self.vector_store = None
 
     @classmethod
     def get_instance(cls):
@@ -164,12 +176,18 @@ class VoiceService:
 
             user_template = np.mean(np.stack(embs, axis=0), axis=0)
 
-            # Load existing templates
-            templates = load_templates(TEMPLATE_PATH)
-            templates[user_id] = user_template
-            
-            # Save updated templates
-            save_templates(templates, TEMPLATE_PATH)
+            # Use VectorStore if available
+            if self.vector_store:
+                self.vector_store.add(
+                    user_id=user_id,
+                    embedding=user_template,
+                    metadata={"wav_count": len(wav_paths), "updated_at": str(os.path.getmtime(wav_paths[0]))}
+                )
+            else:
+                # Fallback to legacy file system
+                templates = load_templates(TEMPLATE_PATH)
+                templates[user_id] = user_template
+                save_templates(templates, TEMPLATE_PATH)
             
             logger.info(f"Enrolled user {user_id} with {len(wav_paths)} samples.")
             return {"status": "success", "user_id": user_id, "wav_count": len(wav_paths)}
@@ -197,28 +215,31 @@ class VoiceService:
                 n_mels=self.n_mels
             )
 
-            # Load templates
-            templates = load_templates(TEMPLATE_PATH)
-            if not templates:
-                return {"status": "reject", "score": 0.0, "speaker": None, "message": "No enrolled users"}
-
-            # Compare against all templates
             best_spk, best_score = None, -1.0
-            
-            for spk, tmpl in templates.items():
-                # Support multi-shot templates (list of embeddings) or single (mean embedding)
-                if isinstance(tmpl, np.ndarray) and tmpl.ndim == 1:
-                    s = cosine_score(emb, tmpl)
-                elif isinstance(tmpl, (list, np.ndarray)):
-                    # If template is a list of embeddings, take max score
-                    scores = [cosine_score(emb, t) for t in tmpl]
-                    s = max(scores) if scores else -1.0
-                else:
-                    s = cosine_score(emb, tmpl)
 
-                if s > best_score:
-                    best_score = s
-                    best_spk = spk
+            # Use VectorStore if available
+            if self.vector_store and self.vector_store.count() > 0:
+                matches = self.vector_store.search(emb, top_k=1)
+                if matches:
+                    best_spk, best_score = matches[0]
+            else:
+                # Fallback to legacy
+                templates = load_templates(TEMPLATE_PATH)
+                if not templates:
+                    return {"status": "reject", "score": 0.0, "speaker": None, "message": "No enrolled users"}
+
+                for spk, tmpl in templates.items():
+                    if isinstance(tmpl, np.ndarray) and tmpl.ndim == 1:
+                        s = cosine_score(emb, tmpl)
+                    elif isinstance(tmpl, (list, np.ndarray)):
+                        scores = [cosine_score(emb, t) for t in tmpl]
+                        s = max(scores) if scores else -1.0
+                    else:
+                        s = cosine_score(emb, tmpl)
+
+                    if s > best_score:
+                        best_score = s
+                        best_spk = spk
 
             result = "ACCEPT" if best_score >= thr else "REJECT"
             logger.info(f"Verification: {wav_path} -> Best match: {best_spk} ({best_score:.4f}) => {result}")

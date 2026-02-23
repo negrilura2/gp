@@ -53,32 +53,32 @@ python manage.py runserver
 
 ```
 voice_access_control/
-├─ model/                 # 模型相关（训练/推理/注册/验证）
-│  ├─ __init__.py
-│  ├─ dataset.py
-│  ├─ ecapa_tdnn.py
-│  ├─ train.py
-│  ├─ infer.py
-│  ├─ enroll.py
-│  └─ verify_demo.py
+├─ model/                 # [Legacy] 旧模型相关代码（逐渐迁移至 voice_engine）
+├─ voice_engine/          # [New] 核心引擎（AI Service, Agent, Vector Store）
+│  ├─ ai_app.py           # FastAPI 服务入口 (WebSocket/HTTP)
+│  ├─ agent_service.py    # LangChain Agent & DeepSeek 集成
+│  ├─ vector_store.py     # ChromaDB 向量存储封装
+│  ├─ stream_processor.py # 音频流 VAD 处理
+│  └─ ...
 ├─ scripts/               # 数据处理、特征提取、演示脚本
-│  ├─ __init__.py
-│  ├─ preprocess.py
-│  ├─ feature_extraction.py
-│  ├─ eval_threshold.py
-│  └─ record_and_verify.py
+│  ├─ data/               # 数据迁移与预处理
+│  └─ ...
+├─ docs/                  # 项目文档
+│  ├─ technical_reference/# 技术架构参考文档
+│  └─ upgrade_plans/      # 升级路线图
 ├─ data/
-│  ├─ raw/                # 原始录音（按用户子目录）
-│  ├─ processed/          # 预处理后 wav
-│  ├─ features/           # MFCC npy（按用户）
-│  └─ voiceprints/        # 模板文件（user_templates.npy）
-├─ models/                # 训练保存的权重（.pth）
-├─ reports/               # ROC/EER 等可视化输出
+│  ├─ chroma_db/          # 向量数据库文件
+│  └─ ...
 ├─ backend/               # Django 项目（api）
 └─ setup.py               # 项目包化
 ```
 
 ---
+
+## 文档资源
+
+*   **[核心架构文档]**: 关于多模态 AI 框架、向量模型与 Agent 的详细设计，请参阅 [docs/technical_reference/multimodal_agent_architecture.md](docs/technical_reference/multimodal_agent_architecture.md)。
+*   **[升级路线图]**: 查看 [docs/upgrade_plans/master_roadmap.md](docs/upgrade_plans/master_roadmap.md)。
 
 ## 已完成（当前状态，接手者可复现）
 

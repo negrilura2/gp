@@ -75,6 +75,29 @@
 *   **输出目录简化**: 噪声测试结果默认输出至 `reports/noise_tests` 和 `reports/plots/noise`，训练指标默认输出至 `reports/metrics`。
 *   **后端读取兼容**: ROC 指标读取支持 `reports/backend_responses` 与历史 `reports/archive/backend_responses` 双路径。
 
+---
+
+## 🧾 补充更新 (2026-02-24)
+
+### 工程化与服务稳定性 (Engineering & Stability)
+*   **WebSocket 服务重构**:
+    *   针对 `ai_app.py` 进行了深度优化，解决了 FastAPI WebSocket 在 Windows 下无法优雅退出 (Ctrl+C 卡死) 的问题。
+    *   **技术细节**: 引入 `asyncio.CancelledError` 显式捕获；将 CPU/GPU 密集型的 `verify` 和 `transcribe` 任务移入线程池 (`run_in_executor`)；`uvicorn` 启动参数指定 `loop="asyncio"`。
+*   **STT 服务健壮性提升**:
+    *   修复了 Windows 环境下 `cublas64_12.dll` 缺失导致的 STT 服务崩溃问题。
+    *   **方案**: 在 `STTService` 中增加 CUDA 可用性探测 (`_check_cuda`)，并实现自动降级机制 (Fallback to CPU)。
+*   **测试工具优化**:
+    *   修复了 `scripts/test_websocket_agent.py` 生成纯正弦波被 VAD 过滤的问题，改为生成调制白噪声 (Modulated White Noise)，成功触发服务端语音识别流程。
+*   **数据恢复**:
+    *   解决了数据库路径变更 (`backend/` -> `data/`) 导致的账号与声纹数据丢失问题。
+
+### 待解决关键问题 (Pending Issues)
+*   **前端声纹可视化失效**:
+    *   **现象**: 前端声纹管理页面显示“特征维度 0”，图表无数据。
+    *   **排查方向**: 疑似向量数据库 (Vector DB) 写入/读取异常，或特征提取环节返回空数据。计划明日重点排查 `VoiceService` 与数据库交互逻辑。
+
+---
+
 ## 🚀 下一步行动 (Next Steps)
 
 1.  **执行 Level 4 对比实验**: 运行 Baseline vs Early Stopping 训练，收集数据。

@@ -1,6 +1,50 @@
 version: '3.8'
 
 services:
+  db:
+    image: mysql:8.0
+    container_name: voice_access_db
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: voice_access_db
+      MYSQL_USER: voice_user
+      MYSQL_PASSWORD: voice_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    restart: unless-stopped
+    command: --default-authentication-plugin=mysql_native_password
+
+  redis:
+    image: redis:7-alpine
+    container_name: voice_access_redis
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+
+  ai_service:
+    build: .
+    container_name: voice_access_ai
+    ports:
+      - "9000:9000"
+    volumes:
+      - .:/app
+      - ./data:/app/data
+      - ./models:/app/models
+    env_file:
+      - .env.docker
+    environment:
+      - APP_ENV=docker
+      - PYTHONUNBUFFERED=1
+      # Override DB settings for AI service if it connects to DB directly (it usually doesn't, but just in case)
+      - DB_HOST=db
+    command: python -m voice_engine.ai_app
+    restart: unless-stopped
+    depends_on:
+      - db
+      - redis
+
   backend:
     build: .
     container_name: voice_access_backend
@@ -15,8 +59,20 @@ services:
     environment:
       - APP_ENV=docker
       - PYTHONUNBUFFERED=1
-    command: python backend/manage.py runserver 0.0.0.0:8000
+      - DB_ENGINE=django.db.backends.mysql
+      - DB_NAME=voice_access_db
+      - DB_USER=voice_user
+      - DB_PASSWORD=voice_password
+      - DB_HOST=db
+      - DB_PORT=3306
+      - AI_SERVICE_URL=http://ai_service:9000
+    command: >
+      sh -c "python backend/manage.py migrate &&
+             python backend/manage.py runserver 0.0.0.0:8000"
     restart: unless-stopped
+    depends_on:
+      - db
+      - ai_service
 
   frontend:
     build: ./frontend
@@ -31,3 +87,6 @@ services:
     depends_on:
       - backend
     restart: unless-stopped
+
+volumes:
+  db_data:
