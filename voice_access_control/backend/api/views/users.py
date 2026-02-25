@@ -137,14 +137,23 @@ class MyVoiceprintView(APIView):
 
 
 def build_voiceprint_preview(username, buckets=64):
-    template_path = os.path.join(os.fspath(settings.VOICEPRINTS_DIR), "user_templates.npy")
-    if not os.path.exists(template_path):
-        return [], 0
-    try:
-        templates = np.load(template_path, allow_pickle=True).item()
-    except Exception:
-        return [], 0
-    emb = templates.get(username)
+    from ..model_loader import get_service
+    service = get_service()
+
+    emb = None
+    if hasattr(service, "get_feature"):
+        emb = service.get_feature(username)
+    
+    if emb is None:
+        template_path = os.path.join(os.fspath(settings.VOICEPRINTS_DIR), "user_templates.npy")
+        if not os.path.exists(template_path):
+            return [], 0
+        try:
+            templates = np.load(template_path, allow_pickle=True).item()
+            emb = templates.get(username)
+        except Exception:
+            return [], 0
+    
     if emb is None:
         return [], 0
     values = np.abs(np.array(emb, dtype=float))
@@ -163,14 +172,23 @@ def build_voiceprint_preview(username, buckets=64):
 
 
 def remove_user_voiceprint(username):
-    template_path = os.path.join(os.fspath(settings.VOICEPRINTS_DIR), "user_templates.npy")
     result = {
         "username": username,
         "template_cleared": False,
         "enroll_files_deleted": False,
-        "template_path": template_path,
         "error": None,
     }
+    
+    from ..model_loader import get_service
+    service = get_service()
+
+    # Try service deletion first
+    if hasattr(service, "delete_feature"):
+        if service.delete_feature(username):
+            result["template_cleared"] = True
+    
+    # Also clean up legacy file directly just in case (or if service.delete_feature failed/didn't handle it)
+    template_path = os.path.join(os.fspath(settings.VOICEPRINTS_DIR), "user_templates.npy")
     try:
         if os.path.exists(template_path):
             templates = np.load(template_path, allow_pickle=True).item()
@@ -179,9 +197,11 @@ def remove_user_voiceprint(username):
                 np.save(template_path, templates)
                 result["template_cleared"] = True
     except Exception as e:
-        result["error"] = str(e)
-        logger.error(f"清理声纹模板失败: {username} {e}")
-        return result
+        # Log error but don't fail if service deletion worked
+        logger.error(f"清理声纹模板文件失败: {username} {e}")
+        if not result["template_cleared"]:
+            result["error"] = str(e)
+            return result
 
     try:
         VoiceTemplate.objects.filter(user__username=username).delete()

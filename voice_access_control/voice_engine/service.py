@@ -178,16 +178,22 @@ class VoiceService:
 
             # Use VectorStore if available
             if self.vector_store:
-                self.vector_store.add(
-                    user_id=user_id,
-                    embedding=user_template,
-                    metadata={"wav_count": len(wav_paths), "updated_at": str(os.path.getmtime(wav_paths[0]))}
-                )
-            else:
-                # Fallback to legacy file system
-                templates = load_templates(TEMPLATE_PATH)
-                templates[user_id] = user_template
-                save_templates(templates, TEMPLATE_PATH)
+                try:
+                    self.vector_store.add(
+                        user_id=user_id,
+                        embedding=user_template,
+                        metadata={
+                            "wav_count": len(wav_paths),
+                            "updated_at": str(os.path.getmtime(wav_paths[0])),
+                        },
+                    )
+                except Exception as e:
+                    logger.error(f"VectorStore add failed for {user_id}: {e}")
+
+            # Always keep legacy templates in sync for preview/backup
+            templates = load_templates(TEMPLATE_PATH)
+            templates[user_id] = user_template
+            save_templates(templates, TEMPLATE_PATH)
             
             logger.info(f"Enrolled user {user_id} with {len(wav_paths)} samples.")
             return {"status": "success", "user_id": user_id, "wav_count": len(wav_paths)}
@@ -195,6 +201,45 @@ class VoiceService:
         except Exception as e:
             logger.error(f"Enrollment failed for {user_id}: {e}")
             return {"status": "error", "error": str(e)}
+
+    def get_feature(self, user_id: str) -> Optional[np.ndarray]:
+        """Retrieve voiceprint feature for a user."""
+        # 1. Prefer legacy templates for stability (also used by training scripts)
+        templates = load_templates()
+        emb = templates.get(user_id)
+        if emb is not None:
+            return emb
+
+        # 1. Try VectorStore
+        if self.vector_store:
+            emb = self.vector_store.get(user_id)
+            if emb is not None:
+                return emb
+
+        return None
+
+    def delete_feature(self, user_id: str) -> bool:
+        """Delete voiceprint feature for a user."""
+        deleted = False
+        # 1. Delete from VectorStore
+        if self.vector_store:
+            try:
+                self.vector_store.delete(user_id)
+                deleted = True
+            except Exception as e:
+                logger.warning(f"Failed to delete from VectorStore: {e}")
+
+        # 2. Delete from .npy templates (Legacy)
+        templates = load_templates()
+        if user_id in templates:
+            del templates[user_id]
+            try:
+                save_templates(templates)
+                deleted = True
+            except Exception as e:
+                logger.error(f"Failed to save templates after deletion: {e}")
+        
+        return deleted
 
     def verify(self, wav_path: str, threshold: float = None) -> Dict[str, Any]:
         """
@@ -249,6 +294,7 @@ class VoiceService:
                 "result": result,
                 "best_score": float(best_score),
                 "best_speaker": best_spk,
+                "predicted_user": best_spk, # Compatible with legacy API
                 "threshold": thr
             }
 

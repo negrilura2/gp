@@ -94,6 +94,24 @@ async def reload(model_path: Optional[str] = Form(None), device: Optional[str] =
     }
 
 
+@app.get("/voiceprint/{user_id}")
+async def get_voiceprint(user_id: str):
+    svc = VoiceService.get_instance()
+    emb = svc.get_feature(user_id)
+    if emb is None:
+        return JSONResponse({"error": "Voiceprint not found"}, status_code=404)
+    return {"user_id": user_id, "embedding": emb.tolist()}
+
+
+@app.delete("/voiceprint/{user_id}")
+async def delete_voiceprint(user_id: str):
+    svc = VoiceService.get_instance()
+    deleted = svc.delete_feature(user_id)
+    if not deleted:
+        return JSONResponse({"error": "Voiceprint not found or failed to delete"}, status_code=404)
+    return {"status": "deleted", "user_id": user_id}
+
+
 @app.post("/transcribe")
 async def transcribe(file: UploadFile = File(...), beam_size: int = Form(5)):
     tmp_path = _save_upload_to_temp(file)

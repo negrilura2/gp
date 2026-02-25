@@ -8779,3 +8779,188 @@ django.db.utils.OperationalError: no such table: auth_user
 [2026-02-24 00:18:22,386] INFO django.server "GET /api/me/ HTTP/1.1" 200 105
 [2026-02-24 00:18:22,405] INFO django.server "GET /api/my-logs/ HTTP/1.1" 200 6294
 [2026-02-24 00:18:22,417] INFO django.server "GET /api/me/voiceprint/ HTTP/1.1" 200 109
+[2026-02-26 02:49:44,513] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-02-26 02:52:36,206] INFO api 用户登录: admin
+[2026-02-26 02:52:36,213] INFO django.server "POST /api/login/ HTTP/1.1" 200 99
+[2026-02-26 02:52:36,248] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-26 02:52:36,461] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 482
+[2026-02-26 02:52:36,479] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6438
+[2026-02-26 02:52:36,487] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-26 02:52:36,502] INFO django.server "GET /api/users/?page=1&is_staff=false HTTP/1.1" 200 624
+[2026-02-26 02:52:36,524] INFO django.server "GET /api/admin-access-logs/ HTTP/1.1" 200 2266
+[2026-02-26 02:52:36,533] INFO django.server "GET /api/models/ HTTP/1.1" 200 1325
+[2026-02-26 02:52:36,600] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 869
+[2026-02-26 02:52:36,609] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 652
+[2026-02-26 02:52:36,630] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6438
+[2026-02-26 02:52:36,658] INFO django.server "GET /api/roc/?t=1772045556430&norm_method=snorm HTTP/1.1" 200 596567
+[2026-02-26 02:52:37,679] INFO django.server "GET /api/models/ HTTP/1.1" 200 1325
+[2026-02-26 02:52:37,714] INFO django.server "GET /api/roc/?t=1772045557664&norm_method=snorm HTTP/1.1" 200 596567
+[2026-02-26 02:52:39,456] INFO django.server "GET /api/admin-access-logs/ HTTP/1.1" 200 2266
+[2026-02-26 02:52:40,420] INFO django.server "GET /api/models/ HTTP/1.1" 200 1325
+[2026-02-26 02:52:40,464] INFO django.server "GET /api/roc/?t=1772045560406&norm_method=snorm HTTP/1.1" 200 596567
+[2026-02-26 02:55:24,264] INFO api 用户登录: guo
+[2026-02-26 02:55:24,266] INFO django.server "POST /api/login/ HTTP/1.1" 200 98
+[2026-02-26 02:55:24,319] INFO django.server "GET /api/me/ HTTP/1.1" 200 105
+[2026-02-26 02:55:24,322] INFO django.server "GET /api/my-logs/ HTTP/1.1" 200 6294
+[2026-02-26 02:55:24,346] INFO django.server "GET /api/me/voiceprint/ HTTP/1.1" 200 109
+[2026-02-26 02:55:29,240] INFO django.server "DELETE /api/me/voiceprint/ HTTP/1.1" 200 84
+[2026-02-26 02:55:45,045] INFO api 声纹注册成功: guo, 5 条音频
+[2026-02-26 02:55:45,045] INFO django.server "POST /api/enroll/ HTTP/1.1" 200 48
+[2026-02-26 02:55:45,063] INFO django.server "GET /api/me/voiceprint/ HTTP/1.1" 200 109
+[2026-02-26 02:55:45,083] INFO django.server "GET /api/me/ HTTP/1.1" 200 105
+[2026-02-26 02:55:45,088] INFO django.server "GET /api/my-logs/ HTTP/1.1" 200 6294
+[2026-02-26 02:55:45,102] INFO django.server "GET /api/me/voiceprint/ HTTP/1.1" 200 109
+[2026-02-26 03:03:05,932] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\backend\api\model_loader.py changed, reloading.
+[2026-02-26 03:03:07,681] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-02-26 03:03:56,720] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\backend\backend\settings.py changed, reloading.
+[2026-02-26 03:03:57,919] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-02-26 03:05:15,365] INFO django.server "DELETE /api/me/voiceprint/ HTTP/1.1" 200 84
+[2026-02-26 03:05:22,012] INFO api 声纹注册成功: guo, 5 条音频
+[2026-02-26 03:05:22,012] INFO django.server "POST /api/enroll/ HTTP/1.1" 200 48
+[2026-02-26 03:05:22,082] INFO django.server "GET /api/me/voiceprint/ HTTP/1.1" 200 109
+[2026-02-26 03:05:22,098] INFO django.server "GET /api/me/ HTTP/1.1" 200 105
+[2026-02-26 03:05:22,110] INFO django.server "GET /api/my-logs/ HTTP/1.1" 200 6294
+[2026-02-26 03:05:22,161] INFO django.server "GET /api/me/voiceprint/ HTTP/1.1" 200 109
+[2026-02-26 03:05:41,401] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-02-26 03:05:55,401] INFO django.server "GET /api/me/ HTTP/1.1" 200 105
+[2026-02-26 03:05:55,402] INFO django.server "GET /api/my-logs/ HTTP/1.1" 200 6294
+[2026-02-26 03:05:55,870] INFO django.server "GET /api/me/voiceprint/ HTTP/1.1" 200 109
+[2026-02-26 03:05:58,885] INFO django.server "DELETE /api/me/voiceprint/ HTTP/1.1" 200 83
+[2026-02-26 03:06:04,851] INFO api 声纹注册成功: guo, 5 条音频
+[2026-02-26 03:06:04,853] INFO django.server "POST /api/enroll/ HTTP/1.1" 200 48
+[2026-02-26 03:06:04,934] INFO django.server "GET /api/me/voiceprint/ HTTP/1.1" 200 109
+[2026-02-26 03:06:04,951] INFO django.server "GET /api/me/ HTTP/1.1" 200 105
+[2026-02-26 03:06:04,957] INFO django.server "GET /api/my-logs/ HTTP/1.1" 200 6294
+[2026-02-26 03:06:05,014] INFO django.server "GET /api/me/voiceprint/ HTTP/1.1" 200 109
+[2026-02-26 03:09:20,905] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\voice_engine\service.py changed, reloading.
+[2026-02-26 03:09:22,131] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-02-26 03:14:21,724] INFO django.server "GET /api/me/ HTTP/1.1" 200 105
+[2026-02-26 03:14:21,724] INFO django.server "GET /api/my-logs/ HTTP/1.1" 200 6294
+[2026-02-26 03:14:22,073] INFO django.server "GET /api/me/voiceprint/ HTTP/1.1" 200 109
+[2026-02-26 03:14:24,532] INFO django.server "DELETE /api/me/voiceprint/ HTTP/1.1" 200 83
+[2026-02-26 03:14:31,905] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-02-26 03:14:46,435] INFO django.server "GET /api/me/ HTTP/1.1" 200 106
+[2026-02-26 03:14:46,435] INFO django.server "GET /api/my-logs/ HTTP/1.1" 200 6294
+[2026-02-26 03:14:46,919] INFO django.server "GET /api/me/voiceprint/ HTTP/1.1" 200 91
+[2026-02-26 03:14:53,522] INFO api 声纹注册成功: guo, 5 条音频
+[2026-02-26 03:14:53,522] INFO django.server "POST /api/enroll/ HTTP/1.1" 200 48
+[2026-02-26 03:14:53,593] INFO django.server "GET /api/me/voiceprint/ HTTP/1.1" 200 552
+[2026-02-26 03:14:53,613] INFO django.server "GET /api/me/ HTTP/1.1" 200 105
+[2026-02-26 03:14:53,616] INFO django.server "GET /api/my-logs/ HTTP/1.1" 200 6294
+[2026-02-26 03:14:53,681] INFO django.server "GET /api/me/voiceprint/ HTTP/1.1" 200 552
+[2026-02-26 03:30:43,145] INFO django.server "GET /admin/ HTTP/1.1" 302 0
+[2026-02-26 03:30:43,293] INFO django.server "GET /admin/login/?next=/admin/ HTTP/1.1" 200 4195
+[2026-02-26 03:30:44,513] INFO django.server "GET /static/admin/css/responsive.css HTTP/1.1" 200 18559
+[2026-02-26 03:30:44,543] INFO django.server "GET /static/admin/js/nav_sidebar.js HTTP/1.1" 200 3063
+[2026-02-26 03:30:44,553] INFO django.server "GET /static/admin/css/login.css HTTP/1.1" 200 958
+[2026-02-26 03:30:44,581] INFO django.server "GET /static/admin/js/theme.js HTTP/1.1" 200 1943
+[2026-02-26 03:30:44,583] INFO django.server "GET /static/admin/css/nav_sidebar.css HTTP/1.1" 200 2694
+[2026-02-26 03:30:44,600] INFO django.server "GET /static/admin/css/dark_mode.css HTTP/1.1" 200 2929
+[2026-02-26 03:30:44,602] INFO django.server "GET /static/admin/css/base.css HTTP/1.1" 200 21310
+[2026-02-26 03:30:44,988] WARNING django.request Not Found: /favicon.ico
+[2026-02-26 03:30:44,988] WARNING django.server "GET /favicon.ico HTTP/1.1" 404 2215
+[2026-02-26 03:30:52,159] INFO django.server "POST /admin/login/?next=/admin/ HTTP/1.1" 302 0
+[2026-02-26 03:30:52,206] INFO django.server "GET /admin/ HTTP/1.1" 200 11906
+[2026-02-26 03:30:52,264] INFO django.server "GET /static/admin/img/icon-addlink.svg HTTP/1.1" 200 331
+[2026-02-26 03:30:52,264] INFO django.server "GET /static/admin/css/dashboard.css HTTP/1.1" 200 441
+[2026-02-26 03:30:52,264] INFO django.server "GET /static/admin/img/icon-changelink.svg HTTP/1.1" 200 380
+[2026-02-26 03:30:54,829] INFO django.server "GET /admin/api/voicetemplate/ HTTP/1.1" 200 12612
+[2026-02-26 03:30:54,892] INFO django.server "GET /static/admin/css/changelists.css HTTP/1.1" 200 6566
+[2026-02-26 03:30:54,895] INFO django.server "GET /admin/jsi18n/ HTTP/1.1" 200 8560
+[2026-02-26 03:30:54,897] INFO django.server "GET /static/admin/js/jquery.init.js HTTP/1.1" 200 347
+[2026-02-26 03:30:54,906] INFO django.server "GET /static/admin/js/admin/RelatedObjectLookups.js HTTP/1.1" 200 8943
+[2026-02-26 03:30:54,906] INFO django.server "GET /static/admin/js/core.js HTTP/1.1" 200 5682
+[2026-02-26 03:30:54,920] INFO django.server "GET /static/admin/js/prepopulate.js HTTP/1.1" 200 1531
+[2026-02-26 03:30:54,921] INFO django.server "GET /static/admin/js/urlify.js HTTP/1.1" 200 7887
+[2026-02-26 03:30:54,923] INFO django.server "GET /static/admin/img/search.svg HTTP/1.1" 200 458
+[2026-02-26 03:30:54,926] INFO django.server "GET /static/admin/js/actions.js HTTP/1.1" 200 7872
+[2026-02-26 03:30:54,955] INFO django.server "GET /static/admin/js/vendor/jquery/jquery.js HTTP/1.1" 200 292458
+[2026-02-26 03:30:54,975] INFO django.server "GET /static/admin/js/filters.js HTTP/1.1" 200 978
+[2026-02-26 03:30:54,988] INFO django.server "GET /static/admin/js/vendor/xregexp/xregexp.js HTTP/1.1" 200 232381
+[2026-02-26 03:30:55,008] INFO django.server "GET /static/admin/img/tooltag-add.svg HTTP/1.1" 200 331
+[2026-02-26 03:30:55,010] INFO django.server "GET /static/admin/img/sorting-icons.svg HTTP/1.1" 200 1097
+[2026-02-26 03:31:01,370] INFO django.server "GET /admin/api/userprofile/ HTTP/1.1" 200 13864
+[2026-02-26 03:31:01,411] INFO django.server "GET /admin/jsi18n/ HTTP/1.1" 200 8560
+[2026-02-26 03:31:03,463] INFO django.server "GET /admin/api/enrolllog/ HTTP/1.1" 200 28318
+[2026-02-26 03:31:03,506] INFO django.server "GET /admin/jsi18n/ HTTP/1.1" 200 8560
+[2026-02-26 03:31:03,512] INFO django.server "GET /static/admin/img/icon-yes.svg HTTP/1.1" 200 436
+[2026-02-26 03:31:03,520] INFO django.server "GET /static/admin/img/icon-no.svg HTTP/1.1" 200 560
+[2026-02-26 03:31:04,448] INFO django.server "GET /admin/api/adminsecret/ HTTP/1.1" 200 11180
+[2026-02-26 03:31:04,509] INFO django.server "GET /admin/jsi18n/ HTTP/1.1" 200 8560
+[2026-02-26 03:31:05,123] INFO django.server "GET /admin/api/adminaccesslog/ HTTP/1.1" 200 35175
+[2026-02-26 03:31:05,162] INFO django.server "GET /admin/jsi18n/ HTTP/1.1" 200 8560
+[2026-02-26 04:06:56,662] INFO django.server "GET /api/me/ HTTP/1.1" 200 105
+[2026-02-26 04:06:56,662] INFO django.server "GET /api/my-logs/ HTTP/1.1" 200 6294
+[2026-02-26 04:06:56,976] INFO django.server "GET /api/me/voiceprint/ HTTP/1.1" 200 552
+[2026-02-26 04:07:28,938] ERROR api 验证异常: 'predicted_user'
+[2026-02-26 04:07:28,945] ERROR django.request Internal Server Error: /api/verify/
+[2026-02-26 04:07:28,945] ERROR django.server "POST /api/verify/ HTTP/1.1" 500 28
+[2026-02-26 04:08:19,362] ERROR api 验证异常: 'predicted_user'
+[2026-02-26 04:08:19,367] ERROR django.request Internal Server Error: /api/verify/
+[2026-02-26 04:08:19,367] ERROR django.server "POST /api/verify/ HTTP/1.1" 500 28
+[2026-02-26 04:08:32,877] ERROR api 验证异常: 'predicted_user'
+[2026-02-26 04:08:32,884] ERROR django.request Internal Server Error: /api/verify/
+[2026-02-26 04:08:32,884] ERROR django.server "POST /api/verify/ HTTP/1.1" 500 28
+[2026-02-26 04:09:00,804] INFO api 用户登录: guo
+[2026-02-26 04:09:00,806] INFO django.server "POST /api/login/ HTTP/1.1" 200 98
+[2026-02-26 04:09:00,881] INFO django.server "GET /api/me/ HTTP/1.1" 200 105
+[2026-02-26 04:09:00,891] INFO django.server "GET /api/my-logs/ HTTP/1.1" 200 6294
+[2026-02-26 04:09:00,950] INFO django.server "GET /api/me/voiceprint/ HTTP/1.1" 200 109
+[2026-02-26 04:10:30,966] INFO django.server "GET /api/me/ HTTP/1.1" 200 105
+[2026-02-26 04:10:30,979] INFO django.server "GET /api/my-logs/ HTTP/1.1" 200 6294
+[2026-02-26 04:10:31,324] INFO django.server "GET /api/me/voiceprint/ HTTP/1.1" 200 552
+[2026-02-26 04:11:01,775] ERROR api 验证异常: 'predicted_user'
+[2026-02-26 04:11:01,780] ERROR django.request Internal Server Error: /api/verify/
+[2026-02-26 04:11:01,780] ERROR django.server "POST /api/verify/ HTTP/1.1" 500 28
+[2026-02-26 04:22:03,322] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\voice_engine\service.py changed, reloading.
+[2026-02-26 04:22:05,677] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-02-26 04:25:35,418] ERROR api 验证异常: 'score'
+[2026-02-26 04:25:35,422] ERROR django.request Internal Server Error: /api/verify/
+[2026-02-26 04:25:35,424] ERROR django.server "POST /api/verify/ HTTP/1.1" 500 19
+[2026-02-26 04:25:57,015] INFO api 用户登录: admin
+[2026-02-26 04:25:57,023] INFO django.server "POST /api/login/ HTTP/1.1" 200 99
+[2026-02-26 04:25:57,060] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-26 04:25:57,435] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 933
+[2026-02-26 04:25:57,453] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 501
+[2026-02-26 04:25:57,466] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6410
+[2026-02-26 04:25:57,474] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-26 04:25:57,489] INFO django.server "GET /api/users/?page=1&is_staff=false HTTP/1.1" 200 624
+[2026-02-26 04:25:57,509] INFO django.server "GET /api/admin-access-logs/ HTTP/1.1" 200 2266
+[2026-02-26 04:25:57,518] INFO django.server "GET /api/models/ HTTP/1.1" 200 1325
+[2026-02-26 04:25:57,571] INFO django.server "GET /api/roc/?t=1772051157275&norm_method=snorm HTTP/1.1" 200 596567
+[2026-02-26 04:25:57,590] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 652
+[2026-02-26 04:25:57,596] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6410
+[2026-02-26 04:25:59,477] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6410
+[2026-02-26 04:26:05,721] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6410
+[2026-02-26 04:26:07,755] INFO django.server "GET /api/models/ HTTP/1.1" 200 1325
+[2026-02-26 04:26:07,795] INFO django.server "GET /api/roc/?t=1772051167741&norm_method=snorm HTTP/1.1" 200 596567
+[2026-02-26 04:26:08,834] INFO django.server "GET /api/admin-access-logs/ HTTP/1.1" 200 2266
+[2026-02-26 04:26:11,343] INFO django.server "GET /api/models/ HTTP/1.1" 200 1325
+[2026-02-26 04:26:11,402] INFO django.server "GET /api/roc/?t=1772051171327&norm_method=snorm HTTP/1.1" 200 596567
+[2026-02-26 04:26:15,845] INFO django.server "GET /api/roc/?t=1772051175799&norm_method=snorm HTTP/1.1" 200 596567
+[2026-02-26 04:26:20,661] INFO django.server "POST /api/models/switch/ HTTP/1.1" 200 39
+[2026-02-26 04:26:23,664] INFO django.server "GET /api/roc/?t=1772051183566&norm_method=none HTTP/1.1" 200 301970
+[2026-02-26 04:26:24,828] INFO django.server "POST /api/roc/evaluate/ HTTP/1.1" 200 137
+[2026-02-26 04:26:26,351] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-02-26 04:26:27,878] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-02-26 04:26:29,355] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-02-26 04:26:30,847] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-02-26 04:26:32,355] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 650
+[2026-02-26 04:26:32,497] INFO django.server "GET /api/roc/?t=1772051192359&norm_method=none HTTP/1.1" 200 301970
+[2026-02-26 04:26:35,855] INFO django.server "POST /api/models/switch/ HTTP/1.1" 200 28
+[2026-02-26 04:26:36,566] INFO django.server "POST /api/roc/evaluate/ HTTP/1.1" 200 122
+[2026-02-26 04:26:38,087] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 274
+[2026-02-26 04:26:45,658] INFO django.server "POST /api/models/switch/ HTTP/1.1" 200 35
+[2026-02-26 04:26:46,437] INFO django.server "GET /api/roc/?t=1772051206386&norm_method=snorm HTTP/1.1" 200 596556
+[2026-02-26 04:26:47,126] INFO django.server "POST /api/roc/evaluate/ HTTP/1.1" 200 129
+[2026-02-26 04:26:48,647] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 148
+[2026-02-26 04:26:50,137] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 148
+[2026-02-26 04:26:51,650] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 148
+[2026-02-26 04:26:53,145] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 148
+[2026-02-26 04:26:54,645] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 648
+[2026-02-26 04:26:54,785] INFO django.server "GET /api/roc/?t=1772051214649&norm_method=snorm HTTP/1.1" 200 735836
+[2026-02-26 04:26:57,062] INFO django.server "GET /api/roc/?t=1772051217028&norm_method=none HTTP/1.1" 200 301966
+[2026-02-26 04:27:03,453] INFO django.server "POST /api/roc/evaluate/ HTTP/1.1" 200 129
+[2026-02-26 04:27:04,993] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 148
+[2026-02-26 04:27:06,484] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 646
+[2026-02-26 04:27:06,615] INFO django.server "GET /api/roc/?t=1772051226487&norm_method=none HTTP/1.1" 200 365106

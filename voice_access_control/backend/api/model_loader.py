@@ -70,6 +70,32 @@ class HttpVoiceService:
                 except Exception:
                     pass
 
+    def get_feature(self, user_id):
+        url = f"{self.base_url}/voiceprint/{user_id}"
+        try:
+            with httpx.Client(timeout=10.0) as client:
+                resp = client.get(url)
+            if resp.status_code == 404:
+                return None
+            resp.raise_for_status()
+            data = resp.json()
+            # Expecting {"user_id": ..., "embedding": [list]}
+            return data.get("embedding")
+        except Exception:
+            return None
+
+    def delete_feature(self, user_id):
+        url = f"{self.base_url}/voiceprint/{user_id}"
+        try:
+            with httpx.Client(timeout=10.0) as client:
+                resp = client.delete(url)
+            if resp.status_code == 404:
+                return False
+            resp.raise_for_status()
+            return True
+        except Exception:
+            return False
+
     def reload(self, model_path=None, device=None):
         data = {}
         if model_path:

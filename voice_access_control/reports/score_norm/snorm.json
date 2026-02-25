@@ -1,0 +1,21 @@
+{
+  "auc": 0.9485864600000001,
+  "eer": 0.12475000000000003,
+  "threshold_eer": 0.2721579074859619,
+  "threshold_mindcf": 0.5754404067993164,
+  "mindcf": 0.008584000000000001,
+  "threshold_youden": 0.27206024527549744,
+  "youden": 0.7514,
+  "threshold": 0.27206024527549744,
+  "p_target": 0.01,
+  "c_miss": 1.0,
+  "c_fa": 1.0,
+  "augment": false,
+  "method": "snorm",
+  "score_norm": {
+    "method": "snorm",
+    "cohort_size": 100,
+    "cohort_speakers": 20,
+    "cohort_utts_per_spk": 5
+  }
+}

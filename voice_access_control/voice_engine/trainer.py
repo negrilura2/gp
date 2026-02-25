@@ -218,8 +218,9 @@ class Trainer:
             if acc_val > best_acc:
                 best_acc = acc_val
                 patience_counter = 0
-                torch.save(self.model.state_dict(), os.path.join(self.save_dir, "ecapa_best.pth"))
-                print("  => Saved best model.")
+                save_name = f"ecapa_{self.feature_type}_best.pth"
+                torch.save(self.model.state_dict(), os.path.join(self.save_dir, save_name))
+                print(f"  => Saved best model to {save_name}.")
             else:
                 patience_counter += 1
                 if self.early_stop and patience_counter >= self.patience:
@@ -236,7 +237,8 @@ class Trainer:
                     "time_sec": float(dur),
                 }
             )
-        torch.save(self.model.state_dict(), os.path.join(self.save_dir, "ecapa_last.pth"))
+        last_name = f"ecapa_{self.feature_type}_last.pth"
+        torch.save(self.model.state_dict(), os.path.join(self.save_dir, last_name))
         run_name = f"earlystop_pat{self.patience}" if self.early_stop else f"fixed_{self.epochs}ep"
         summary = {
             "run_name": run_name,
