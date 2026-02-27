@@ -189,22 +189,6 @@ def remove_user_voiceprint(username):
         if service.delete_feature(username):
             result["template_cleared"] = True
     
-    # Also clean up legacy file directly just in case (or if service.delete_feature failed/didn't handle it)
-    template_path = os.path.join(os.fspath(settings.VOICEPRINTS_DIR), "user_templates.npy")
-    try:
-        if os.path.exists(template_path):
-            templates = np.load(template_path, allow_pickle=True).item()
-            if username in templates:
-                del templates[username]
-                np.save(template_path, templates)
-                result["template_cleared"] = True
-    except Exception as e:
-        # Log error but don't fail if service deletion worked
-        logger.error(f"清理声纹模板文件失败: {username} {e}")
-        if not result["template_cleared"]:
-            result["error"] = str(e)
-            return result
-
     try:
         VoiceTemplate.objects.filter(user__username=username).delete()
         enroll_dir = os.path.join(os.fspath(settings.ENROLL_DIR), username)

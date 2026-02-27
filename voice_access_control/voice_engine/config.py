@@ -63,10 +63,12 @@ VOICEPRINTS_DIR = get_path_env("VOICEPRINTS_DIR", os.path.join(DATA_DIR, "voicep
 # 默认模型路径
 _default_model_name = "ecapa_mfcc_delta_best.pth"
 DEFAULT_MODEL_PATH = get_path_env("DEFAULT_MODEL_PATH", os.path.join(MODELS_DIR, _default_model_name))
-DEFAULT_TEMPLATE_PATH = get_path_env("DEFAULT_TEMPLATE_PATH", os.path.join(VOICEPRINTS_DIR, "user_templates.npy"))
+# DEFAULT_TEMPLATE_PATH is deprecated, removing default fallback
+DEFAULT_TEMPLATE_PATH = get_path_env("DEFAULT_TEMPLATE_PATH", "")
 
 # 兼容旧代码的别名
 MODEL_PATH = DEFAULT_MODEL_PATH
+# TEMPLATE_PATH is deprecated
 TEMPLATE_PATH = DEFAULT_TEMPLATE_PATH
 
 # -----------------------------------------------------------------------------

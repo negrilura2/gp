@@ -62,7 +62,7 @@ class EnrollView(APIView):
             VoiceTemplate.objects.update_or_create(
                 user=request.user,
                 defaults={
-                    "template_path": os.path.join(os.fspath(settings.VOICEPRINTS_DIR), "user_templates.npy"),
+                    "template_path": "vector_store", # Use VectorStore
                     "embedding_count": len(saved_paths),
                 },
             )

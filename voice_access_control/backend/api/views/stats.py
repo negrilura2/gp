@@ -98,8 +98,8 @@ class StatsView(APIView):
                 "median": median,
             }
 
-        total_users = User.objects.count()
-        enrolled_users = VoiceTemplate.objects.values("user").distinct().count()
+        total_users = User.objects.filter(is_staff=False, is_superuser=False).count()
+        enrolled_users = VoiceTemplate.objects.filter(user__is_staff=False, user__is_superuser=False).values("user").distinct().count()
 
         if mode == "echarts":
             x_axis = [d["date"] for d in daily_data]
@@ -145,9 +145,9 @@ class DashboardView(APIView):
     permission_classes = [IsAdminUser]
 
     def get(self, request):
-        total_users = User.objects.count()
-        admin_users = User.objects.filter(is_staff=True).count()
-        enrolled_users = VoiceTemplate.objects.values("user").distinct().count()
+        total_users = User.objects.filter(is_staff=False, is_superuser=False).count()
+        admin_users = User.objects.filter(models.Q(is_staff=True) | models.Q(is_superuser=True)).count()
+        enrolled_users = VoiceTemplate.objects.filter(user__is_staff=False, user__is_superuser=False).values("user").distinct().count()
 
         verify_stats = VerifyLog.objects.aggregate(
             total=Count("id"),
@@ -201,7 +201,7 @@ class DashboardView(APIView):
                     "raw_wav": count_files(os.fspath(settings.RAW_DIR), {".wav"}),
                     "processed_wav": count_files(os.fspath(settings.PROCESSED_DIR), {".wav"}),
                     "feature_files": count_files(os.fspath(settings.FEATURES_DIR), {".npy"}),
-                    "voiceprints": count_files(os.fspath(settings.VOICEPRINTS_DIR), {".npy"}),
+                    "voiceprints": VoiceTemplate.objects.count(), # Use DB count instead of file count
                     "recordings": count_files(
                         os.fspath(settings.RECORDINGS_DIR),
                         {".wav", ".flac", ".mp3", ".ogg", ".m4a"},

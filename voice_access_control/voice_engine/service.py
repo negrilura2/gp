@@ -12,12 +12,10 @@ from typing import List, Tuple, Optional, Dict, Any
 
 from .config import (
     MODEL_PATH,
-    TEMPLATE_PATH,
     DEFAULT_N_MELS,
     DEFAULT_THRESHOLD,
     DEFAULT_DEVICE,
     FEATURE_TYPE_MFCC_DELTA,
-    DEFAULT_TEMPLATE_PATH,
     EMBEDDING_DIM
 )
 from .ecapa_tdnn import LightECAPA
@@ -33,24 +31,6 @@ logger = logging.getLogger("voice_engine")
 # ==========================================
 # Helper Functions
 # ==========================================
-
-def load_templates(path=None):
-    """Load voiceprint templates dictionary {user_id: embedding}"""
-    # Backward compatibility: Try loading from .npy if VectorStore fails or is empty?
-    # For now, we rely on VectorStore migration.
-    # But to keep code safe, we can leave this helper if needed by other modules,
-    # though VoiceService will use VectorStore.
-    path = path or TEMPLATE_PATH
-    if not os.path.exists(path):
-        return {} 
-    return np.load(path, allow_pickle=True).item()
-
-def save_templates(templates, path=None):
-    """Save voiceprint templates dictionary"""
-    path = path or TEMPLATE_PATH
-    os.makedirs(os.path.dirname(path), exist_ok=True)
-    np.save(path, templates)
-    logger.info(f"Templates saved to {path}")
 
 def cosine_score(a, b):
     """Compute cosine similarity between two vectors"""
@@ -212,12 +192,10 @@ class VoiceService:
                     )
                 except Exception as e:
                     logger.error(f"VectorStore add failed for {user_id}: {e}")
+                    raise RuntimeError(f"Failed to save voiceprint to VectorStore: {e}")
+            else:
+                raise RuntimeError("VectorStore is not initialized. Cannot enroll user.")
 
-            # Always keep legacy templates in sync for preview/backup
-            templates = load_templates(TEMPLATE_PATH)
-            templates[user_id] = user_template
-            save_templates(templates, TEMPLATE_PATH)
-            
             logger.info(f"Enrolled user {user_id} with {len(wav_paths)} samples.")
             return {"status": "success", "user_id": user_id, "wav_count": len(wav_paths)}
             
@@ -238,13 +216,6 @@ class VoiceService:
             except Exception as e:
                 logger.warning(f"VectorStore retrieval failed for {user_id}: {e}")
 
-        # 2. Fallback to legacy templates (Backup/Migration)
-        templates = load_templates()
-        emb = templates.get(user_id)
-        if emb is not None:
-            logger.info(f"Retrieved feature for {user_id} from Legacy Templates (.npy)")
-            return emb
-
         return None
 
     def delete_feature(self, user_id: str) -> bool:
@@ -257,16 +228,6 @@ class VoiceService:
                 deleted = True
             except Exception as e:
                 logger.warning(f"Failed to delete from VectorStore: {e}")
-
-        # 2. Delete from .npy templates (Legacy)
-        templates = load_templates()
-        if user_id in templates:
-            del templates[user_id]
-            try:
-                save_templates(templates)
-                deleted = True
-            except Exception as e:
-                logger.error(f"Failed to save templates after deletion: {e}")
         
         return deleted
 
@@ -297,23 +258,11 @@ class VoiceService:
                 if matches:
                     best_spk, best_score = matches[0]
             else:
-                # Fallback to legacy
-                templates = load_templates(TEMPLATE_PATH)
-                if not templates:
-                    return {"status": "reject", "score": 0.0, "speaker": None, "message": "No enrolled users"}
-
-                for spk, tmpl in templates.items():
-                    if isinstance(tmpl, np.ndarray) and tmpl.ndim == 1:
-                        s = cosine_score(emb, tmpl)
-                    elif isinstance(tmpl, (list, np.ndarray)):
-                        scores = [cosine_score(emb, t) for t in tmpl]
-                        s = max(scores) if scores else -1.0
-                    else:
-                        s = cosine_score(emb, tmpl)
-
-                    if s > best_score:
-                        best_score = s
-                        best_spk = spk
+                if not self.vector_store:
+                     logger.error("VectorStore not initialized.")
+                     return {"status": "error", "error": "VectorStore not initialized"}
+                # If store is empty
+                return {"status": "reject", "score": 0.0, "speaker": None, "message": "No enrolled users"}
 
             result = "ACCEPT" if best_score >= thr else "REJECT"
             logger.info(f"Verification: {wav_path} -> Best match: {best_spk} ({best_score:.4f}) => {result}")

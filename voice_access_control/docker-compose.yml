@@ -39,7 +39,8 @@ services:
       - PYTHONUNBUFFERED=1
       # Override DB settings for AI service if it connects to DB directly (it usually doesn't, but just in case)
       - DB_HOST=db
-    command: python -m voice_engine.ai_app
+    # Use uvicorn directly with reload for development
+    command: uvicorn voice_engine.ai_app:app --host 0.0.0.0 --port 9000 --reload
     restart: unless-stopped
     depends_on:
       - db

@@ -9934,3 +9934,377 @@ ImportError: attempted relative import beyond top-level package
 [2026-02-27 16:01:24,012] INFO django.server "GET /api/analysis/embedding/image/?method=tsne&score_norm=znorm HTTP/1.1" 200 70247
 [2026-02-27 16:01:25,966] INFO django.server "GET /api/analysis/embedding/image/?method=tsne&score_norm=none HTTP/1.1" 200 68916
 [2026-02-27 16:01:25,986] INFO django.server "GET /api/roc/?t=1772179285944&norm_method=none HTTP/1.1" 200 342365
+[2026-02-27 16:10:20,905] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\voice_engine\service.py changed, reloading.
+[2026-02-27 16:10:21,954] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-02-27 16:10:29,003] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\voice_engine\service.py changed, reloading.
+[2026-02-27 16:10:30,015] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-02-27 16:10:35,844] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\voice_engine\service.py changed, reloading.
+[2026-02-27 16:10:36,852] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-02-27 16:10:53,772] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\backend\api\views\voice.py changed, reloading.
+[2026-02-27 16:10:54,736] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-02-27 16:17:27,510] INFO api 用户登录: xxyhh
+[2026-02-27 16:17:27,512] INFO django.server "POST /api/login/ HTTP/1.1" 200 100
+[2026-02-27 16:17:27,575] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-27 16:17:27,576] INFO django.server "GET /api/my-logs/ HTTP/1.1" 200 6553
+[2026-02-27 16:17:27,788] INFO django.server "GET /api/me/voiceprint/ HTTP/1.1" 200 546
+[2026-02-27 16:17:44,725] INFO django.server "DELETE /api/me/voiceprint/ HTTP/1.1" 200 85
+[2026-02-27 16:17:56,836] INFO api 声纹注册成功: xxyhh, 5 条音频
+[2026-02-27 16:17:56,838] INFO django.server "POST /api/enroll/ HTTP/1.1" 200 50
+[2026-02-27 16:17:56,907] INFO django.server "GET /api/me/voiceprint/ HTTP/1.1" 200 550
+[2026-02-27 16:17:56,919] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-27 16:18:18,252] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-27 16:18:18,257] INFO django.server "GET /api/my-logs/ HTTP/1.1" 200 6553
+[2026-02-27 16:18:19,286] WARNING api Voiceprint preview failed: user 'xxyhh' not found in Service.
+[2026-02-27 16:18:19,287] INFO django.server "GET /api/me/voiceprint/ HTTP/1.1" 200 109
+[2026-02-27 16:18:38,733] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-27 16:18:38,739] INFO django.server "GET /api/my-logs/ HTTP/1.1" 200 6553
+[2026-02-27 16:18:38,973] INFO django.server "GET /api/me/voiceprint/ HTTP/1.1" 200 550
+[2026-02-27 16:18:41,999] INFO django.server "DELETE /api/me/voiceprint/ HTTP/1.1" 200 85
+[2026-02-27 16:18:57,182] INFO api 声纹注册成功: xxyhh, 5 条音频
+[2026-02-27 16:18:57,184] INFO django.server "POST /api/enroll/ HTTP/1.1" 200 50
+[2026-02-27 16:18:57,262] INFO django.server "GET /api/me/voiceprint/ HTTP/1.1" 200 550
+[2026-02-27 16:18:57,278] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-27 16:19:08,853] INFO django.server "DELETE /api/me/voiceprint/ HTTP/1.1" 200 85
+[2026-02-27 16:24:05,489] INFO api 声纹注册成功: xxyhh, 5 条音频
+[2026-02-27 16:24:05,491] INFO django.server "POST /api/enroll/ HTTP/1.1" 200 50
+[2026-02-27 16:24:05,564] INFO django.server "GET /api/me/voiceprint/ HTTP/1.1" 200 550
+[2026-02-27 16:24:05,577] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-27 16:27:51,351] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\backend\api\views\users.py changed, reloading.
+[2026-02-27 16:27:52,436] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-02-27 16:38:08,718] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-27 16:38:08,722] INFO django.server "GET /api/my-logs/ HTTP/1.1" 200 6553
+[2026-02-27 16:38:09,177] INFO django.server "GET /api/me/voiceprint/ HTTP/1.1" 200 550
+[2026-02-27 16:38:13,570] INFO django.server "DELETE /api/me/voiceprint/ HTTP/1.1" 200 85
+[2026-02-27 16:38:19,855] INFO api 声纹注册成功: xxyhh, 1 条音频
+[2026-02-27 16:38:19,856] INFO django.server "POST /api/enroll/ HTTP/1.1" 200 50
+[2026-02-27 16:38:19,933] INFO django.server "GET /api/me/voiceprint/ HTTP/1.1" 200 547
+[2026-02-27 16:38:19,950] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-27 16:38:28,583] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-27 16:38:28,591] INFO django.server "GET /api/my-logs/ HTTP/1.1" 200 6553
+[2026-02-27 16:38:29,583] WARNING api Voiceprint preview failed: user 'xxyhh' not found in Service.
+[2026-02-27 16:38:29,584] INFO django.server "GET /api/me/voiceprint/ HTTP/1.1" 200 109
+[2026-02-27 16:38:43,759] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-27 16:38:43,766] INFO django.server "GET /api/my-logs/ HTTP/1.1" 200 6553
+[2026-02-27 16:38:44,058] INFO django.server "GET /api/me/voiceprint/ HTTP/1.1" 200 547
+[2026-02-27 16:38:47,220] INFO django.server "DELETE /api/me/voiceprint/ HTTP/1.1" 200 85
+[2026-02-27 16:39:34,775] INFO django.server "GET /api/me/ HTTP/1.1" 200 108
+[2026-02-27 16:39:34,775] INFO django.server "GET /api/my-logs/ HTTP/1.1" 200 6553
+[2026-02-27 16:39:35,768] WARNING api Voiceprint preview failed: user 'xxyhh' not found in Service.
+[2026-02-27 16:39:35,769] INFO django.server "GET /api/me/voiceprint/ HTTP/1.1" 200 91
+[2026-02-27 16:39:42,203] INFO api 声纹注册成功: xxyhh, 3 条音频
+[2026-02-27 16:39:42,203] INFO django.server "POST /api/enroll/ HTTP/1.1" 200 50
+[2026-02-27 16:39:42,280] INFO django.server "GET /api/me/voiceprint/ HTTP/1.1" 200 549
+[2026-02-27 16:39:42,294] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-27 16:40:38,577] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\voice_engine\config.py changed, reloading.
+[2026-02-27 16:40:39,754] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-02-27 16:40:49,850] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\backend\api\views\stats.py changed, reloading.
+[2026-02-27 16:40:50,833] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-02-27 16:42:42,815] INFO django.server "DELETE /api/me/voiceprint/ HTTP/1.1" 200 85
+[2026-02-27 16:42:59,951] INFO api 声纹注册成功: xxyhh, 1 条音频
+[2026-02-27 16:42:59,953] INFO django.server "POST /api/enroll/ HTTP/1.1" 200 50
+[2026-02-27 16:43:00,040] INFO django.server "GET /api/me/voiceprint/ HTTP/1.1" 200 547
+[2026-02-27 16:43:00,056] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-27 16:47:56,131] INFO django.server "DELETE /api/me/voiceprint/ HTTP/1.1" 200 85
+[2026-02-27 16:48:23,268] INFO api 声纹注册成功: xxyhh, 2 条音频
+[2026-02-27 16:48:23,268] INFO django.server "POST /api/enroll/ HTTP/1.1" 200 50
+[2026-02-27 16:48:23,366] INFO django.server "GET /api/me/voiceprint/ HTTP/1.1" 200 548
+[2026-02-27 16:48:23,383] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-27 18:45:20,259] INFO api 用户登录: admin
+[2026-02-27 18:45:20,266] INFO django.server "POST /api/login/ HTTP/1.1" 200 99
+[2026-02-27 18:45:20,295] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-27 18:45:20,571] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 525
+[2026-02-27 18:45:20,595] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6389
+[2026-02-27 18:45:20,608] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-27 18:45:20,634] INFO django.server "GET /api/users/?page=1&is_staff=false HTTP/1.1" 200 624
+[2026-02-27 18:45:20,670] INFO django.server "GET /api/admin-access-logs/ HTTP/1.1" 200 2425
+[2026-02-27 18:45:20,683] INFO django.server "GET /api/models/ HTTP/1.1" 200 1208
+[2026-02-27 18:45:20,706] INFO django.server "GET /api/analysis/embedding/image/?method=tsne&score_norm=none HTTP/1.1" 200 68916
+[2026-02-27 18:45:20,765] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 1010
+[2026-02-27 18:45:20,777] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 917
+[2026-02-27 18:45:20,800] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6389
+[2026-02-27 18:45:20,879] INFO django.server "GET /api/roc/?t=1772189120515&norm_method=snorm HTTP/1.1" 200 689934
+[2026-02-27 18:45:30,324] INFO django.server "POST /api/admin-list/ HTTP/1.1" 200 404
+[2026-02-27 18:45:30,364] INFO django.server "GET /api/admin-access-logs/ HTTP/1.1" 200 2584
+[2026-02-27 18:45:30,406] INFO django.server "GET /api/admins/ HTTP/1.1" 200 432
+[2026-02-27 18:47:29,676] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\backend\api\views\stats.py changed, reloading.
+[2026-02-27 18:47:32,822] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-02-27 18:48:03,108] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-27 18:48:03,519] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-27 18:48:03,543] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6389
+[2026-02-27 18:48:03,548] INFO django.server "GET /api/users/?page=1&is_staff=false HTTP/1.1" 200 624
+[2026-02-27 18:48:03,623] INFO django.server "GET /api/analysis/embedding/image/?method=tsne&score_norm=none HTTP/1.1" 200 68916
+[2026-02-27 18:48:03,690] INFO django.server "GET /api/roc/?t=1772189283459&norm_method=snorm HTTP/1.1" 200 689934
+[2026-02-27 18:48:03,703] INFO django.server "GET /api/admin-access-logs/ HTTP/1.1" 200 2584
+[2026-02-27 18:48:03,710] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 917
+[2026-02-27 18:48:03,740] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6389
+[2026-02-27 18:48:03,873] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 1010
+[2026-02-27 18:48:03,908] ERROR django.request Internal Server Error: /api/stats/
+Traceback (most recent call last):
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\views\decorators\csrf.py", line 56, in wrapper_view
+    return view_func(*args, **kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\views\generic\base.py", line 105, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "D:\traepg\gp\voice_access_control\backend\api\views\stats.py", line 31, in get
+    x_axis = [d["date"] for d in daily_data]
+NameError: name 'daily_data' is not defined
+[2026-02-27 18:48:03,916] ERROR django.server "GET /api/stats/?mode=echarts HTTP/1.1" 500 97743
+[2026-02-27 18:48:04,032] INFO django.server "GET /api/models/ HTTP/1.1" 200 1208
+[2026-02-27 18:48:11,346] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6389
+[2026-02-27 18:48:11,364] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6389
+[2026-02-27 18:48:11,857] INFO django.server "GET /api/models/ HTTP/1.1" 200 1208
+[2026-02-27 18:48:11,925] INFO django.server "GET /api/roc/?t=1772189291831&norm_method=snorm HTTP/1.1" 200 689934
+[2026-02-27 18:48:11,925] INFO django.server "GET /api/analysis/embedding/image/?method=tsne&score_norm=snorm HTTP/1.1" 200 70627
+[2026-02-27 18:48:12,912] INFO django.server "GET /api/admin-access-logs/ HTTP/1.1" 200 2584
+[2026-02-27 18:48:15,376] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-27 18:48:15,623] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-27 18:48:15,633] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6389
+[2026-02-27 18:48:15,667] INFO django.server "GET /api/users/?page=1&is_staff=false HTTP/1.1" 200 624
+[2026-02-27 18:48:15,706] ERROR django.request Internal Server Error: /api/stats/
+Traceback (most recent call last):
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\views\decorators\csrf.py", line 56, in wrapper_view
+    return view_func(*args, **kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\views\generic\base.py", line 105, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "D:\traepg\gp\voice_access_control\backend\api\views\stats.py", line 31, in get
+    x_axis = [d["date"] for d in daily_data]
+NameError: name 'daily_data' is not defined
+[2026-02-27 18:48:15,714] ERROR django.server "GET /api/stats/?mode=echarts HTTP/1.1" 500 97743
+[2026-02-27 18:48:15,723] INFO django.server "GET /api/admin-access-logs/ HTTP/1.1" 200 2584
+[2026-02-27 18:48:15,723] INFO django.server "GET /api/models/ HTTP/1.1" 200 1208
+[2026-02-27 18:48:15,731] INFO django.server "GET /api/analysis/embedding/image/?method=tsne&score_norm=none HTTP/1.1" 200 68916
+[2026-02-27 18:48:15,751] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 917
+[2026-02-27 18:48:15,766] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6389
+[2026-02-27 18:48:15,890] INFO django.server "GET /api/roc/?t=1772189295577&norm_method=snorm HTTP/1.1" 200 689934
+[2026-02-27 18:48:15,961] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 1010
+[2026-02-27 18:53:58,424] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-27 18:53:58,744] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-27 18:53:58,773] INFO django.server "GET /api/users/?page=1&is_staff=false HTTP/1.1" 200 624
+[2026-02-27 18:53:58,809] INFO django.server "GET /api/models/ HTTP/1.1" 200 1208
+[2026-02-27 18:53:58,810] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6389
+[2026-02-27 18:53:58,840] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 917
+[2026-02-27 18:53:58,868] INFO django.server "GET /api/admin-access-logs/ HTTP/1.1" 200 2584
+[2026-02-27 18:53:58,882] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6389
+[2026-02-27 18:53:58,949] ERROR django.request Internal Server Error: /api/stats/
+Traceback (most recent call last):
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\views\decorators\csrf.py", line 56, in wrapper_view
+    return view_func(*args, **kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\views\generic\base.py", line 105, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "D:\traepg\gp\voice_access_control\backend\api\views\stats.py", line 31, in get
+    x_axis = [d["date"] for d in daily_data]
+NameError: name 'daily_data' is not defined
+[2026-02-27 18:53:58,955] INFO django.server "GET /api/analysis/embedding/image/?method=tsne&score_norm=none HTTP/1.1" 200 68916
+[2026-02-27 18:53:58,981] ERROR django.server "GET /api/stats/?mode=echarts HTTP/1.1" 500 97743
+[2026-02-27 18:53:59,060] INFO django.server "GET /api/roc/?t=1772189638684&norm_method=snorm HTTP/1.1" 200 689934
+[2026-02-27 18:53:59,113] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 1010
+[2026-02-27 18:54:17,532] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-27 18:54:17,780] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-27 18:54:17,823] INFO django.server "GET /api/users/?page=1&is_staff=false HTTP/1.1" 200 624
+[2026-02-27 18:54:17,826] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6389
+[2026-02-27 18:54:17,848] INFO django.server "GET /api/models/ HTTP/1.1" 200 1208
+[2026-02-27 18:54:17,899] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 917
+[2026-02-27 18:54:17,905] INFO django.server "GET /api/admin-access-logs/ HTTP/1.1" 200 2584
+[2026-02-27 18:54:17,943] ERROR django.request Internal Server Error: /api/stats/
+Traceback (most recent call last):
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\views\decorators\csrf.py", line 56, in wrapper_view
+    return view_func(*args, **kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\views\generic\base.py", line 105, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "D:\traepg\gp\voice_access_control\backend\api\views\stats.py", line 31, in get
+    x_axis = [d["date"] for d in daily_data]
+NameError: name 'daily_data' is not defined
+[2026-02-27 18:54:18,003] INFO django.server "GET /api/roc/?t=1772189657731&norm_method=snorm HTTP/1.1" 200 689934
+[2026-02-27 18:54:18,004] INFO django.server "GET /api/analysis/embedding/image/?method=tsne&score_norm=none HTTP/1.1" 200 68916
+[2026-02-27 18:54:18,005] ERROR django.server "GET /api/stats/?mode=echarts HTTP/1.1" 500 97743
+[2026-02-27 18:54:18,013] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6389
+[2026-02-27 18:54:18,068] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 1010
+[2026-02-27 18:56:43,150] ERROR django.request Internal Server Error: /api/stats/
+Traceback (most recent call last):
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\views\decorators\csrf.py", line 56, in wrapper_view
+    return view_func(*args, **kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\views\generic\base.py", line 105, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "D:\traepg\gp\voice_access_control\backend\api\views\stats.py", line 31, in get
+    reject_count=Count("id", filter=models.Q(result="REJECT")),
+NameError: name 'daily_data' is not defined
+[2026-02-27 18:56:43,152] ERROR django.server "GET /api/stats/?mode=echarts HTTP/1.1" 500 97660
+[2026-02-27 18:56:43,185] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6389
+[2026-02-27 18:56:43,197] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-27 18:56:43,221] INFO django.server "GET /api/users/?page=1&is_staff=false HTTP/1.1" 200 624
+[2026-02-27 18:56:43,253] INFO django.server "GET /api/admin-access-logs/ HTTP/1.1" 200 2584
+[2026-02-27 18:56:43,264] INFO django.server "GET /api/models/ HTTP/1.1" 200 1208
+[2026-02-27 18:56:43,287] INFO django.server "GET /api/analysis/embedding/image/?method=tsne&score_norm=none HTTP/1.1" 200 68916
+[2026-02-27 18:56:43,289] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 1010
+[2026-02-27 18:56:43,310] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 917
+[2026-02-27 18:56:43,382] INFO django.server "GET /api/roc/?t=1772189803086&norm_method=snorm HTTP/1.1" 200 689934
+[2026-02-27 18:56:43,393] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6389
+[2026-02-27 18:56:43,434] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\backend\api\views\stats.py changed, reloading.
+[2026-02-27 18:56:44,966] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-02-27 18:57:15,875] INFO api 用户登录: admin
+[2026-02-27 18:57:15,882] INFO django.server "POST /api/login/ HTTP/1.1" 200 99
+[2026-02-27 18:57:15,906] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-27 18:57:16,150] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 1010
+[2026-02-27 18:57:16,173] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 525
+[2026-02-27 18:57:16,194] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6389
+[2026-02-27 18:57:16,205] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-27 18:57:16,233] INFO django.server "GET /api/users/?page=1&is_staff=false HTTP/1.1" 200 624
+[2026-02-27 18:57:16,281] INFO django.server "GET /api/admin-access-logs/ HTTP/1.1" 200 2584
+[2026-02-27 18:57:16,356] INFO django.server "GET /api/roc/?t=1772189836078&norm_method=snorm HTTP/1.1" 200 689934
+[2026-02-27 18:57:16,406] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 917
+[2026-02-27 18:57:16,417] INFO django.server "GET /api/analysis/embedding/image/?method=tsne&score_norm=none HTTP/1.1" 200 68916
+[2026-02-27 18:57:16,425] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6389
+[2026-02-27 18:57:16,615] INFO django.server "GET /api/models/ HTTP/1.1" 200 1208
+[2026-02-27 18:57:22,411] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-27 18:57:22,675] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-27 18:57:22,683] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6389
+[2026-02-27 18:57:22,721] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 525
+[2026-02-27 18:57:22,730] INFO django.server "GET /api/users/?page=1&is_staff=false HTTP/1.1" 200 624
+[2026-02-27 18:57:22,762] INFO django.server "GET /api/models/ HTTP/1.1" 200 1208
+[2026-02-27 18:57:22,763] INFO django.server "GET /api/admin-access-logs/ HTTP/1.1" 200 2584
+[2026-02-27 18:57:22,766] INFO django.server "GET /api/analysis/embedding/image/?method=tsne&score_norm=none HTTP/1.1" 200 68916
+[2026-02-27 18:57:22,794] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 917
+[2026-02-27 18:57:22,801] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6389
+[2026-02-27 18:57:22,871] INFO django.server "GET /api/roc/?t=1772189842637&norm_method=snorm HTTP/1.1" 200 689934
+[2026-02-27 18:57:22,907] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 1010
+[2026-02-27 18:57:24,066] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6389
+[2026-02-27 18:57:24,941] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6389
+[2026-02-27 18:57:25,592] INFO django.server "GET /api/models/ HTTP/1.1" 200 1208
+[2026-02-27 18:57:25,651] INFO django.server "GET /api/analysis/embedding/image/?method=tsne&score_norm=snorm HTTP/1.1" 200 70627
+[2026-02-27 18:57:25,652] INFO django.server "GET /api/roc/?t=1772189845569&norm_method=snorm HTTP/1.1" 200 689934
+[2026-02-27 18:57:26,332] INFO django.server "GET /api/admin-access-logs/ HTTP/1.1" 200 2584
+[2026-02-27 18:59:27,039] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\backend\api\views\stats.py changed, reloading.
+[2026-02-27 18:59:28,343] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-02-27 18:59:35,297] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\backend\api\views\stats.py changed, reloading.
+[2026-02-27 18:59:36,636] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-02-27 18:59:49,142] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\backend\api\views\stats.py changed, reloading.
+[2026-02-27 18:59:50,392] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-02-27 18:59:59,305] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\backend\api\views\stats.py changed, reloading.
+[2026-02-27 19:00:00,699] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-02-27 19:00:11,407] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-27 19:00:11,724] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6389
+[2026-02-27 19:00:11,731] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 525
+[2026-02-27 19:00:11,733] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-27 19:00:11,870] INFO django.server "GET /api/roc/?t=1772190011615&norm_method=snorm HTTP/1.1" 200 689934
+[2026-02-27 19:00:11,880] INFO django.server "GET /api/users/?page=1&is_staff=false HTTP/1.1" 200 624
+[2026-02-27 19:00:11,890] INFO django.server "GET /api/analysis/embedding/image/?method=tsne&score_norm=none HTTP/1.1" 200 68916
+[2026-02-27 19:00:11,915] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 917
+[2026-02-27 19:00:11,942] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6389
+[2026-02-27 19:00:11,951] INFO django.server "GET /api/admin-access-logs/ HTTP/1.1" 200 2584
+[2026-02-27 19:00:12,027] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 1010
+[2026-02-27 19:00:12,208] INFO django.server "GET /api/models/ HTTP/1.1" 200 1208
+[2026-02-27 19:00:14,957] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6389
+[2026-02-27 19:00:16,211] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6389
+[2026-02-27 19:00:17,238] INFO django.server "GET /api/models/ HTTP/1.1" 200 1208
+[2026-02-27 19:00:17,328] INFO django.server "GET /api/roc/?t=1772190017222&norm_method=snorm HTTP/1.1" 200 689934
+[2026-02-27 19:00:17,358] INFO django.server "GET /api/analysis/embedding/image/?method=tsne&score_norm=snorm HTTP/1.1" 200 70627
+[2026-02-27 19:00:18,401] INFO django.server "GET /api/admin-access-logs/ HTTP/1.1" 200 2584
+[2026-02-27 19:00:19,898] INFO django.server "GET /api/models/ HTTP/1.1" 200 1208
+[2026-02-27 19:00:19,959] INFO django.server "GET /api/analysis/embedding/image/?method=tsne&score_norm=snorm HTTP/1.1" 200 70627
+[2026-02-27 19:00:19,963] INFO django.server "GET /api/roc/?t=1772190019877&norm_method=snorm HTTP/1.1" 200 689934
+[2026-02-27 19:04:50,553] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-27 19:04:50,921] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-02-27 19:04:50,949] INFO django.server "GET /api/users/?page=1&is_staff=false HTTP/1.1" 200 624
+[2026-02-27 19:04:50,951] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6389
+[2026-02-27 19:04:50,953] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 525
+[2026-02-27 19:04:50,969] INFO django.server "GET /api/models/ HTTP/1.1" 200 1208
+[2026-02-27 19:04:51,005] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 917
+[2026-02-27 19:04:51,065] INFO django.server "GET /api/analysis/embedding/image/?method=tsne&score_norm=none HTTP/1.1" 200 68916
+[2026-02-27 19:04:51,065] INFO django.server "GET /api/admin-access-logs/ HTTP/1.1" 200 2584
+[2026-02-27 19:04:51,066] INFO django.server "GET /api/roc/?t=1772190290872&norm_method=snorm HTTP/1.1" 200 689934
+[2026-02-27 19:04:51,079] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6389
+[2026-02-27 19:04:51,126] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 1010
+[2026-02-27 19:04:51,827] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6389
+[2026-02-27 19:04:52,208] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6389
+[2026-02-27 19:04:52,656] INFO django.server "GET /api/models/ HTTP/1.1" 200 1208
+[2026-02-27 19:04:52,708] INFO django.server "GET /api/analysis/embedding/image/?method=tsne&score_norm=snorm HTTP/1.1" 200 70627
+[2026-02-27 19:04:52,708] INFO django.server "GET /api/roc/?t=1772190292635&norm_method=snorm HTTP/1.1" 200 689934
+[2026-02-27 19:04:53,360] INFO django.server "GET /api/admin-access-logs/ HTTP/1.1" 200 2584
+[2026-02-27 19:04:55,351] INFO django.server "GET /api/models/ HTTP/1.1" 200 1208
+[2026-02-27 19:04:55,359] INFO django.server "GET /api/analysis/embedding/image/?method=tsne&score_norm=snorm HTTP/1.1" 200 70627
+[2026-02-27 19:04:55,408] INFO django.server "GET /api/roc/?t=1772190295333&norm_method=snorm HTTP/1.1" 200 689934
+[2026-02-27 19:04:58,734] INFO django.server "GET /api/analysis/embedding/image/?method=tsne&score_norm=none HTTP/1.1" 200 68916
+[2026-02-27 19:04:58,835] INFO django.server "GET /api/roc/?t=1772190298720&norm_method=none HTTP/1.1" 200 342365
+[2026-02-27 19:05:01,319] INFO django.server "GET /api/analysis/embedding/image/?method=tsne&score_norm=none HTTP/1.1" 200 68916
+[2026-02-27 19:05:04,558] INFO django.server "GET /api/analysis/embedding/image/?method=tsne&score_norm=snorm HTTP/1.1" 200 70627
+[2026-02-27 19:05:04,623] INFO django.server "GET /api/roc/?t=1772190304547&norm_method=snorm HTTP/1.1" 200 689934
+[2026-02-27 19:05:09,235] INFO django.server "POST /api/models/switch/ HTTP/1.1" 200 56
+[2026-02-27 19:05:12,726] INFO django.server "GET /api/analysis/embedding/image/?method=tsne&score_norm=none HTTP/1.1" 200 68916
+[2026-02-27 19:05:12,754] INFO django.server "GET /api/roc/?t=1772190312705&norm_method=none HTTP/1.1" 200 342365
+[2026-02-27 19:05:14,011] INFO django.server "POST /api/roc/evaluate/ HTTP/1.1" 200 138
+[2026-02-27 19:05:15,638] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 153
+[2026-02-27 19:05:17,026] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 153
+[2026-02-27 19:05:18,527] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 153
+[2026-02-27 19:05:20,025] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 153
+[2026-02-27 19:05:21,527] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 153
+[2026-02-27 19:05:23,025] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 153
+[2026-02-27 19:05:24,540] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 153
+[2026-02-27 19:05:26,025] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 153
+[2026-02-27 19:05:27,526] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 153
+[2026-02-27 19:05:29,024] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 153
+[2026-02-27 19:05:30,528] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 153
+[2026-02-27 19:05:32,028] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 914
+[2026-02-27 19:05:32,049] INFO django.server "GET /api/analysis/embedding/image/?method=tsne&score_norm=none HTTP/1.1" 200 66492
+[2026-02-27 19:05:32,140] INFO django.server "GET /api/roc/?t=1772190332032&norm_method=none HTTP/1.1" 200 304718
+[2026-02-27 19:05:36,913] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 525
+[2026-02-27 19:05:36,929] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6389
+[2026-02-27 19:05:37,028] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 1010
