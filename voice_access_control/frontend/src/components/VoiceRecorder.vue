@@ -1,8 +1,20 @@
 <template>
   <div class="voice-recorder">
     <!-- 声波展示区域 -->
-    <div class="wave-container" ref="waveContainerRef">
+    <div class="wave-container" ref="waveContainerRef" @click="handleCanvasClick">
       <canvas ref="waveCanvasRef" class="wave-canvas"></canvas>
+    </div>
+
+    <!-- 播放进度条 -->
+    <div class="progress-container" v-if="activeFile && !recording">
+       <el-slider 
+         v-model="playbackProgress" 
+         :max="1" 
+         :step="0.001" 
+         :format-tooltip="formatProgress"
+         @input="handleSliderInput"
+         @change="handleSliderChange"
+       />
     </div>
 
     <!-- 录音控制区域 -->
@@ -33,6 +45,7 @@
           :auto-upload="false"
           :show-file-list="false"
           accept=".wav"
+          multiple
           :on-change="handleSelectAudio"
         >
           <el-button>选择文件</el-button>
@@ -44,7 +57,7 @@
     <!-- 待提交列表 -->
     <div class="enroll-list" v-if="enrollFiles.length > 0">
       <div class="list-header">
-        <span>待提交录音 ({{ enrollFiles.length }}/{{ maxRecords }})</span>
+        <span>待提交录音 ({{ enrollFiles.length }})</span>
         <el-button
           type="success"
           :loading="submitting"
@@ -63,8 +76,18 @@
           v-for="(f, idx) in enrollFiles"
           :key="idx"
           class="wav-item"
+          :class="{ 'is-active': activeFile === f }"
+          @click="previewAudio(f)"
         >
           <div class="wav-info">
+            <el-button
+              circle
+              size="small"
+              type="primary"
+              :icon="playing && activeFile === f ? VideoPause : VideoPlay"
+              @click.stop="togglePlayback(f)"
+              style="margin-right: 8px"
+            />
             <el-icon><Document /></el-icon>
             <span class="wav-name">{{ f.name }}</span>
             <span class="wav-size">{{ (f.size / 1024).toFixed(1) }} KB</span>
@@ -74,7 +97,7 @@
             size="small"
             type="danger"
             :icon="Delete"
-            @click="removeEnrollFile(idx)"
+            @click.stop="removeEnrollFile(idx)"
           />
         </div>
       </div>
@@ -88,13 +111,13 @@
 <script setup>
 import { ref, onUnmounted, nextTick } from "vue";
 import { ElMessage } from "element-plus";
-import { Microphone, Document, Delete } from "@element-plus/icons-vue";
+import { Microphone, Document, Delete, VideoPlay, VideoPause } from "@element-plus/icons-vue";
 import { enrollVoice } from "../api";
 
 const props = defineProps({
   maxRecords: {
     type: Number,
-    default: 5,
+    default: 100, // Increased from 5 to 100 as requested
   },
   targetSampleRate: {
     type: Number,
@@ -107,6 +130,10 @@ const emit = defineEmits(["enrolled"]);
 const recording = ref(false);
 const submitting = ref(false);
 const enrollFiles = ref([]);
+const activeFile = ref(null);
+const playing = ref(false);
+const playbackProgress = ref(0);
+const isSeeking = ref(false);
 const waveCanvasRef = ref(null);
 const waveContainerRef = ref(null);
 
@@ -117,6 +144,20 @@ let audioChunks = [];
 let audioContext = null;
 let analyser = null;
 let animationId = null;
+let playbackSource = null;
+let playbackStartTime = 0;
+let playbackDuration = 0;
+let currentAudioBuffer = null;
+let currentRawData = null;
+let currentFileKey = "";
+
+function formatProgress(val) {
+  if (!playbackDuration) return "0:00";
+  const sec = val * playbackDuration;
+  const m = Math.floor(sec / 60);
+  const s = Math.floor(sec % 60);
+  return `${m}:${s.toString().padStart(2, "0")}`;
+}
 
 // --- Canvas Logic ---
 function getCanvasMetrics() {
@@ -179,7 +220,9 @@ function stopDrawWave() {
     cancelAnimationFrame(animationId);
     animationId = null;
   }
-  // Clear canvas
+}
+
+function clearCanvas() {
   const metrics = getCanvasMetrics();
   if (metrics) {
     const { canvas, width, height, ratio } = metrics;
@@ -226,6 +269,7 @@ function stopRecording() {
   }
   recording.value = false;
   stopDrawWave();
+  clearCanvas();
   if (mediaStream) {
     mediaStream.getTracks().forEach((track) => track.stop());
     mediaStream = null;
@@ -264,12 +308,397 @@ function addEnrollFile(file) {
 }
 
 function removeEnrollFile(index) {
+  const removed = enrollFiles.value[index];
   enrollFiles.value.splice(index, 1);
+
+  const noFilesLeft = enrollFiles.value.length === 0;
+  const removedIsActive = removed && activeFile.value === removed;
+
+  if (noFilesLeft || removedIsActive) {
+    activeFile.value = null;
+    playbackProgress.value = 0;
+    currentAudioBuffer = null;
+    currentRawData = null;
+    currentFileKey = "";
+    stopPlayback(true);
+    clearCanvas();
+  }
 }
 
 function clearEnrollFiles() {
   enrollFiles.value = [];
+  activeFile.value = null;
+  stopPlayback();
+  clearCanvas();
 }
+
+async function previewAudio(file) {
+  if (recording.value) return;
+  activeFile.value = file;
+  
+  if (playing.value) {
+    stopPlayback(false);
+  }
+
+  try {
+    const key = `${file.name}-${file.size}-${file.lastModified}`;
+    if (currentFileKey && currentFileKey !== key) {
+      playbackProgress.value = 0;
+    }
+    await ensureAudioData(file);
+    if (currentRawData) {
+      drawProgressWave(currentRawData, playbackProgress.value || 0);
+    }
+  } catch (e) {
+    console.error("无法预览音频", e);
+    ElMessage.error("无法解析音频文件");
+  }
+}
+
+function stopPlayback(reset = true) {
+  if (playbackSource) {
+    try {
+      playbackSource.stop();
+    } catch (e) { /* ignore */ }
+    playbackSource = null;
+  }
+  
+  if (animationId) {
+    cancelAnimationFrame(animationId);
+    animationId = null;
+  }
+
+  playing.value = false;
+  if (reset) {
+    playbackProgress.value = 0;
+  }
+}
+
+async function togglePlayback(file) {
+  if (recording.value) return;
+  
+  if (playing.value && activeFile.value === file) {
+    stopPlayback(false);
+    if (currentRawData) {
+      drawProgressWave(currentRawData, playbackProgress.value || 0);
+    }
+    return;
+  }
+  
+  if (playing.value) {
+    stopPlayback(false);
+  }
+  
+  activeFile.value = file;
+  
+  try {
+    const key = `${file.name}-${file.size}-${file.lastModified}`;
+    if (currentFileKey && currentFileKey !== key) {
+      playbackProgress.value = 0;
+    }
+    await ensureAudioData(file);
+    if (currentAudioBuffer && currentRawData) {
+      startPlaybackAt(playbackProgress.value || 0);
+    }
+    
+  } catch (e) {
+    console.error("无法播放音频", e);
+    ElMessage.error("无法播放音频文件");
+    stopPlayback(false);
+  }
+}
+
+function handleSliderInput(val) {
+  isSeeking.value = true;
+  playbackProgress.value = val;
+  if (currentRawData) {
+    drawProgressWave(currentRawData, val);
+  }
+}
+
+function handleSliderChange(val) {
+  isSeeking.value = false;
+  playbackProgress.value = val;
+  if (playing.value) {
+    seekTo(val);
+  } else if (currentRawData) {
+    drawProgressWave(currentRawData, val);
+  }
+}
+
+function seekTo(progress) {
+  if (recording.value || !activeFile.value || !audioContext || !currentAudioBuffer) return;
+  startPlaybackAt(progress);
+}
+
+async function ensureAudioData(file) {
+  const key = `${file.name}-${file.size}-${file.lastModified}`;
+  if (currentAudioBuffer && currentRawData && currentFileKey === key) {
+    return;
+  }
+  currentFileKey = key;
+  if (!audioContext) {
+    audioContext = new (window.AudioContext || window.webkitAudioContext)({
+      sampleRate: props.targetSampleRate,
+    });
+  }
+  const arrayBuffer = await file.arrayBuffer();
+  const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+  currentAudioBuffer = audioBuffer;
+  currentRawData = audioBuffer.getChannelData(0);
+  playbackDuration = audioBuffer.duration;
+}
+
+function startPlaybackAt(progress) {
+  if (!audioContext || !currentAudioBuffer || !currentRawData) return;
+  const seekTime = Math.max(0, Math.min(progress, 1)) * playbackDuration;
+  if (playbackSource) {
+    try {
+      playbackSource.stop();
+    } catch (e) { /* ignore */ }
+    playbackSource = null;
+  }
+  playbackSource = audioContext.createBufferSource();
+  playbackSource.buffer = currentAudioBuffer;
+  playbackSource.connect(audioContext.destination);
+  playing.value = true;
+  playbackStartTime = audioContext.currentTime - seekTime;
+  playbackSource.onended = () => {
+    if (playing.value && (audioContext.currentTime - playbackStartTime >= playbackDuration - 0.2)) {
+      playing.value = false;
+      playbackProgress.value = 0;
+      stopDrawWave();
+      if (currentRawData) {
+        drawProgressWave(currentRawData, 0);
+      }
+    }
+  };
+  playbackSource.start(0, seekTime);
+  drawPlaybackWave(currentRawData);
+}
+
+function drawProgressWave(data, progress) {
+  stopDrawWave();
+  const metrics = getCanvasMetrics();
+  if (!metrics) return;
+  const { canvas, width, height, ratio } = metrics;
+  const ctx = setupHiDpiCanvas(canvas, width, height, ratio);
+  
+  const step = Math.ceil(data.length / width);
+  const amp = height / 2;
+  const mid = height / 2;
+  const progressX = width * progress;
+  
+  ctx.fillStyle = "#000000";
+  ctx.fillRect(0, 0, width, height);
+  
+  // Draw unplayed part (Green #4ade80)
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(progressX, 0, width - progressX, height);
+  ctx.clip();
+  
+  ctx.lineWidth = 1;
+  ctx.strokeStyle = "#4ade80"; 
+  ctx.beginPath();
+  for (let i = 0; i < width; i++) {
+    let min = 1.0;
+    let max = -1.0;
+    for (let j = 0; j < step; j++) {
+      const idx = (i * step) + j;
+      if (idx < data.length) {
+        const datum = data[idx];
+        if (datum < min) min = datum;
+        if (datum > max) max = datum;
+      }
+    }
+    ctx.moveTo(i, mid + min * amp);
+    ctx.lineTo(i, mid + max * amp);
+  }
+  ctx.stroke();
+  ctx.restore();
+
+  // Draw played part (Red #ef4444) - As requested "Red"
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(0, 0, progressX, height);
+  ctx.clip();
+  
+  ctx.lineWidth = 1;
+  ctx.strokeStyle = "#ef4444"; 
+  ctx.beginPath();
+  for (let i = 0; i < width; i++) {
+    let min = 1.0;
+    let max = -1.0;
+    for (let j = 0; j < step; j++) {
+      const idx = (i * step) + j;
+      if (idx < data.length) {
+        const datum = data[idx];
+        if (datum < min) min = datum;
+        if (datum > max) max = datum;
+      }
+    }
+    ctx.moveTo(i, mid + min * amp);
+    ctx.lineTo(i, mid + max * amp);
+  }
+  ctx.stroke();
+  ctx.restore();
+  
+  // Draw progress line (Red #ef4444)
+  ctx.strokeStyle = "#ef4444";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(progressX, 0);
+  ctx.lineTo(progressX, height);
+  ctx.stroke();
+}
+
+function drawPlaybackWave(data) {
+  stopDrawWave();
+  const metrics = getCanvasMetrics();
+  if (!metrics) return;
+  const { canvas, width, height, ratio } = metrics;
+  const ctx = setupHiDpiCanvas(canvas, width, height, ratio);
+  
+  const step = Math.ceil(data.length / width);
+  const amp = height / 2;
+  const mid = height / 2;
+  
+  function draw() {
+    if (!playing.value) return;
+    animationId = requestAnimationFrame(draw);
+    
+    if (isSeeking.value) return;
+
+    const now = audioContext.currentTime;
+    const elapsed = now - playbackStartTime;
+    const progress = Math.min(elapsed / playbackDuration, 1.0);
+    const progressX = width * progress;
+    
+    ctx.fillStyle = "#000000";
+    ctx.fillRect(0, 0, width, height);
+    
+    // Draw unplayed part (Green #4ade80)
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(progressX, 0, width - progressX, height);
+    ctx.clip();
+    
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = "#4ade80"; // Unplayed: Green
+    ctx.beginPath();
+    for (let i = 0; i < width; i++) {
+      let min = 1.0;
+      let max = -1.0;
+      for (let j = 0; j < step; j++) {
+        const idx = (i * step) + j;
+        if (idx < data.length) {
+          const datum = data[idx];
+          if (datum < min) min = datum;
+          if (datum > max) max = datum;
+        }
+      }
+      ctx.moveTo(i, mid + min * amp);
+      ctx.lineTo(i, mid + max * amp);
+    }
+    ctx.stroke();
+    ctx.restore();
+
+    // Draw played part (Red #ef4444)
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(0, 0, progressX, height);
+    ctx.clip();
+    
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = "#ef4444"; // Played: Red
+    ctx.beginPath();
+    for (let i = 0; i < width; i++) {
+      let min = 1.0;
+      let max = -1.0;
+      for (let j = 0; j < step; j++) {
+        const idx = (i * step) + j;
+        if (idx < data.length) {
+          const datum = data[idx];
+          if (datum < min) min = datum;
+          if (datum > max) max = datum;
+        }
+      }
+      ctx.moveTo(i, mid + min * amp);
+      ctx.lineTo(i, mid + max * amp);
+    }
+    ctx.stroke();
+    ctx.restore();
+    
+    // Draw progress line (Red #ef4444)
+    ctx.strokeStyle = "#ef4444";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(progressX, 0);
+    ctx.lineTo(progressX, height);
+    ctx.stroke();
+    
+    playbackProgress.value = progress;
+  }
+  draw();
+}
+
+function drawStaticWave(data) {
+  stopDrawWave(); // Stop any animation first
+  const metrics = getCanvasMetrics();
+  if (!metrics) return;
+  const { canvas, width, height, ratio } = metrics;
+  const ctx = setupHiDpiCanvas(canvas, width, height, ratio);
+  
+  ctx.fillStyle = "#000000";
+  ctx.fillRect(0, 0, width, height);
+  
+  ctx.lineWidth = 1;
+  ctx.strokeStyle = "#4ade80"; // green-400
+  ctx.beginPath();
+  
+  const step = Math.ceil(data.length / width);
+  const amp = height / 2;
+  const mid = height / 2;
+  
+  for (let i = 0; i < width; i++) {
+    let min = 1.0;
+    let max = -1.0;
+    for (let j = 0; j < step; j++) {
+      const idx = (i * step) + j;
+      if (idx < data.length) {
+        const datum = data[idx];
+        if (datum < min) min = datum;
+        if (datum > max) max = datum;
+      }
+    }
+    // Normalize slightly for visibility
+    ctx.moveTo(i, mid + min * amp);
+    ctx.lineTo(i, mid + max * amp);
+  }
+  ctx.stroke();
+}
+
+function handleCanvasClick(event) {
+  if (recording.value || !activeFile.value || !audioContext) return;
+  
+  const metrics = getCanvasMetrics();
+  if (!metrics) return;
+  const { width } = metrics;
+  
+  const rect = event.target.getBoundingClientRect();
+  const x = event.clientX - rect.left;
+  const progress = Math.max(0, Math.min(x / width, 1.0));
+  
+  if (playbackDuration > 0) {
+    playbackProgress.value = progress;
+    if (playing.value) {
+      seekTo(progress);
+    } else if (currentRawData) {
+      drawProgressWave(currentRawData, progress);
+    }
+   }
+ }
 
 // --- Submit Logic ---
 async function submitVoiceprint() {
@@ -310,6 +739,7 @@ onUnmounted(() => {
   height: 120px;
   overflow: hidden;
   position: relative;
+  cursor: pointer;
 }
 
 .wave-canvas {
@@ -384,6 +814,17 @@ onUnmounted(() => {
   padding: 8px 12px;
   border-radius: 6px;
   border: 1px solid #e2e8f0;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.wav-item:hover {
+  background-color: #f1f5f9;
+}
+
+.wav-item.is-active {
+  background-color: #e2e8f0;
+  border-color: #cbd5e1;
 }
 
 .wav-info {

@@ -202,46 +202,79 @@ def get_eval_thread():
 
 
 def _start_eval_thread(model_path, feature_dir, norm_method="none"):
+    """
+    Start a background thread to run evaluation AND embedding plotting.
+    """
     global EVAL_THREAD
 
     def _run():
         model_name = os.path.basename(model_path)
+        # Mark as running
         _set_eval_status("running", model=model_name, started_at=timezone.now().isoformat())
+        
+        output_buffer = io.StringIO()
+        
         try:
             from scripts import evaluate as evaluate_module
-            # Construct args object that matches what evaluate.run expects
-            # evaluate.run uses: args.out_dir, args.noise_dir, args.feature_dir, args.model, args.score_norm, etc.
-            # It also uses args.cohort_speakers, args.cohort_utts_per_spk, args.cohort_seed
-            args = Namespace(
+            from scripts.analysis import plot_embedding
+            
+            # 1. Run Evaluation (ROC/EER/DET)
+            # ------------------------------------------------
+            # Construct namespace args for evaluate.py
+            eval_args = Namespace(
                 model=model_path,
                 feature_dir=feature_dir,
                 out_dir=os.fspath(settings.REPORTS_DIR),
                 max_pairs=20000,
                 noise_dir=None,
-                score_norm=norm_method or "none",
+                score_norm=norm_method or "none", # Pass the user-selected norm method
                 cohort_speakers=20,
                 cohort_utts_per_spk=5,
                 cohort_seed=42,
-                # Add missing args that might be accessed
                 config=None,
             )
-            buf = io.StringIO()
-            with redirect_stdout(buf):
-                # We need to wrap args in EvalArgs if evaluate.run expects it?
-                # No, evaluate.run(args) just accesses attributes on args.
-                # But wait, evaluate.main() does: eval_args = EvalArgs(args, cfg); run(eval_args)
-                # And EvalArgs.__init__ sets attributes.
-                # So if we pass a Namespace with all attributes, it should be fine.
-                # However, let's look at evaluate.py again.
-                # run(args) uses: args.out_dir, args.noise_dir, args.feature_dir, args.model, args.score_norm
-                # It also uses args.cohort_...
-                # So our Namespace is sufficient.
-                evaluate_module.run(args)
-            output = buf.getvalue().strip()
-            _set_eval_status("ok", model=model_name, output=output, finished_at=timezone.now().isoformat())
+            
+            with redirect_stdout(output_buffer):
+                print(f"--- Starting Evaluation (Score Norm: {norm_method}) ---")
+                evaluate_module.run(eval_args)
+                
+            # 2. Run Embedding Visualization (t-SNE)
+            # ------------------------------------------------
+            # We also pass score_norm to plot_embedding so the filename matches what frontend expects.
+            # Frontend expects: {method}_{feature_type}_{score_norm}_{model_name}.png
+            plot_args = Namespace(
+                model=model_path,
+                feature_dir=feature_dir,
+                out_dir=os.fspath(settings.REPORTS_DIR),
+                method="tsne",     # Default to t-SNE
+                score_norm=norm_method or "none", # Pass the norm tag to plotting
+                feature_type=None, # Let script infer or use default
+                batch_size=32,
+                device=None,       # Auto-detect
+                perplexity=30,
+                seed=42,
+                max_speakers=10,
+                max_utts_per_spk=10,
+                config=None
+            )
+            
+            with redirect_stdout(output_buffer):
+                print(f"\n--- Starting t-SNE Plotting (Tag: {norm_method}) ---")
+                if hasattr(plot_embedding, 'run'):
+                    plot_embedding.run(plot_args)
+                else:
+                    print("Warning: plot_embedding.run() not found.")
+
+            # Success
+            full_output = output_buffer.getvalue().strip()
+            _set_eval_status("ok", model=model_name, output=full_output, finished_at=timezone.now().isoformat())
+            
         except Exception as e:
-            msg = str(e) or "评估失败"
-            _set_eval_status("failed", model=model_name, error=msg, finished_at=timezone.now().isoformat())
+            # Failure
+            err_msg = str(e) or "Evaluation failed"
+            full_output = output_buffer.getvalue().strip()
+            logger.error(f"Eval thread failed: {err_msg}")
+            _set_eval_status("failed", model=model_name, error=err_msg, output=full_output, finished_at=timezone.now().isoformat())
 
     EVAL_THREAD = threading.Thread(target=_run, daemon=True)
     EVAL_THREAD.start()

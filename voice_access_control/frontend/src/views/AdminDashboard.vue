@@ -110,6 +110,7 @@
                 :on-eval-norm-method-change="handleEvalNormMethodChange"
                 :on-eval-collapse="handleEvalCollapse"
                 :on-eval-card-click="handleEvalCardClick"
+                :tsne-image-url="tsneImageUrl"
               />
             </el-tab-pane>
             <el-tab-pane label="系统设置" name="settings">
@@ -425,7 +426,8 @@ import {
   cleanVerifyLogs,
   checkModelFiles,
   cleanCacheFiles,
-  setAuthToken
+  setAuthToken,
+  fetchEmbeddingImage
 } from "../api";
 
 const router = useRouter();
@@ -664,6 +666,15 @@ const evalItems = [
     note: "横轴为置信度，纵轴为准确率，曲线越贴近对角线越好。",
     placeholder: "暂无数据",
     thumb: "校准缩略图"
+  },
+  {
+    key: "tsne",
+    title: "t-SNE 聚类",
+    subtitle: "嵌入空间可视化",
+    detail: "将高维声纹特征降维至 2D 平面，展示不同说话人的聚类效果。需运行 plot_embedding.py。",
+    note: "不同颜色的点代表不同说话人，簇的分离度越高，模型区分能力越强。",
+    placeholder: "暂无 t-SNE 图片",
+    thumb: "t-SNE 缩略图"
   }
 ];
 const activeEvalKey = ref("");
@@ -674,6 +685,20 @@ const evalDetailChartRef = ref(null);
 const evalThumbRefs = ref({});
 const evalThumbCharts = {};
 let evalDetailChart = null;
+
+const tsneImageUrl = ref("");
+
+async function loadTsneImage() {
+  try {
+    const res = await fetchEmbeddingImage("tsne", evalNormMethod.value || "none");
+    if (tsneImageUrl.value) {
+      URL.revokeObjectURL(tsneImageUrl.value);
+    }
+    tsneImageUrl.value = URL.createObjectURL(res.data);
+  } catch (e) {
+    tsneImageUrl.value = "";
+  }
+}
 
 function canInitChart(el) {
   return el && el.clientWidth > 0 && el.clientHeight > 0;
@@ -1035,6 +1060,9 @@ function hasEvalData(key) {
   }
   if (key === "calib") {
     return Array.isArray(metrics.calibration?.bins) && metrics.calibration.bins.length > 1;
+  }
+  if (key === "tsne") {
+    return !!tsneImageUrl.value;
   }
   return false;
 }
@@ -1865,6 +1893,9 @@ function buildNormMetrics(data) {
 
 async function loadModelMetrics({ autoDetect = true } = {}) {
   modelMetricsLoading.value = true;
+  // Always try to load t-SNE image regardless of metrics success
+  // Pass current norm method
+  loadTsneImage();
   try {
     const methodsToTry =
       autoDetect && evalNormMethod.value === "none"
@@ -1955,6 +1986,9 @@ function handleEvalCardClick(key) {
   }
   resetEvalDetailChart();
   activeEvalKey.value = key;
+  if (key === "tsne") {
+    loadTsneImage();
+  }
   nextTick(() => {
     handleResize();
     updateEvalDetailChart();

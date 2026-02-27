@@ -61,14 +61,21 @@ class VectorStore:
         if embedding.ndim != 1:
             raise ValueError(f"Embedding must be 1D array, got shape {embedding.shape}")
         
-        # Normalize embedding (L2 norm) to ensure cosine distance works as expected
         embedding = embedding / (np.linalg.norm(embedding) + 1e-9)
-        
+
+        meta = dict(metadata) if metadata else {}
+        if "user_id" not in meta:
+            meta["user_id"] = user_id
+        if "username" not in meta and "username" in meta:
+            pass
+        elif "username" not in meta:
+            meta["username"] = user_id
+
         try:
             self._collection.upsert(
                 ids=[user_id],
                 embeddings=[embedding.tolist()],
-                metadatas=[metadata or {}]
+                metadatas=[meta]
             )
             logger.info(f"Upserted voiceprint for user: {user_id}")
         except Exception as e:
@@ -138,13 +145,30 @@ class VectorStore:
         return self._collection.count()
 
     def get(self, user_id: str) -> Optional[np.ndarray]:
-        """Retrieve raw embedding for a user"""
         try:
             res = self._collection.get(ids=[user_id], include=["embeddings"])
-            if res['embeddings']:
-                return np.array(res['embeddings'][0])
-            return None
-        except Exception:
+        
+        # 1. 基础结构校验
+            if res is None or 'embeddings' not in res or res['embeddings'] is None:
+                return None
+            
+            embedding_list = res['embeddings']
+            if len(embedding_list) == 0:
+                return None
+
+            first_embedding = embedding_list[0]
+        
+        # 2. 【核心修复点】不要使用 if not first_embedding
+        # 使用 len() 或者 is None 来判断
+            if first_embedding is None or len(first_embedding) == 0:
+                return None
+            
+        # 强制转换为 float64，并确保它是扁平的一维数组
+            return np.array(first_embedding, dtype=np.float64).flatten()
+        
+        except Exception as e:
+        # 这里能帮你看到具体的报错
+            logger.error(f"Error retrieving embedding for {user_id}: {str(e)}")
             return None
 
     def clear(self):

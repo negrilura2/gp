@@ -1,11 +1,15 @@
+
 """
-模型单例加载器 (Adapter for VoiceService)。
+模型单例加载器 (Adapter for VoiceService).
 在 Django 启动时加载一次模型，后续所有请求共享同一个模型实例，避免重复加载。
 """
 import os
 import threading
+import time
+import logging
 
 import httpx
+import numpy as np
 
 # 项目根目录
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
@@ -16,6 +20,7 @@ if ROOT not in sys.path:
 
 from voice_engine.service import VoiceService
 
+logger = logging.getLogger("api")
 AI_SERVICE_URL = os.getenv("AI_SERVICE_URL", "").strip()
 
 
@@ -23,6 +28,28 @@ class HttpVoiceService:
     def __init__(self, base_url: str):
         self.base_url = base_url.rstrip("/")
         self.model_path = None
+        self.feature_type = "unknown"
+        self.n_mels = 40
+        self.feat_dim = 192
+        self.device = "remote"
+        self._sync_config()
+
+    def _sync_config(self):
+        """Fetch configuration from remote service to ensure consistency."""
+        try:
+            url = f"{self.base_url}/health"
+            with httpx.Client(timeout=5.0) as client:
+                resp = client.get(url)
+            if resp.status_code == 200:
+                data = resp.json()
+                self.model_path = data.get("model_path")
+                self.device = data.get("device", "remote")
+                self.feature_type = data.get("feature_type", "unknown")
+                self.n_mels = data.get("n_mels", 80)
+                # Note: feat_dim might not be in health check, but we can infer or add it later if needed.
+                # For now, 192 is standard for ECAPA-TDNN.
+        except Exception as e:
+            logger.warning(f"Failed to sync config from AI Service: {e}")
 
     def _post_files(self, path, data, files):
         url = f"{self.base_url}{path}"
@@ -80,7 +107,10 @@ class HttpVoiceService:
             resp.raise_for_status()
             data = resp.json()
             # Expecting {"user_id": ..., "embedding": [list]}
-            return data.get("embedding")
+            emb_list = data.get("embedding")
+            if emb_list:
+                return np.array(emb_list)
+            return None
         except Exception:
             return None
 
@@ -127,6 +157,43 @@ def get_service():
                     _service = VoiceService.get_instance()
     return _service
 
+def get_voice_feature_with_retry(username, retries=3, delay=0.2):
+    """
+    Robust feature retrieval with retry logic for consistency.
+    Handles differences between Local and Http service returns.
+    """
+    service = get_service()
+    
+    # Helper to standardize return to np.ndarray
+    def _fetch():
+        try:
+            emb = service.get_feature(username)
+            if emb is None:
+                return None
+            if isinstance(emb, list):
+                emb = np.array(emb)
+            if isinstance(emb, np.ndarray) and emb.size > 0:
+                return emb
+            return None
+        except Exception as e:
+            logger.warning(f"Error fetching feature for {username}: {e}")
+            return None
+
+    # First attempt
+    emb = _fetch()
+    if emb is not None:
+        return emb
+        
+    # Retry loop
+    for i in range(retries):
+        time.sleep(delay)
+        emb = _fetch()
+        if emb is not None:
+            logger.info(f"Voiceprint found for {username} after retry {i+1}")
+            return emb
+            
+    return None
+
 def get_model(model_path=None, n_mels=None):
     """
     Deprecated: Use get_service() instead.
@@ -134,18 +201,12 @@ def get_model(model_path=None, n_mels=None):
     """
     service = get_service()
     if isinstance(service, HttpVoiceService):
-        url = f"{AI_SERVICE_URL.rstrip('/')}/health"
-        with httpx.Client(timeout=10.0) as client:
-            resp = client.get(url)
-        resp.raise_for_status()
-        data = resp.json()
-        return None, data.get("device"), None, data.get("n_mels")
+        # Mock return for HttpService to avoid breaking legacy code
+        return None, "cpu", "unknown", 80
     return service.model, service.device, service.feature_type, service.n_mels
 
 def get_model_path():
     service = get_service()
-    if isinstance(service, HttpVoiceService):
-        return service.model_path
     return service.model_path
 
 def set_model_path(model_path):
@@ -173,4 +234,3 @@ def get_n_mels():
 def get_device():
     service = get_service()
     return service.device
-    _model_path = model_path

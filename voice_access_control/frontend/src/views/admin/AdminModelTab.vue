@@ -126,6 +126,9 @@
                 <div v-if="!activeEvalHasData" class="eval-detail-empty">
                   {{ activeEval.placeholder }}
                 </div>
+                <div v-else-if="activeEval.key === 'tsne'" class="eval-detail-image-container">
+                  <img :src="tsneImageUrl" class="eval-detail-image" alt="t-SNE Plot" />
+                </div>
                 <div v-else :ref="evalDetailChartRef" class="eval-detail-canvas"></div>
               </div>
               <div class="eval-detail-note">{{ activeEval.note }}</div>
@@ -157,7 +160,10 @@
             <div class="eval-title">{{ item.title }}</div>
             <div class="eval-subtitle">{{ item.subtitle }}</div>
             <div class="eval-thumb">
-              <div v-if="hasEvalData(item.key)" class="eval-thumb-canvas" :ref="setEvalThumbRef(item.key)"></div>
+              <div v-if="item.key === 'tsne' && tsneImageUrl" class="eval-thumb-image">
+                <img :src="tsneImageUrl" />
+              </div>
+              <div v-else-if="hasEvalData(item.key)" class="eval-thumb-canvas" :ref="setEvalThumbRef(item.key)"></div>
               <div v-else class="eval-thumb-empty">暂无数据</div>
             </div>
           </div>
@@ -197,11 +203,38 @@ defineProps({
   onModelSwitch: { type: Function, required: true },
   onEvalNormMethodChange: { type: Function, required: true },
   onEvalCollapse: { type: Function, required: true },
-  onEvalCardClick: { type: Function, required: true }
+  onEvalCardClick: { type: Function, required: true },
+  tsneImageUrl: { type: String, default: "" }
 });
 </script>
 
 <style scoped>
+.eval-detail-image-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f9fafb;
+}
+.eval-detail-image {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+.eval-thumb-image {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f9fafb;
+}
+.eval-thumb-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
 .model-header {
   display: flex;
   justify-content: space-between;

@@ -16,7 +16,7 @@ dataset:
 
 training:
   batch_size: 32
-  epochs: 40
+  epochs: 60
   lr: 0.001
   optimizer: "adam"  # adam, adamw
   loss: "aam"         # ce (CrossEntropy), aam (AAMSoftmax)

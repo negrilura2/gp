@@ -41,9 +41,13 @@ class RocEvaluateView(APIView):
         else:
             model_path = get_model_path()
         if not model_path or not os.path.isfile(model_path):
-            model_path = get_latest_file_path(models_dir, {".pth", ".pt", ".onnx"})
+            candidate = get_latest_file_path(models_dir, {".pth", ".pt", ".onnx"})
+            if candidate:
+                model_path = candidate
+                
         if not model_path or not os.path.isfile(model_path):
             return Response({"status": "failed", "error": "模型文件不存在"})
+            
         feature_dir = get_feature_dir_for_model(model_path)
         if count_files(feature_dir, {".npy"}) == 0:
             # Try appending mfcc_delta if count is 0
@@ -52,6 +56,7 @@ class RocEvaluateView(APIView):
                 feature_dir = candidate
             elif count_files(feature_dir, {".npy"}) == 0:
                  return Response({"status": "failed", "error": "特征文件为空，无法评估"})
+        
         with EVAL_STATUS_LOCK:
             status_payload = _read_eval_status()
             if status_payload.get("status") == "running":
@@ -59,6 +64,9 @@ class RocEvaluateView(APIView):
                 if eval_thread is not None and eval_thread.is_alive():
                     return Response(status_payload)
                 _set_eval_status("failed", error="评估进程异常终止")
+            
+            # Start evaluation thread
+            from ..view_utils import _start_eval_thread
             _start_eval_thread(model_path, feature_dir, norm_method=norm_method)
             return Response({"status": "running", "model": os.path.basename(model_path), "feature_dir": feature_dir})
 

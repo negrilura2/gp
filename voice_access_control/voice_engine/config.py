@@ -75,6 +75,7 @@ TEMPLATE_PATH = DEFAULT_TEMPLATE_PATH
 SAMPLE_RATE = int(os.getenv("SAMPLE_RATE", 16000))
 N_MFCC = int(os.getenv("N_MFCC", 13))
 DEFAULT_N_MELS = int(os.getenv("DEFAULT_N_MELS", 40))
+EMBEDDING_DIM = int(os.getenv("EMBEDDING_DIM", 192))
 
 # 特征提取参数 (python_speech_features 默认值，显式定义以防变更)
 WIN_LEN = 0.025

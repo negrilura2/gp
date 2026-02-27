@@ -20,6 +20,7 @@ from .views.admin import (
 )
 from .views.stats import StatsView, DashboardView
 from .views.roc import RocView, RocEvaluateView, RocEvaluateStatusView, ThresholdConfigView
+from .views.analysis import EmbeddingImageView
 
 urlpatterns = [
     # 用户
@@ -61,4 +62,5 @@ urlpatterns = [
     path('roc/', RocView.as_view(), name='roc'),
     path('roc/evaluate/', RocEvaluateView.as_view(), name='roc-evaluate'),
     path('roc/evaluate/status/', RocEvaluateStatusView.as_view(), name='roc-evaluate-status'),
+    path('analysis/embedding/image/', EmbeddingImageView.as_view(), name='embedding-image'),
 ]

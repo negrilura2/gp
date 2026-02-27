@@ -149,6 +149,14 @@ export function fetchRocEvaluateStatus() {
   return api.get("/roc/evaluate/status/");
 }
 
+export function fetchEmbeddingImage(method = "tsne", score_norm = "none") {
+  return api.get("/analysis/embedding/image/", {
+    params: { method, score_norm },
+    responseType: "blob"
+  });
+}
+
+
 export function fetchModels() {
   return api.get("/models/");
 }

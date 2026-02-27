@@ -137,29 +137,31 @@ class MyVoiceprintView(APIView):
 
 
 def build_voiceprint_preview(username, buckets=64):
-    from ..model_loader import get_service
-    service = get_service()
+    from ..model_loader import get_voice_feature_with_retry
+    import numpy as np
+    
+    # Use centralized robust retrieval (handles VectorStore latency and type conversion)
+    emb = get_voice_feature_with_retry(username)
 
-    emb = None
-    if hasattr(service, "get_feature"):
-        emb = service.get_feature(username)
-    
     if emb is None:
-        template_path = os.path.join(os.fspath(settings.VOICEPRINTS_DIR), "user_templates.npy")
-        if not os.path.exists(template_path):
-            return [], 0
-        try:
-            templates = np.load(template_path, allow_pickle=True).item()
-            emb = templates.get(username)
-        except Exception:
-            return [], 0
-    
-    if emb is None:
+        # Final check: explicit logging for debugging
+        logger.warning(f"Voiceprint preview failed: user '{username}' not found in Service.")
         return [], 0
-    values = np.abs(np.array(emb, dtype=float))
+
+    # Ensure it's a flattened numpy array
+    if emb.ndim > 1:
+        emb = emb.flatten()
+
+    # Empty check
+    if emb.size == 0:
+        return [], 0
+
+    values = np.abs(emb.astype(np.float64))
     embedding_dim = int(values.size)
+    
     if embedding_dim == 0:
         return [], 0
+
     if embedding_dim < buckets:
         values = np.pad(values, (0, buckets - embedding_dim))
     if values.size > buckets:

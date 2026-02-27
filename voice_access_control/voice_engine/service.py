@@ -5,6 +5,7 @@ This is the ONLY entry point the backend should use.
 """
 import os
 import logging
+import json
 import numpy as np
 import torch
 from typing import List, Tuple, Optional, Dict, Any
@@ -16,7 +17,8 @@ from .config import (
     DEFAULT_THRESHOLD,
     DEFAULT_DEVICE,
     FEATURE_TYPE_MFCC_DELTA,
-    DEFAULT_TEMPLATE_PATH
+    DEFAULT_TEMPLATE_PATH,
+    EMBEDDING_DIM
 )
 from .ecapa_tdnn import LightECAPA
 from .dataset import (
@@ -69,6 +71,27 @@ def load_model(model_path=MODEL_PATH, device=None, feature_type=None, n_mels=DEF
     if not os.path.exists(model_path):
         raise FileNotFoundError(f"Model file not found: {model_path}")
 
+    # Try to load metadata
+    meta_path = os.path.splitext(model_path)[0] + ".json"
+    meta_cfg = {}
+    if os.path.exists(meta_path):
+        try:
+            with open(meta_path, "r") as f:
+                meta_cfg = json.load(f)
+            logger.info(f"Loaded model metadata from {meta_path}")
+        except Exception as e:
+            logger.warning(f"Failed to load metadata: {e}")
+
+    # Use metadata to override defaults
+    if feature_type is None and "feature_type" in meta_cfg:
+        feature_type = meta_cfg["feature_type"]
+    
+    # If n_mels is default, try to use metadata
+    if n_mels == DEFAULT_N_MELS and "n_mels" in meta_cfg:
+        n_mels = meta_cfg["n_mels"]
+
+    emb_dim = meta_cfg.get("emb_dim", EMBEDDING_DIM)
+
     state = torch.load(model_path, map_location=device)
     
     if feature_type is None:
@@ -81,7 +104,7 @@ def load_model(model_path=MODEL_PATH, device=None, feature_type=None, n_mels=DEF
             feature_type = FEATURE_TYPE_MFCC_DELTA
             
     feat_dim = get_feature_dim(feature_type, n_mels)
-    model = LightECAPA(feat_dim=feat_dim, emb_dim=192, n_speakers=None).to(device)
+    model = LightECAPA(feat_dim=feat_dim, emb_dim=emb_dim, n_speakers=None).to(device)
     model.load_state_dict(state, strict=False)
     model.eval()
     return model, device, feature_type
@@ -204,17 +227,23 @@ class VoiceService:
 
     def get_feature(self, user_id: str) -> Optional[np.ndarray]:
         """Retrieve voiceprint feature for a user."""
-        # 1. Prefer legacy templates for stability (also used by training scripts)
+        
+        # 1. Prefer VectorStore (Primary Source of Truth)
+        if self.vector_store:
+            try:
+                emb = self.vector_store.get(user_id)
+                if emb is not None:
+                    logger.info(f"Retrieved feature for {user_id} from VectorStore (ChromaDB)")
+                    return emb
+            except Exception as e:
+                logger.warning(f"VectorStore retrieval failed for {user_id}: {e}")
+
+        # 2. Fallback to legacy templates (Backup/Migration)
         templates = load_templates()
         emb = templates.get(user_id)
         if emb is not None:
+            logger.info(f"Retrieved feature for {user_id} from Legacy Templates (.npy)")
             return emb
-
-        # 1. Try VectorStore
-        if self.vector_store:
-            emb = self.vector_store.get(user_id)
-            if emb is not None:
-                return emb
 
         return None
 

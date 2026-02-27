@@ -1,89 +1,70 @@
-"""
-Script to migrate legacy .npy voiceprints to ChromaDB Vector Store.
-"""
 import os
 import sys
-import logging
 import numpy as np
-from pathlib import Path
+import logging
 
-# Add project root to sys.path
-PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-if PROJECT_ROOT not in sys.path:
-    sys.path.insert(0, PROJECT_ROOT)
+# Add project root to path
+ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+if ROOT not in sys.path:
+    sys.path.insert(0, ROOT)
 
 from voice_engine.vector_store import VectorStore
 from voice_engine.config import TEMPLATE_PATH
 
 logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger("migrate_to_chroma")
+logger = logging.getLogger("migrate")
 
-def migrate():
-    logger.info("Starting migration from .npy to ChromaDB...")
-    
-    # 1. Load legacy .npy templates
+def main():
     if not os.path.exists(TEMPLATE_PATH):
-        logger.warning(f"No legacy template file found at {TEMPLATE_PATH}. Nothing to migrate.")
+        logger.error(f"Template file not found: {TEMPLATE_PATH}")
         return
 
+    logger.info(f"Loading templates from {TEMPLATE_PATH}...")
     try:
         templates = np.load(TEMPLATE_PATH, allow_pickle=True).item()
     except Exception as e:
         logger.error(f"Failed to load .npy file: {e}")
         return
 
-    if not templates:
-        logger.info("Legacy template file is empty.")
-        return
+    logger.info(f"Found {len(templates)} users in .npy file.")
 
-    logger.info(f"Found {len(templates)} users in legacy templates.")
-
-    # 2. Initialize VectorStore
+    logger.info("Initializing ChromaDB VectorStore...")
     try:
-        vector_store = VectorStore()
+        vs = VectorStore()
     except Exception as e:
         logger.error(f"Failed to initialize VectorStore: {e}")
         return
-
-    # 3. Migrate each user
+    
     success_count = 0
+    fail_count = 0
+
     for user_id, embedding in templates.items():
         try:
-            # Handle different embedding formats (single vector vs list of vectors)
-            # Legacy code might store list of embeddings for multi-enrollment
-            # We take the mean if it's a list/matrix, or just use it if it's a vector
-            
-            final_emb = None
-            if isinstance(embedding, (list, tuple)):
+            # Ensure embedding is 1D array
+            if isinstance(embedding, list):
                 embedding = np.array(embedding)
             
-            if isinstance(embedding, np.ndarray):
-                if embedding.ndim == 1:
-                    final_emb = embedding
-                elif embedding.ndim == 2:
-                    # Average multiple embeddings
-                    final_emb = np.mean(embedding, axis=0)
-                else:
-                    logger.warning(f"Skipping user {user_id}: embedding has unexpected shape {embedding.shape}")
-                    continue
-            else:
-                logger.warning(f"Skipping user {user_id}: unknown embedding type {type(embedding)}")
+            if embedding.ndim != 1:
+                logger.warning(f"Skipping {user_id}: embedding shape {embedding.shape} is not 1D")
+                fail_count += 1
                 continue
 
-            # Add to Chroma
-            vector_store.add(
-                user_id=user_id, 
-                embedding=final_emb,
-                metadata={"source": "migration_from_npy", "original_count": 1}
+            vs.add(
+                user_id=user_id,
+                embedding=embedding,
+                metadata={"source": "migration", "legacy": True, "username": user_id}
             )
             success_count += 1
-            logger.info(f"Migrated user: {user_id}")
             
+            if success_count % 10 == 0:
+                logger.info(f"Migrated {success_count} users...")
+                
         except Exception as e:
-            logger.error(f"Failed to migrate user {user_id}: {e}")
+            logger.error(f"Failed to migrate {user_id}: {e}")
+            fail_count += 1
 
-    logger.info(f"Migration complete. Successfully migrated {success_count}/{len(templates)} users.")
-    logger.info(f"Total count in ChromaDB: {vector_store.count()}")
+    logger.info(f"Migration completed. Success: {success_count}, Failed: {fail_count}")
+    logger.info(f"Total in ChromaDB: {vs.count()}")
 
 if __name__ == "__main__":
-    migrate()
+    main()

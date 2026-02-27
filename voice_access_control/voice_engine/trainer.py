@@ -11,6 +11,9 @@ import torch.nn.functional as F
 from torch.utils.data import DataLoader, Subset
 from torch.utils.tensorboard import SummaryWriter
 from sklearn.model_selection import train_test_split
+from .config import (
+    EMBEDDING_DIM
+)
 from .dataset import SpeakerDataset, pad_collate
 from .ecapa_tdnn import LightECAPA
 from .losses import AAMSoftmaxLoss
@@ -94,7 +97,7 @@ class Trainer:
         self.noise_dir = cfg.get("dataset", {}).get("noise_dir")
         self.save_dir = cfg.get("paths", {}).get("save_dir", "models")
         self.log_dir = cfg.get("paths", {}).get("log_dir", "reports")
-        self.tensorboard_dir = cfg.get("paths", {}).get("runs_dir", "runs")
+        self.tensorboard_root = cfg.get("paths", {}).get("runs_dir", "runs")
         self.strategy_dir = cfg.get("paths", {}).get("strategy_dir", os.path.join("reports", "strategy"))
         self.batch_size = cfg.get("training", {}).get("batch_size", 32)
         self.lr = cfg.get("training", {}).get("lr", 1e-3)
@@ -106,7 +109,14 @@ class Trainer:
         self.patience = cfg.get("training", {}).get("patience", 3)
         self.eer_interval = cfg.get("evaluation", {}).get("eer_interval", 5)
         self.eer_pairs = cfg.get("evaluation", {}).get("eer_pairs", 20000)
-        
+
+        exp_cfg = cfg.get("experiment", {}) if isinstance(cfg.get("experiment", {}), dict) else {}
+        exp_name = exp_cfg.get("name")
+        if not exp_name:
+            exp_name = f"ecapa_{self.feature_type}"
+        timestamp = time.strftime("%b%d_%H-%M")
+        self.tensorboard_dir = os.path.join(self.tensorboard_root, f"{timestamp}_{exp_name}")
+
         self.model = None
         self.optimizer = None
         self.loss_fn = None
@@ -116,6 +126,7 @@ class Trainer:
         os.makedirs(self.save_dir, exist_ok=True)
         os.makedirs(self.log_dir, exist_ok=True)
         os.makedirs(self.strategy_dir, exist_ok=True)
+        os.makedirs(self.tensorboard_dir, exist_ok=True)
         self.writer = SummaryWriter(log_dir=self.tensorboard_dir)
 
     def setup(self):
@@ -219,7 +230,21 @@ class Trainer:
                 best_acc = acc_val
                 patience_counter = 0
                 save_name = f"ecapa_{self.feature_type}_best.pth"
-                torch.save(self.model.state_dict(), os.path.join(self.save_dir, save_name))
+                save_path = os.path.join(self.save_dir, save_name)
+                torch.save(self.model.state_dict(), save_path)
+                
+                # Save metadata
+                meta_name = f"ecapa_{self.feature_type}_best.json"
+                meta_path = os.path.join(self.save_dir, meta_name)
+                with open(meta_path, "w") as f:
+                    json.dump({
+                        "feature_type": self.feature_type,
+                        "n_mels": self.n_mels,
+                        "feat_dim": self.model.layer1.conv.weight.shape[1],
+                        "emb_dim": EMBEDDING_DIM,
+                        "model_type": "LightECAPA"
+                    }, f, indent=2)
+                
                 print(f"  => Saved best model to {save_name}.")
             else:
                 patience_counter += 1
@@ -238,7 +263,21 @@ class Trainer:
                 }
             )
         last_name = f"ecapa_{self.feature_type}_last.pth"
-        torch.save(self.model.state_dict(), os.path.join(self.save_dir, last_name))
+        last_path = os.path.join(self.save_dir, last_name)
+        torch.save(self.model.state_dict(), last_path)
+        
+        # Save metadata for last model
+        meta_name = f"ecapa_{self.feature_type}_last.json"
+        meta_path = os.path.join(self.save_dir, meta_name)
+        with open(meta_path, "w") as f:
+            json.dump({
+                "feature_type": self.feature_type,
+                "n_mels": self.n_mels,
+                "feat_dim": self.model.layer1.conv.weight.shape[1],
+                "emb_dim": EMBEDDING_DIM,
+                "model_type": "LightECAPA"
+            }, f, indent=2)
+
         run_name = f"earlystop_pat{self.patience}" if self.early_stop else f"fixed_{self.epochs}ep"
         summary = {
             "run_name": run_name,

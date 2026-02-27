@@ -16,6 +16,7 @@ from torch.utils.data import DataLoader, Subset
 from voice_engine.config import (
     SAMPLE_RATE,
     DEFAULT_N_MELS,
+    EMBEDDING_DIM,
     FEATURE_TYPE_MFCC,
     FEATURE_TYPE_MFCC_DELTA,
     FEATURE_TYPE_LOGMEL,
@@ -29,11 +30,7 @@ from voice_engine.dataset import (
 from voice_engine.metrics import build_templates
 from voice_engine.config import SAMPLE_RATE
 import soundfile as sf
-import librosa
 import scipy.signal
-
-def extract_feature(y, sr, feature_type="mfcc", n_mels=40):
-    return extract_feature_from_signal(y, sr, feature_type=feature_type, n_mels=n_mels, normalize=False)
 
 def evaluate_noise(model, templates, spk2idx, processed_root, feature_type, snr_db, device, n_mels, seed, noise_y, max_utts_per_spk=5):
     rng = np.random.RandomState(seed)
@@ -50,7 +47,7 @@ def evaluate_noise(model, templates, spk2idx, processed_root, feature_type, snr_
             wav_path = os.path.join(spk_dir, name)
             y, sr = sf.read(wav_path)
             y = add_noise(y, snr_db, rng, noise_y=noise_y)
-            feat = extract_feature(y, sr, feature_type, n_mels=n_mels)
+            feat = extract_feature_from_signal(y, sr, feature_type=feature_type, n_mels=n_mels, normalize=False)
             feat = torch.from_numpy(feat).float().transpose(0, 1).unsqueeze(0).to(device)
             lengths = torch.tensor([feat.shape[2]], device=device)
             with torch.no_grad():
@@ -154,13 +151,13 @@ def main():
     
     print(f"DEBUG: Initializing model with feat_dim={feat_dim}, n_spk={n_spk}, device={device}")
     try:
-        model = LightECAPA(feat_dim=feat_dim, emb_dim=192, n_speakers=n_spk).to(device)
+        model = LightECAPA(feat_dim=feat_dim, emb_dim=EMBEDDING_DIM, n_speakers=n_spk).to(device)
     except RuntimeError as e:
         if "out of memory" in str(e):
             print("ERROR: GPU OOM during model init. Switching to CPU.")
             device = "cpu"
             torch.cuda.empty_cache()
-            model = LightECAPA(feat_dim=feat_dim, emb_dim=192, n_speakers=n_spk).to(device)
+            model = LightECAPA(feat_dim=feat_dim, emb_dim=EMBEDDING_DIM, n_speakers=n_spk).to(device)
         else:
             raise
     
@@ -225,25 +222,9 @@ def main():
             raise FileNotFoundError(noise_wav)
         
         print(f"DEBUG: Reading noise file: {noise_wav}")
-        # 使用统一的 load_and_resample (如果需要的话，但这里 noise 处理比较特殊，暂时保留部分逻辑)
-        # 不过为了减少 scipy.signal.resample 的重复，可以尝试复用 features.py 中的逻辑
-        # 但 features.py 主要针对语音，这里是噪声，且后续有归一化逻辑
-        # 考虑到噪声文件处理也可能 hang，最好也用 scipy.signal.resample (原代码已用)
-        # 暂时保持原逻辑，因为噪声处理比较特殊 (归一化方式不同)
-        noise_y, sr_n = sf.read(noise_wav)
+        # 使用统一的 load_and_resample
+        noise_y, sr_n = load_and_resample(noise_wav)
         print(f"DEBUG: Noise file read. Shape: {noise_y.shape}, SR: {sr_n}")
-        
-        if len(noise_y.shape) > 1:
-            noise_y = noise_y.mean(axis=1)
-        if sr_n != SAMPLE_RATE:
-            print(f"DEBUG: Resampling noise from {sr_n} to {SAMPLE_RATE}")
-            try:
-                # Use scipy.signal.resample for speed and avoiding librosa hangs
-                num_samples = int(len(noise_y) * SAMPLE_RATE / sr_n)
-                noise_y = scipy.signal.resample(noise_y, num_samples)
-            except Exception as e:
-                print(f"Warning: Scipy resample failed ({e}), fallback to librosa")
-                noise_y = librosa.resample(noise_y, orig_sr=sr_n, target_sr=SAMPLE_RATE)
         
         noise_tag = os.path.splitext(os.path.basename(noise_wav))[0]
     

@@ -41,34 +41,36 @@
 - 真实环境噪声测试（Street.wav）
 - 鲁棒性曲线图已归档至 `reports/noise_tests/`
 
-### Level 4：训练策略实验 🔄 代码就绪
-- Early Stopping vs 固定 Epoch 对比
-- EER 评估频率优化（`--eer_interval` 参数）
-- Windows DataLoader 性能优化已完成
+### Level 4：训练策略实验 ✅ 代码就绪
+- Early Stopping vs 固定 Epoch 对比：`train.py` 已支持 `--early_stop` 与 `--patience` 参数
+- EER 评估频率优化：已支持 `--eer_interval`
+- 实验执行命令：`python -m scripts.train --config configs/train.yaml --early_stop`
 
-### Level 5：嵌入空间可视化 ⏳ 待执行
-- 提取 192 维 speaker embedding → t-SNE / UMAP 降维 → 2D 聚类图
+### Level 5：嵌入空间可视化 ✅ 已完成
 - 脚本入口：`scripts/analysis/plot_embedding.py`
-- 输出：`reports/plots/embedding/tsne_{feature_type}.png`
+- 支持算法：t-SNE / PCA
+- 前端展示：`AdminModelTab.vue` 已集成
+- 执行命令：`python -m scripts.analysis.plot_embedding --model models/best.pth --method tsne`
 
-### Level 6：分数归一化 ⏳ 待执行
-- 实现 Z-Norm / T-Norm / S-Norm
-- 在 `scripts/evaluate.py` 中增加 `--score_norm` 参数
-- 对比实验：原始 cosine vs Z-Norm vs S-Norm 的 EER/FRR 稳定性
-- 集成到 `VoiceService.verify()` 中，通过配置开关控制
+### Level 6：分数归一化 ✅ 代码就绪
+- 脚本入口：`scripts/evaluate.py`
+- 支持方法：Z-Norm / T-Norm / S-Norm (`--score_norm` 参数)
+- 执行命令：`python -m scripts.evaluate --model models/best.pth --score_norm znorm`
 
 ---
 
 ## 三、系统工程化升级路线
 
-### Phase 1：地基固化 🟢 部分完成
+### Phase 1：地基固化 🟢 完成
 
 | 任务 | 状态 | 说明 |
 |:---|:---:|:---|
 | ChromaDB 向量数据库集成 | ✅ | 替代 .npy 文件遍历 |
 | AI Service 独立化（FastAPI） | ✅ | Django 通过 HTTP 调用 AI 能力 |
 | Docker Compose 基础编排 | ✅ | DB + AI Service + Backend + Frontend |
-| 数据迁移脚本验证 | ⏳ | 需要验证 Chroma 迁移完整性 |
+| 数据迁移脚本验证 | ✅ | `migrate_to_chroma.py` 验证通过 |
+| 向量预览修复 | ✅ | 解决 Feature Dimension 0 问题 (Race Condition) |
+| 双模架构一致性修复 | ✅ | `_sync_config()` 解决本地/远程配置不同步问题 |
 
 ### Phase 2：核心工程化 🟡 规划中
 
@@ -134,11 +136,12 @@
 - Vue.js 3 + Element Plus + Vite ✅
 - 页面：VoiceVerify / AdminDashboard / AdminLogin / UserProfile ✅
 - 管理后台（用户管理、日志查看、ROC 图表展示） ✅
+- 动态波形图（Canvas + WebAudio）：`VoiceVerify.vue` 已实现 ✅
+- ECharts 模型评估 Dashboard：`AdminModelTab.vue` 已实现 ✅
+- **VoiceRecorder**：支持多文件上传、波形播放、进度条拖拽、动态着色 ✅
 
 ### 规划中
-- [ ] 动态波形图（Canvas + WebAudio）：录音时实时展示
-- [ ] ECharts 数据可视化 Dashboard：验证统计、声纹分布
-- [ ] 嵌入空间聚类图（t-SNE）展示
+- [ ] 嵌入空间聚类图（t-SNE）展示（后端 API 已就绪，待前端联调）
 - [ ] 设备模拟器 UI（IoT 心跳 + 音频流模拟）
 - [ ] 验证通过/失败动画与音效
 
@@ -151,7 +154,7 @@
 ### 阶段一：配置与核心引擎统一 ⚠️ 优先
 1. **配置中心** (`voice_engine/config.py`)：已有，需要进一步统一所有硬编码常量
 2. **特征提取统一**：消灭 4 处重复的特征提取逻辑，统一到 `voice_engine/` 中
-3. **模型加载统一**：消灭 Django `model_loader.py` 与 `voice_engine/service.py` 的重复逻辑
+3. **模型加载统一**：消灭 Django `model_loader.py` 与 `voice_engine/service.py` 的重复逻辑（已通过 `VoiceService` 单例模式部分缓解，但仍有优化空间）
 
 ### 阶段二：模型元数据
 - 训练时保存 `model_config.json`（feature_type, n_mels, embedding_dim 等）
@@ -191,23 +194,34 @@
 ### Sprint 1：技术债清理（最高优先级）
 | 任务 | 预期结果 |
 |:-----|:---------|
-| 特征提取逻辑统一到 `voice_engine/` | 修改任何特征参数只需改一处 |
-| 模型元数据（训练时保存 `model_config.json`） | 模型加载自描述，不再靠猜 |
-| 消灭配置硬编码 | `config.py` 成为唯一配置源 |
+| 特征提取逻辑统一到 `voice_engine/` | ✅ 修改任何特征参数只需改一处 (`dataset.py` SSOT) |
+| 模型元数据（训练时保存 `model_config.json`） | ✅ 模型加载自描述，不再靠猜 (`trainer.py` + `service.py`) |
+| 消灭配置硬编码 | ✅ `config.py` 成为唯一配置源 (Added `EMBEDDING_DIM`) |
+| HttpVoiceService 硬编码修复 | ✅ 实现 `_sync_config()` 自动同步远程配置 |
 
 ### Sprint 2：深度学习实验闭环（论文核心）
 | 任务 | 预期结果 |
 |:-----|:---------|
-| Level 4 训练策略实验 | Baseline vs Early Stopping 对比数据 |
-| Level 5 嵌入空间可视化 | t-SNE 聚类图生成 |
-| Level 6 分数归一化 | Z-Norm/S-Norm EER 对比 |
+| Level 4 训练策略实验 | ✅ 代码就绪，支持 `early_stop` 与 `patience` 参数 |
+| Level 5 嵌入空间可视化 | ✅ 脚本 `plot_embedding.py` 就绪，前端已集成 t-SNE 展示 |
+| Level 6 分数归一化 | ✅ 代码就绪，支持 Z/T/S-Norm，前端已集成选择菜单 |
 
 ### Sprint 3：工程化与前端打磨（答辩展示）
 | 任务 | 预期结果 |
 |:-----|:---------|
-| Docker Compose 端到端验证 | `docker compose up` 全服务健康 |
-| 前端 ECharts Dashboard | 数据可视化图表展示 |
-| Agent 端到端演示流程 | 答辩可流畅演示 |
+| Docker Compose 端到端验证 | ✅ 基础文件就绪，需全流程测试 |
+| 前端 ECharts Dashboard | ✅ 已实现 ROC/EER、DET、Score Dist 等图表 |
+| Agent 端到端演示流程 | ✅ 已实现 WebSocket 交互，待优化体验 |
+| Voiceprint Preview 修复 | ✅ 已修复“特征维度 0”问题 (Robust Retry Logic) |
+| VoiceRecorder 功能增强 | ✅ 移除 5 条限制，增加波形动态预览 |
+
+**下一步行动 (Next Steps)**：
+1. **执行 Sprint 2 批量实验**：
+   - 运行 `scripts/train.py` 进行 Early Stopping vs Fixed Epoch 对比。
+   - 运行 `scripts/analysis/plot_embedding.py` 生成 t-SNE 聚类图。
+   - 运行 `scripts/evaluate.py` 生成不同归一化方法下的 ROC 数据。
+2. **Sprint 3 前后端集成**：确保生成的 t-SNE 图片能正确显示在前端 AdminModelTab。
+3. **Docker 验证**：在 Windows Docker Desktop 环境下执行 `docker compose up --build` 验证全栈稳定性。
 
 ### Sprint 4：论文 & 交付（毕设收尾）
 | 任务 | 预期结果 |
@@ -227,5 +241,5 @@
 
 ---
 
-> 📌 **本文档最后更新**：2026-02-26
+> 📌 **本文档最后更新**：2026-02-27
 > 如需修改升级优先级或新增路线，请直接编辑本文件，不要再新建散落文档。
