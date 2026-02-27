@@ -16,17 +16,17 @@
 ```mermaid
 graph TD
     User["用户 (Browser/App)"] -->|WebSocket 音频流| AIService
-    User -->|HTTP 请求| Nginx[Nginx Gateway]
+    User -->|HTTP 请求| Nginx["Nginx Gateway"]
     
     Nginx --> Frontend["前端容器 (Vue3 + Vite)"]
     Nginx --> Backend["后端容器 (Django REST)"]
     
     subgraph "Core AI Engine"
-        AIService[AI Service (FastAPI)]
-        AIService -->|VAD & STT| Whisper[Faster-Whisper]
-        AIService -->|Embedding| ECAPA[ECAPA-TDNN]
-        AIService -->|Reasoning| Agent[LangChain + DeepSeek]
-        AIService -->|Vector Store| ChromaDB[ChromaDB]
+        AIService["AI Service (FastAPI)"]
+        AIService -->|VAD & STT| Whisper["Faster-Whisper"]
+        AIService -->|Embedding| ECAPA["ECAPA-TDNN"]
+        AIService -->|Reasoning| Agent["LangChain + DeepSeek"]
+        AIService -->|Vector Store| ChromaDB["ChromaDB"]
     end
     
     subgraph "Data Persistence"
