@@ -75,13 +75,25 @@ class EnrollLog(models.Model):
 
 
 class VerifyLog(models.Model):
-    """验证日志：user=请求发起人，predicted_user=模型预测用户名"""
+    """
+    验证与交互日志 (Enhanced for Hybrid Intelligence)
+    User = 谁在说话 (预测结果)
+    Intent = 意图 (OpenDoor, QueryInfo, etc.)
+    Source = 来源 (LocalNLU vs CloudAgent)
+    """
     timestamp = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='verify_logs')
     wav_path = models.CharField(max_length=512, null=True, blank=True)
     predicted_user = models.CharField(max_length=128)
     score = models.FloatField()
     result = models.CharField(max_length=16)  # ACCEPT / REJECT
+    
+    # 新增字段用于 AI 分析
+    intent = models.CharField(max_length=64, default='verify_only') # open_door, turn_on_light, query_knowledge, verify_only
+    source = models.CharField(max_length=32, default='legacy')      # local_nlu, cloud_agent, legacy_http
+    response_text = models.TextField(blank=True, default='')        # Agent 回复的内容
+    latency_ms = models.IntegerField(default=0)                     # 处理耗时
+    
     door_state = models.CharField(max_length=16, default='CLOSED')
     threshold = models.FloatField(default=0.75)
     client_ip = models.GenericIPAddressField(null=True, blank=True)
@@ -91,4 +103,4 @@ class VerifyLog(models.Model):
         ordering = ['-timestamp']
 
     def __str__(self):
-        return f"VerifyLog({self.predicted_user}, {self.score:.3f}, {self.result})"
+        return f"VerifyLog({self.predicted_user}, {self.intent}, {self.result})"

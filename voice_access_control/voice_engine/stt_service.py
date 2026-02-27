@@ -4,6 +4,7 @@ Provides speech-to-text transcription capabilities.
 """
 import os
 import logging
+import gc
 import numpy as np
 from typing import Union, BinaryIO
 from faster_whisper import WhisperModel
@@ -63,7 +64,8 @@ class STTService:
                 self.model = WhisperModel(
                     self.model_size, 
                     device=self.device, 
-                    compute_type=self.compute_type
+                    compute_type=self.compute_type,
+                    cpu_threads=4 # Limit threads to prevent resource exhaustion
                 )
             except Exception as e:
                 # Catch initialization errors (like DLL missing)
@@ -117,11 +119,17 @@ class STTService:
                 })
                 full_text.append(segment.text)
             
+            # Cleanup memory
+            del segments, info
+            if self.device == "cuda":
+                import torch
+                torch.cuda.empty_cache()
+            gc.collect()
+            
             return {
                 "text": "".join(full_text),
-                "language": info.language,
-                "language_probability": info.language_probability,
-                "segments": seg_list
+                "segments": seg_list,
+                "language": "zh"
             }
         except Exception as e:
             # Runtime fallback

@@ -3,6 +3,7 @@ import json
 import logging
 from typing import Optional, Dict, Any, List
 
+import httpx
 from langchain_openai import ChatOpenAI
 from langchain_core.tools import tool
 from langchain.agents import create_tool_calling_agent, AgentExecutor
@@ -10,10 +11,26 @@ from langchain_core.prompts import ChatPromptTemplate
 
 from voice_engine.config import get_path_env
 from voice_engine.nlu import LocalNLU
+from voice_engine.knowledge_service import KnowledgeService
 
 logger = logging.getLogger(__name__)
 
 # 定义工具 (Tools)
+@tool
+def search_knowledge_base(query: str) -> str:
+    """
+    Search the local knowledge base for information about house rules, emergency contacts, wifi passwords, device manuals, or community info.
+    Use this tool when the user asks a question that is not a command to open/close something.
+    """
+    try:
+        service = KnowledgeService.get_instance()
+        if not service:
+            return "知识库服务暂时不可用。"
+        return service.get_knowledge_context(query)
+    except Exception as e:
+        logger.error(f"Error searching knowledge base: {e}")
+        return "查询知识库时发生错误。"
+
 @tool
 def open_door(user_name: str = "unknown") -> str:
     """
@@ -69,19 +86,20 @@ class AgentService:
                 temperature=0.1  # 降低温度，提高工具调用的稳定性
             )
             
-            self.tools = [open_door, turn_on_light, alert_police]
+            self.tools = [open_door, turn_on_light, alert_police, search_knowledge_base]
             
             # 定义 Prompt
             # System prompt 中包含当前用户信息，以便 Agent 做出决策
             self.prompt = ChatPromptTemplate.from_messages([
-                ("system", "你是一个智能家居安防助手。你有能力控制家里的门锁、灯光和报警系统。"
+                ("system", "你是一个智能家居安防助手。你有能力控制家里的门锁、灯光和报警系统，也能回答关于家庭和社区的问题。"
                            "当前识别到的用户身份: {user_identity} (置信度得分: {confidence})。"
                            "请根据用户指令和身份置信度采取行动。"
                            "规则："
                            "1. 只要用户要求开门且置信度大于 0.7，你必须调用 open_door 工具，不要犹豫。"
                            "2. 调用工具后，请根据工具的返回结果回复用户，说明门已打开。"
                            "3. 只有在置信度低于 0.7 或身份未知时，才拒绝开门。"
-                           "4. 请使用简体中文回复。"),
+                           "4. 如果用户询问家庭信息（如WiFi、电话、规定），请调用 search_knowledge_base 工具。"
+                           "5. 请使用简体中文回复。"),
                 ("human", "{input}"),
                 ("placeholder", "{agent_scratchpad}"),
             ])
@@ -98,6 +116,42 @@ class AgentService:
             logger.error(f"Failed to initialize AgentService components: {e}")
             self.agent_executor = None
 
+    @staticmethod
+    def _get_verify_threshold() -> float:
+        """
+        获取本地 NLU 使用的全局阈值。
+        优先级：
+        1) 通过 Django 后端 /api/threshold/ 读取当前阈值（与前端滑块一致）
+        2) 读取环境变量 VOICE_VERIFY_THRESHOLD
+        3) 兜底使用 0.70
+        """
+        # 1) 从 Django 后端读取
+        backend_base = os.getenv("BACKEND_BASE_URL", "http://127.0.0.1:8000").rstrip("/")
+        try:
+            url = f"{backend_base}/api/threshold/"
+            with httpx.Client(timeout=1.0) as client:
+                resp = client.get(url)
+            if resp.status_code == 200:
+                data = resp.json() or {}
+                v = float(data.get("threshold"))
+                if 0.0 < v < 1.0:
+                    return v
+        except Exception:
+            # 后端不可达时静默回退到环境变量逻辑
+            pass
+
+        # 2) 环境变量
+        try:
+            env_val = os.getenv("VOICE_VERIFY_THRESHOLD")
+            if env_val is not None:
+                v = float(env_val)
+                if 0.0 < v < 1.0:
+                    return v
+        except Exception:
+            pass
+        # 3) 默认兜底
+        return 0.70
+
     async def process_command(self, text: str, user_context: Dict[str, Any]) -> Dict[str, Any]:
         """
         处理自然语言指令
@@ -112,33 +166,40 @@ class AgentService:
             return {"status": "ignored", "message": "Text too short"}
             
         user_identity = user_context.get("user", "unknown")
-        confidence = user_context.get("score", 0.0)
+        confidence = float(user_context.get("score", 0.0) or 0.0)
 
         # === Hybrid Intelligence Strategy ===
         # Step 1: Edge-Side NLU (High Priority, Low Latency, Safety Critical)
         # Check if the intent can be resolved locally without Cloud LLM
         intent_name, slots = self.local_nlu.parse(text)
+
+        # Use global threshold instead of a hard-coded 0.7
+        thr = self._get_verify_threshold()
         
         if intent_name == "open_door":
-            if confidence > 0.7:
-                logger.info(f"Local NLU triggered 'open_door' for {user_identity} (Score: {confidence})")
-                # Directly execute local logic or tool function
-                # Note: In a real system, we might invoke the tool function directly here
-                # But to keep consistent response format, we simulate a successful action
+            if confidence > thr:
+                logger.info(f"Local NLU triggered 'open_door' for {user_identity} "
+                            f"(Score: {confidence}, Threshold: {thr})")
                 msg = f"已通过本地指令识别为您（{user_identity}）执行开门操作。"
                 return {
                     "status": "success",
                     "response": msg,
                     "action_taken": True,
-                    "source": "local_nlu"
+                    "source": "local_nlu",
+                    "threshold_used": thr,
                 }
             else:
-                logger.warning(f"Local NLU blocked 'open_door' due to low confidence: {confidence}")
+                logger.warning(
+                    f"Local NLU blocked 'open_door' due to low confidence: "
+                    f"{confidence} (Threshold: {thr})"
+                )
                 return {
                     "status": "reject",
-                    "response": f"识别到开门指令，但您的身份置信度 ({confidence:.2f}) 不足，无法执行。",
+                    "response": f"识别到开门指令，但您的身份置信度 ({confidence:.2f}) "
+                                f"低于当前阈值 ({thr:.2f})，无法执行。",
                     "action_taken": False,
-                    "source": "local_nlu"
+                    "source": "local_nlu",
+                    "threshold_used": thr,
                 }
         
         # Step 2: Cloud LLM (Complex Reasoning)

@@ -2,7 +2,7 @@
   <el-container class="dashboard-container" style="height: 100vh">
     <el-header height="60px">
       <div class="header">
-        <div class="title">声纹门禁系统 · 后台仪表盘</div>
+        <div class="title">声纹门禁系统 · 智能监控中心</div>
       </div>
     </el-header>
     <el-main class="dashboard-main">
@@ -10,9 +10,9 @@
         <div class="dashboard-content">
           <div class="dashboard-hero">
             <div class="hero-text">
-              <div class="hero-title">管理员控制台</div>
+              <div class="hero-title">智能安防仪表盘</div>
               <div class="hero-subtitle">
-                统一查看验证趋势、阈值策略与系统运行状态
+                实时监控 AI 交互、意图识别与系统健康状态
               </div>
             </div>
             <div class="hero-actions">
@@ -27,12 +27,48 @@
             class="apple-tabs"
             @tab-change="handleTabChange"
           >
-            <el-tab-pane label="概览" name="overview">
-              <AdminOverviewTab
-                :summary-cards="summaryCards"
-                :line-chart-ref="setLineChartRef"
-                :pie-chart-ref="setPieChartRef"
-              />
+            <el-tab-pane label="智能概览" name="overview">
+               <!-- 新的概览内容，直接内联实现，移除 AdminOverviewTab 组件引用以避免文件缺失错误 -->
+               <div class="overview-grid">
+                  <!-- 1. 核心指标卡片 -->
+                  <div class="stat-cards">
+                    <el-card v-for="card in summaryCards" :key="card.title" shadow="hover" class="stat-card">
+                      <div class="stat-value">{{ card.value }}</div>
+                      <div class="stat-title">{{ card.title }}</div>
+                      <div class="stat-desc" v-if="card.desc">{{ card.desc }}</div>
+                    </el-card>
+                  </div>
+
+                  <!-- 2. 图表区域 -->
+                  <el-row :gutter="20" style="margin-top: 20px;">
+                    <el-col :span="12">
+                      <el-card shadow="hover" header="AI 意图分布">
+                        <div ref="pieChartRef" style="height: 300px;"></div>
+                      </el-card>
+                    </el-col>
+                    <el-col :span="12">
+                       <el-card shadow="hover" header="决策来源分析 (Edge vs Cloud)">
+                         <div ref="sourceChartRef" style="height: 300px;"></div>
+                       </el-card>
+                    </el-col>
+                  </el-row>
+                  
+                  <el-row :gutter="20" style="margin-top: 20px;">
+                    <el-col :span="24">
+                      <el-card shadow="hover" header="每日 AI 交互趋势">
+                        <div ref="lineChartRef" style="height: 350px;"></div>
+                      </el-card>
+                    </el-col>
+                  </el-row>
+
+                  <el-row :gutter="20" style="margin-top: 20px;">
+                     <el-col :span="24">
+                        <el-card shadow="hover" header="系统延迟热力图 (最近 50 次交互)">
+                           <div ref="latencyChartRef" style="height: 300px;"></div>
+                        </el-card>
+                     </el-col>
+                  </el-row>
+               </div>
             </el-tab-pane>
             <el-tab-pane label="验证日志" name="logs">
               <AdminLogsTab
@@ -585,17 +621,17 @@ const thresholdDraft = ref(0.7);
 const savingThreshold = ref(false);
 const activeTab = ref("overview");
 
-const lineChartRef = ref(null);
-const pieChartRef = ref(null);
-let lineChart;
-let pieChart;
+// const lineChartRef = ref(null); // Removed redundant declaration
+// const pieChartRef = ref(null); // Removed redundant declaration
+// let lineChart; // Removed redundant declaration
+// let pieChart; // Removed redundant declaration
 
-const setLineChartRef = (el) => {
-  lineChartRef.value = el;
-};
-const setPieChartRef = (el) => {
-  pieChartRef.value = el;
-};
+// const setLineChartRef = (el) => {
+//   lineChartRef.value = el;
+// };
+// const setPieChartRef = (el) => {
+//   pieChartRef.value = el;
+// };
 const setRocChartRef = (el) => {
   rocChartRef.value = el;
 };
@@ -608,18 +644,30 @@ const summaryCards = computed(() => {
   if (!s) return [];
   const sum = s.summary;
   return [
-    { key: "users_total", label: "用户总数", value: sum.users_total },
-    { key: "users_enrolled", label: "已注册用户", value: sum.users_enrolled },
-    { key: "verify_total", label: "验证总次数", value: sum.verify_total },
-    {
-      key: "verify_accept_rate",
-      label: "验证通过率",
-      value: (sum.verify_accept_rate * 100).toFixed(1) + "%"
+    { 
+      title: "用户总数", 
+      value: sum.users_total,
+      desc: "已注册系统并完成声纹录入的用户"
+    },
+    { 
+      title: "已注册用户", 
+      value: sum.users_enrolled,
+      desc: "声纹库中活跃的身份ID"
+    },
+    { 
+      title: "验证总次数", 
+      value: sum.verify_total,
+      desc: "历史所有声纹验证请求"
     },
     {
-      key: "threshold_default",
-      label: "默认阈值",
-      value: sum.threshold_default
+      title: "验证通过率",
+      value: sum.verify_total ? ((sum.verify_accept_rate || 0) * 100).toFixed(1) + "%" : "0%",
+      desc: "系统接受的合法访问请求比例"
+    },
+    {
+      title: "默认阈值",
+      value: sum.threshold_default,
+      desc: "当前系统的全局安全判定阈值"
     }
   ];
 });
@@ -747,12 +795,6 @@ const rocDerived = computed(() => {
   };
 });
 
-function initCharts() {
-  lineChart = ensureChart(lineChartRef.value, lineChart);
-  pieChart = ensureChart(pieChartRef.value, pieChart);
-  rocChart = ensureChart(rocChartRef.value, rocChart);
-}
-
 function stopEvalPolling() {
   if (evalPollingTimer) {
     clearInterval(evalPollingTimer);
@@ -832,101 +874,217 @@ async function handleEvalNormMethodChange(value) {
 
 function updateCharts() {
   if (!stats.value) return;
-  const xAxis = stats.value.xAxis || [];
-  const s = stats.value.series || {};
-  const totals = s.verify_total || [];
-  const pieData = stats.value.pie || [];
-  const maxTotal = totals.length ? Math.max(...totals) : 0;
-  const yMax = maxTotal ? Math.ceil(maxTotal * 1.4) : 5;
+  
+  // New API Structure:
+  // stats.value.daily_trends = [{date, total, avg_score, ai_interactions}, ...]
+  // stats.value.intent_distribution = [{intent, count}, ...]
+  // stats.value.source_distribution = [{source, count}, ...]
+  // stats.value.latency_history = [{timestamp, latency_ms, source, intent}, ...]
 
+  const daily = stats.value.daily_trends || [];
+  const xAxis = daily.map(d => d.date);
+  const totalSeries = daily.map(d => d.total);
+  const aiSeries = daily.map(d => d.ai_interactions || 0);
+
+  // 1. Line Chart: Daily Trends (Total vs AI Interactions)
   if (lineChart) {
     lineChart.setOption({
       tooltip: { trigger: "axis" },
-      legend: { data: ["验证次数", "通过率"] },
-      grid: { left: 40, right: 50, top: 40, bottom: 40 },
+      legend: { data: ["总交互次数", "AI 智能交互"] },
+      grid: { left: 40, right: 40, top: 40, bottom: 40 },
       xAxis: {
         type: "category",
         data: xAxis,
         boundaryGap: true,
-        axisLine: { lineStyle: { color: "#dcdfe6" } },
-        axisTick: { show: false }
+        axisLine: { lineStyle: { color: "#dcdfe6" } }
       },
-      yAxis: [
-        {
-          type: "value",
-          name: "次数",
-          min: 0,
-          max: yMax,
-          minInterval: 1,
-          axisLine: { show: false },
-          splitLine: { lineStyle: { type: "dashed", color: "#ebeef5" } }
-        },
-        {
-          type: "value",
-          name: "通过率",
-          min: 0,
-          max: 1,
-          axisLabel: {
-            formatter: (v) => `${Math.round(v * 100)}%`
-          },
-          axisLine: { show: false },
-          splitLine: { show: false }
-        }
-      ],
+      yAxis: {
+        type: "value",
+        minInterval: 1,
+        splitLine: { lineStyle: { type: "dashed", color: "#ebeef5" } }
+      },
       series: [
         {
-          name: "验证次数",
-          type: "bar",
-          data: totals,
-          barMaxWidth: 26,
-          itemStyle: {
-            color: "#409EFF",
-            borderRadius: [4, 4, 0, 0]
-          }
-        },
-        {
-          name: "通过率",
+          name: "总交互次数",
           type: "line",
           smooth: true,
           symbol: "circle",
-          symbolSize: 6,
-          lineStyle: { width: 2, color: "#67C23A" },
-          itemStyle: { color: "#67C23A" },
-          yAxisIndex: 1,
-          data: s.accept_rate || []
+          symbolSize: 8,
+          data: totalSeries,
+          itemStyle: { color: "#409EFF" },
+          areaStyle: {
+            color: {
+              type: "linear",
+              x: 0, y: 0, x2: 0, y2: 1,
+              colorStops: [
+                { offset: 0, color: "rgba(64,158,255,0.3)" },
+                { offset: 1, color: "rgba(64,158,255,0.05)" }
+              ]
+            }
+          }
+        },
+        {
+          name: "AI 智能交互",
+          type: "bar",
+          barMaxWidth: 30,
+          data: aiSeries,
+          itemStyle: { 
+            color: "#67C23A",
+            borderRadius: [4, 4, 0, 0]
+          }
         }
       ]
     });
   }
 
+  // 2. Pie Chart: Intent Distribution
   if (pieChart) {
-    const totalCount = pieData.reduce((acc, item) => acc + (item.value || 0), 0);
+    const intentData = (stats.value.intent_distribution || []).map(item => ({
+      name: formatIntentLabel(item.intent),
+      value: item.count
+    }));
+    
     pieChart.setOption({
-      color: ["#3B82F6", "#10B981", "#F97316"],
       tooltip: { trigger: "item" },
-      legend: {
-        orient: "horizontal",
-        left: "center",
-        bottom: 0,
-        formatter: (name) => {
-          const target = pieData.find((item) => item.name === name);
-          const value = target ? target.value : 0;
-          const percent = totalCount ? Math.round((value / totalCount) * 100) : 0;
-          return `${name}  ${value} (${percent}%)`;
-        }
-      },
+      legend: { bottom: 0 },
       series: [
         {
+          name: "意图分布",
           type: "pie",
-          radius: "62%",
+          radius: ["40%", "70%"],
           center: ["50%", "45%"],
-          avoidLabelOverlap: true,
-          label: { show: false },
-          labelLine: { show: false },
-          data: pieData
+          itemStyle: {
+            borderRadius: 5,
+            borderColor: "#fff",
+            borderWidth: 2
+          },
+          data: intentData,
+          label: { show: false }
         }
       ]
     });
+  }
+
+  // 3. Source Chart (New): Edge vs Cloud
+  if (sourceChart) {
+    const sourceData = (stats.value.source_distribution || []).map(item => ({
+      name: formatSourceLabel(item.source),
+      value: item.count
+    }));
+
+    sourceChart.setOption({
+      tooltip: { trigger: "item" },
+      legend: { bottom: 0 },
+      series: [
+        {
+          name: "决策来源",
+          type: "pie",
+          radius: "60%",
+          center: ["50%", "45%"],
+          data: sourceData,
+          itemStyle: {
+            shadowBlur: 10,
+            shadowOffsetX: 0,
+            shadowColor: 'rgba(0, 0, 0, 0.5)'
+          }
+        }
+      ]
+    });
+  }
+
+  // 4. Latency Chart (New): Heatmap/Scatter
+  if (latencyChart) {
+    const latencyData = (stats.value.latency_history || []).reverse(); // Oldest first
+    const xTime = latencyData.map(d => d.timestamp.substring(11, 19)); // HH:MM:SS
+    const yLatency = latencyData.map(d => d.latency_ms);
+    
+    latencyChart.setOption({
+      tooltip: {
+        trigger: 'axis',
+        formatter: function (params) {
+          const idx = params[0].dataIndex;
+          const item = latencyData[idx];
+          return `${item.timestamp}<br/>
+                  耗时: ${item.latency_ms}ms<br/>
+                  来源: ${formatSourceLabel(item.source)}<br/>
+                  意图: ${formatIntentLabel(item.intent)}`;
+        }
+      },
+      grid: { left: 50, right: 20, top: 30, bottom: 30 },
+      xAxis: {
+        type: 'category',
+        data: xTime,
+        boundaryGap: false
+      },
+      yAxis: {
+        type: 'value',
+        name: '耗时 (ms)',
+        splitLine: { lineStyle: { type: 'dashed' } }
+      },
+      visualMap: {
+        show: false,
+        min: 0,
+        max: 3000,
+        inRange: { color: ['#67C23A', '#E6A23C', '#F56C6C'] }
+      },
+      series: [{
+        type: 'line',
+        data: yLatency,
+        symbolSize: 6,
+        lineStyle: { width: 1 },
+        areaStyle: { opacity: 0.2 }
+      }]
+    });
+  }
+}
+
+// Helpers
+function formatIntentLabel(key) {
+  const map = {
+    'open_door': '开门指令',
+    'turn_on_light': '开灯指令',
+    'query_knowledge': '知识问答',
+    'verify_only': '纯声纹验证',
+    'chat': '闲聊',
+    'agent_action': '智能体动作'
+  };
+  return map[key] || key;
+}
+
+function formatSourceLabel(key) {
+  const map = {
+    'local_nlu': '边缘端 (Edge)',
+    'cloud_agent': '云端 (Cloud)',
+    'legacy': '传统接口'
+  };
+  return map[key] || key;
+}
+
+let lineChart = null;
+let pieChart = null;
+let sourceChart = null;
+let latencyChart = null;
+const lineChartRef = ref(null);
+const pieChartRef = ref(null);
+const sourceChartRef = ref(null);
+const latencyChartRef = ref(null);
+
+function setLineChartRef(el) { lineChartRef.value = el; }
+function setPieChartRef(el) { pieChartRef.value = el; }
+// source/latency refs are bound directly in template via ref="sourceChartRef"
+
+function initCharts() {
+  if (lineChartRef.value && !lineChart) {
+    lineChart = echarts.init(lineChartRef.value);
+  }
+  if (pieChartRef.value && !pieChart) {
+    pieChart = echarts.init(pieChartRef.value);
+  }
+  if (sourceChartRef.value && !sourceChart) {
+    sourceChart = echarts.init(sourceChartRef.value);
+  }
+  if (latencyChartRef.value && !latencyChart) {
+    latencyChart = echarts.init(latencyChartRef.value);
   }
 }
 
@@ -2152,6 +2310,8 @@ function handleLogout() {
 function handleResize() {
   if (lineChart) lineChart.resize();
   if (pieChart) pieChart.resize();
+  if (sourceChart) sourceChart.resize();
+  if (latencyChart) latencyChart.resize();
   if (rocChart) rocChart.resize();
   Object.values(evalThumbCharts).forEach((chart) => chart && chart.resize());
   if (evalDetailChart) evalDetailChart.resize();
@@ -2295,6 +2455,40 @@ onUnmounted(() => {
   padding: 0 24px;
   font-weight: 600;
   color: #111827;
+}
+
+/* === Overview Grid Layout === */
+.overview-grid {
+  padding: 20px;
+}
+
+.stat-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.stat-card {
+  text-align: center;
+}
+
+.stat-value {
+  font-size: 28px;
+  font-weight: 600;
+  color: #303133;
+  margin-bottom: 8px;
+}
+
+.stat-title {
+  font-size: 14px;
+  color: #909399;
+}
+
+.stat-desc {
+  font-size: 12px;
+  color: #c0c4cc;
+  margin-top: 4px;
 }
 
 .dashboard-content {

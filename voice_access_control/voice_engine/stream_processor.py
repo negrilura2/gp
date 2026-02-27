@@ -8,17 +8,23 @@ import webrtcvad
 import numpy as np
 import io
 import wave
+import audioop
 
 logger = logging.getLogger("voice_engine.stream")
 
 class AudioBuffer:
-    def __init__(self, sample_rate=16000, frame_duration_ms=30, padding_duration_ms=300):
+    def __init__(self, sample_rate=16000, frame_duration_ms=30, padding_duration_ms=500):
         self.sample_rate = sample_rate
         self.frame_duration_ms = frame_duration_ms
         self.frame_size = int(sample_rate * frame_duration_ms / 1000) * 2 # 2 bytes per sample (16-bit)
-        self.vad = webrtcvad.Vad(2) # Mode 2: Aggressive
+        # Mode 3 is the most aggressive (filters out more non-speech)
+        self.vad = webrtcvad.Vad(3) 
+        # Energy threshold to filter out breathing/background noise (RMS value)
+        # Lowered from 500 to 300 to be more sensitive to speech
+        self.energy_threshold = 200 
         
         self.buffer = bytearray()
+        # Increased padding to capture more context and avoid chopping start/end
         self.ring_buffer = collections.deque(maxlen=padding_duration_ms // frame_duration_ms)
         self.triggered = False
         self.voiced_frames = []
@@ -37,13 +43,18 @@ class AudioBuffer:
             
             is_speech = False
             try:
-                is_speech = self.vad.is_speech(frame, self.sample_rate)
+                # 1. Energy Check (RMS) - Filter out low volume noise (breathing)
+                rms = audioop.rms(frame, 2)
+                if rms > self.energy_threshold:
+                    # 2. VAD Check - Only run VAD if energy is sufficient
+                    is_speech = self.vad.is_speech(frame, self.sample_rate)
             except Exception:
                 pass # Ignore VAD errors on bad frames
 
             if not self.triggered:
                 self.ring_buffer.append((frame, is_speech))
                 num_voiced = len([f for f, s in self.ring_buffer if s])
+                # Require 90% of buffer to be voiced to trigger start
                 if num_voiced > 0.9 * self.ring_buffer.maxlen:
                     self.triggered = True
                     self.voiced_frames.extend([f for f, s in self.ring_buffer])
@@ -51,6 +62,7 @@ class AudioBuffer:
             else:
                 self.voiced_frames.append(frame)
                 self.ring_buffer.append((frame, is_speech))
+                # Require 90% of buffer to be unvoiced to trigger end
                 num_unvoiced = len([f for f, s in self.ring_buffer if not s])
                 if num_unvoiced > 0.9 * self.ring_buffer.maxlen:
                     self.triggered = False

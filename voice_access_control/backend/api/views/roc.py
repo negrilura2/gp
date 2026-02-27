@@ -5,6 +5,7 @@ from django.conf import settings
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.permissions import AllowAny
 
 from ..serializers import ThresholdConfigSerializer, get_effective_threshold
 from ..model_loader import get_model_path
@@ -173,7 +174,16 @@ class RocView(APIView):
 
 
 class ThresholdConfigView(APIView):
-    permission_classes = [IsAdminUser]
+    """
+    阈值配置接口：
+    - GET：任何客户端（包括 AI 服务）都可以读取当前阈值
+    - POST：仅管理员可修改
+    """
+
+    def get_permissions(self):
+        if self.request.method == "GET":
+            return [AllowAny()]
+        return [IsAdminUser()]
 
     def get(self, request):
         return Response({"threshold": get_effective_threshold()})

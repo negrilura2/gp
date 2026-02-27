@@ -21,124 +21,77 @@ class StatsView(APIView):
     def get(self, request):
         mode = request.query_params.get("mode", "").lower()
 
+        # === 1. 基础数据 ===
+        
+        # 用户统计 (排除管理员)
+        user_count = User.objects.filter(is_staff=False, is_superuser=False).count()
+        enroll_count = EnrollLog.objects.values('username').distinct().count()
+
+        # 日志统计
+        total_logs = VerifyLog.objects.count()
+        accept_count = VerifyLog.objects.filter(result="ACCEPT").count()
+        verify_accept_rate = round(accept_count / total_logs, 4) if total_logs > 0 else 0
+        
+        # === 2. 意图分布 (Intent Distribution) - NEW ===
+        # 统计不同意图的占比：开门、开灯、查询知识库、纯验证
+        intent_stats = (
+            VerifyLog.objects.values('intent')
+            .annotate(count=Count('id'))
+            .order_by('-count')
+        )
+        
+        # === 3. 来源分布 (Source Distribution) - NEW ===
+        # 统计决策来源：Local NLU (Edge) vs Cloud Agent (Cloud)
+        source_stats = (
+            VerifyLog.objects.values('source')
+            .annotate(count=Count('id'))
+            .order_by('-count')
+        )
+        
+        # === 4. 延迟性能 (Latency Heatmap data) - NEW ===
+        # 获取最近 50 条记录的延迟数据，用于前端绘制性能热力图或散点图
+        latency_data = (
+            VerifyLog.objects.all()
+            .order_by('-timestamp')[:50]
+            .values('timestamp', 'latency_ms', 'source', 'intent')
+        )
+
+        # === 5. 每日趋势 (Daily Trends) ===
         daily = (
             VerifyLog.objects.annotate(date=TruncDate("timestamp"))
             .values("date")
             .annotate(
                 total=Count("id"),
                 avg_score=Avg("score"),
-                accept_count=Count("id", filter=models.Q(result="ACCEPT")),
-                reject_count=Count("id", filter=models.Q(result="REJECT")),
+                # 统计每天的 AI 交互次数 (intent != verify_only)
+                ai_interaction_count=Count("id", filter=~models.Q(intent="verify_only")),
             )
             .order_by("date")
         )
+        
         daily_data = [
             {
                 "date": str(d["date"]),
                 "total": d["total"],
                 "avg_score": round(d["avg_score"], 4) if d["avg_score"] else 0,
-                "accept_rate": round(d["accept_count"] / d["total"], 4) if d["total"] else 0,
+                "ai_interactions": d["ai_interaction_count"]
             }
             for d in daily
         ]
 
-        result_stats = VerifyLog.objects.aggregate(
-            accept=Count("id", filter=models.Q(result="ACCEPT")),
-            reject=Count("id", filter=models.Q(result="REJECT")),
-        )
-        accept_count = result_stats.get("accept") or 0
-        reject_count = result_stats.get("reject") or 0
-        total_count = accept_count + reject_count
-        accept_rate = round(accept_count / total_count, 4) if total_count else 0
-
-        now = timezone.now()
-        last_7_qs = VerifyLog.objects.filter(timestamp__gte=now - timedelta(days=7))
-        last_30_qs = VerifyLog.objects.filter(timestamp__gte=now - timedelta(days=30))
-
-        def _window_summary(qs):
-            stats = qs.aggregate(
-                total=Count("id"),
-                accept=Count("id", filter=models.Q(result="ACCEPT")),
-            )
-            total = stats.get("total") or 0
-            if total == 0:
-                return {"total": 0, "accept_rate": 0}
-            acc = stats.get("accept") or 0
-            return {
-                "total": total,
-                "accept_rate": round(acc / total, 4),
-            }
-
-        window_summary = {
-            "last_7_days": _window_summary(last_7_qs),
-            "last_30_days": _window_summary(last_30_qs),
-        }
-
-        score_stats = {"max": 0, "min": 0, "avg": 0, "median": 0}
-        all_qs = VerifyLog.objects.all()
-        total_scores = all_qs.count()
-        if total_scores > 0:
-            agg = all_qs.aggregate(
-                max_score=Max("score"),
-                min_score=Min("score"),
-                avg_score=Avg("score"),
-            )
-            ordered_scores = all_qs.order_by("score").values_list("score", flat=True)
-            mid = (total_scores - 1) // 2
-            if total_scores % 2 == 1:
-                median = float(ordered_scores[mid])
-            else:
-                left = float(ordered_scores[mid])
-                right = float(ordered_scores[mid + 1])
-                median = float((left + right) / 2.0)
-            score_stats = {
-                "max": float(agg["max_score"]) if agg["max_score"] is not None else 0,
-                "min": float(agg["min_score"]) if agg["min_score"] is not None else 0,
-                "avg": float(agg["avg_score"]) if agg["avg_score"] is not None else 0,
-                "median": median,
-            }
-
-        total_users = User.objects.filter(is_staff=False, is_superuser=False).count()
-        enrolled_users = VoiceTemplate.objects.filter(user__is_staff=False, user__is_superuser=False).values("user").distinct().count()
-
-        if mode == "echarts":
-            x_axis = [d["date"] for d in daily_data]
-            return Response(
-                {
-                    "xAxis": x_axis,
-                    "series": {
-                        "verify_total": [d["total"] for d in daily_data],
-                        "accept_rate": [d["accept_rate"] for d in daily_data],
-                    },
-                    "pie": [
-                        {"name": "ACCEPT", "value": accept_count},
-                        {"name": "REJECT", "value": reject_count},
-                    ],
-                    "users": {
-                        "total": total_users,
-                        "enrolled": enrolled_users,
-                    },
-                    "window_summary": window_summary,
-                    "score_stats": score_stats,
-                }
-            )
-
-        return Response(
-            {
-                "daily": daily_data,
-                "result_distribution": {
-                    "ACCEPT": accept_count,
-                    "REJECT": reject_count,
-                    "ACCEPT_RATE": accept_rate,
-                },
-                "users": {
-                    "total": total_users,
-                    "enrolled": enrolled_users,
-                },
-                "window_summary": window_summary,
-                "score_stats": score_stats,
-            }
-        )
+        # === 6. 聚合响应 ===
+        return Response({
+            "summary": {
+                "total_users": user_count,
+                "enrolled_users": enroll_count,
+                "total_verifications": total_logs,
+                "verify_accept_rate": verify_accept_rate,
+            },
+            "intent_distribution": list(intent_stats),
+            "source_distribution": list(source_stats),
+            "latency_history": list(latency_data),
+            "daily_trends": daily_data,
+        })
 
 
 class DashboardView(APIView):

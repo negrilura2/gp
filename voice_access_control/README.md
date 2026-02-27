@@ -30,29 +30,37 @@
                           │ ┌──▼─────────▼────┐ │
                           │ │ LangChain Agent  │ │
                           │ │  (DeepSeek V3)   │ │
-                          │ └─────────────────┘ │
+                          │ └──┬─────────┬────┘ │
+                          │    │         │      │
+                          │ ┌──▼──────┐┌─▼────────┐
+                          │ │Local NLU││RAG (KB)  │
+                          │ └─────────┘└──────────┘
                           └──────────┬──────────┘
                       ┌──────────────┼──────────────┐
                ┌──────▼──────┐ ┌────▼─────┐ ┌──────▼──────┐
                │  ChromaDB   │ │  SQLite  │ │   Redis     │
-               │ (向量存储)   │ │ (MySQL)  │ │  (规划中)    │
+               │ (向量/知识库)│ │ (MySQL)  │ │  (规划中)    │
                └─────────────┘ └──────────┘ └─────────────┘
 ```
 
-### 多模态处理流程
+### 多模态处理流程 (Hybrid Intelligence)
 
 ```
 用户音频流 (WebSocket)
     │
     ▼
-AudioBuffer + VAD 语音切分
+AudioBuffer + VAD (Mode 3) 语音切分
     │
     ├──── 声纹路径 ──→ ECAPA-TDNN → ChromaDB 检索 → 身份识别 (Who?)
     │
     ├──── 语音路径 ──→ Faster-Whisper → 文本转录 (What?)
     │
-    └──── Agent 路径 ──→ LangChain (身份 + 意图) → Tool Calling → 执行动作
-                         (开门 / 开灯 / 报警 / 拒绝)
+    └──── 智能路径 (Hybrid NLU)
+            │
+            ├─ [L1: Edge NLU] ──→ 毫秒级高频指令 (开门/关灯)
+            │
+            └─ [L2: Cloud Agent] ──→ DeepSeek + RAG (家庭知识库)
+                                     (WiFi密码 / 社区规定 / 复杂对话)
 ```
 
 ---
@@ -72,8 +80,13 @@ voice_access_control/
 │   ├── config.py            #    全局配置中心 (SAMPLE_RATE, N_MELS, ...)
 │   ├── vector_store.py      #    ChromaDB 向量存储封装
 │   ├── agent_service.py     #    LangChain Agent + DeepSeek 集成
+│   ├── knowledge_service.py #    RAG 知识库服务 (ChromaDB + sentence-transformers)
+│   ├── nlu.py               #    本地边缘端 NLU (Local Intent Parsing)
 │   ├── stt_service.py       #    Faster-Whisper STT 服务
 │   └── stream_processor.py  #    音频流 VAD 处理 (Ring Buffer)
+│
+├── tools/                   # 🛠️ 运维与可视化工具
+│   └── knowledge_dashboard.py # Streamlit 管理面板 (RAG & 声纹可视化)
 │
 ├── scripts/                 # 🚀 可执行入口 (entrypoint 层)
 │   ├── train.py             #    训练入口: python -m scripts.train --config ...
@@ -227,24 +240,31 @@ MFCC/LogMel/Delta 的提取逻辑散落在 **4 个独立文件** 中，且实现
 
 ---
 
-## 🚀 快速上手
+## 🛠️ 可视化管理面板
 
-### 环境准备
+项目内置了基于 Streamlit 的 **Local Vector Database Manager**，用于可视化管理声纹库和知识库。
 
+### 启动命令
 ```bash
-# 1. 创建 conda 环境
-conda create -n voice_access python=3.9.18 -y
-conda activate voice_access
+streamlit run tools/knowledge_dashboard.py
+```
 
-# 2. 安装项目包（使 import voice_engine / scripts 可用）
-cd voice_access_control
-pip install -e .
+### 功能特性
+1.  **多库管理**：支持切换查看 **Knowledge Base (RAG)** 和 **Voiceprints (声纹库)**。
+2.  **知识库管理**：
+    *   🔍 **语义搜索**：测试 "物业电话" 等查询，查看命中结果。
+    *   ➕ **即时添加**：手动输入家庭规则或信息，实时存入向量库。
+3.  **声纹可视化**：
+    *   📊 **波形折线图**：展示 192 维声纹特征的波动。
+    *   🔥 **特征热力图**：自动重塑向量维度（如 12x16），直观展示声纹指纹图案。
+    *   📉 **自动降级**：如果未安装 `plotly`，自动回退到 `matplotlib` 渲染。
 
-# 3. 安装依赖
+## 📦 环境配置与部署
+
+### 1. 核心依赖
+```bash
 pip install -r requirements.txt
-
-# 4. PyTorch (根据 GPU 选择)
-pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
+# 包含: torch, fastapi, langchain, chromadb, faster-whisper, streamlit, plotly
 ```
 
 ### Docker 一键启动
