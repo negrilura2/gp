@@ -15,11 +15,11 @@
 
 ```mermaid
 graph TD
-    User[用户 (Browser/App)] -->|WebSocket 音频流| AIService
+    User["用户 (Browser/App)"] -->|WebSocket 音频流| AIService
     User -->|HTTP 请求| Nginx[Nginx Gateway]
     
-    Nginx --> Frontend[前端容器 (Vue3 + Vite)]
-    Nginx --> Backend[后端容器 (Django REST)]
+    Nginx --> Frontend["前端容器 (Vue3 + Vite)"]
+    Nginx --> Backend["后端容器 (Django REST)"]
     
     subgraph "Core AI Engine"
         AIService[AI Service (FastAPI)]
@@ -30,8 +30,8 @@ graph TD
     end
     
     subgraph "Data Persistence"
-        Backend --> MySQL[(MySQL 8.0)]
-        AIService -.-> Redis[(Redis 缓存)]
+        Backend --> MySQL["(MySQL 8.0)"]
+        AIService -.-> Redis["(Redis 缓存)"]
     end
 ```
 
