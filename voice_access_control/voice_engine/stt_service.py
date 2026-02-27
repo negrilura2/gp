@@ -97,7 +97,14 @@ class STTService:
 
         try:
             # Note: transcribe returns a generator
-            segments, info = self.model.transcribe(audio, beam_size=beam_size)
+            # Force language to Chinese ('zh') to avoid random Thai/English
+            # Use initial_prompt to guide Simplified Chinese output
+            segments, info = self.model.transcribe(
+                audio, 
+                beam_size=beam_size,
+                language="zh",
+                initial_prompt="请使用简体中文回复。这是智能家居的语音指令，例如：开门、关灯、报警。"
+            )
             
             # Force consumption of the generator to catch any runtime errors (like CUDA errors)
             seg_list = []
