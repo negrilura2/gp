@@ -146,7 +146,7 @@ class VerifyView(APIView):
                 raise RuntimeError(error_msg)
 
             best_spk = verify_result["predicted_user"]
-            best_score = verify_result["score"]
+            best_score = verify_result.get("best_score", 0.0)
             result = verify_result["result"]
 
         except FileNotFoundError as e:

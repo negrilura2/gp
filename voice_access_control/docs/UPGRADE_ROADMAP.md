@@ -202,9 +202,9 @@
 ### Sprint 2：深度学习实验闭环（论文核心）
 | 任务 | 预期结果 |
 |:-----|:---------|
-| Level 4 训练策略实验 | ✅ 代码就绪，支持 `early_stop` 与 `patience` 参数 |
-| Level 5 嵌入空间可视化 | ✅ 脚本 `plot_embedding.py` 就绪，前端已集成 t-SNE 展示 |
-| Level 6 分数归一化 | ✅ 代码就绪，支持 Z/T/S-Norm，前端已集成选择菜单 |
+| Level 4 训练策略实验 | ✅ 代码就绪，已完成 `early_stop` 实验 |
+| Level 5 嵌入空间可视化 | ✅ t-SNE 脚本就绪，前端已支持 Z/T-Norm 策略切换与展示 |
+| Level 6 分数归一化 | ✅ 已生成 Z/T/S-Norm 下的 ROC/EER 对比数据 |
 
 ### Sprint 3：工程化与前端打磨（答辩展示）
 | 任务 | 预期结果 |
@@ -214,14 +214,12 @@
 | Agent 端到端演示流程 | ✅ 已实现 WebSocket 交互，待优化体验 |
 | Voiceprint Preview 修复 | ✅ 已修复“特征维度 0”问题 (Robust Retry Logic) |
 | VoiceRecorder 功能增强 | ✅ 移除 5 条限制，增加波形动态预览 |
+| 前后端可视化集成 | ✅ 实现 `score_norm` 参数透传，前端动态加载对应聚类图 |
 
 **下一步行动 (Next Steps)**：
-1. **执行 Sprint 2 批量实验**：
-   - 运行 `scripts/train.py` 进行 Early Stopping vs Fixed Epoch 对比。
-   - 运行 `scripts/analysis/plot_embedding.py` 生成 t-SNE 聚类图。
-   - 运行 `scripts/evaluate.py` 生成不同归一化方法下的 ROC 数据。
-2. **Sprint 3 前后端集成**：确保生成的 t-SNE 图片能正确显示在前端 AdminModelTab。
-3. **Docker 验证**：在 Windows Docker Desktop 环境下执行 `docker compose up --build` 验证全栈稳定性。
+1. **Docker 验证**：在 Windows Docker Desktop 环境下执行 `docker compose up --build` 验证全栈稳定性。
+2. **论文撰写**：基于 `reports/` 目录下生成的丰富图表（ROC, DET, t-SNE, Score Dist），开始撰写毕业论文实验章节。
+3. **Agent 优化**：测试 WebSocket 实时对话流程，确保 Agent 能正确响应 "开门" 等指令。
 
 ### Sprint 4：论文 & 交付（毕设收尾）
 | 任务 | 预期结果 |

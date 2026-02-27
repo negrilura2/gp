@@ -84,7 +84,6 @@
                       <!-- 使用新组件处理录音与提交 -->
                       <VoiceRecorder
                         @enrolled="handleEnrolled"
-                        :max-records="5"
                       />
                     </div>
                   </el-card>
