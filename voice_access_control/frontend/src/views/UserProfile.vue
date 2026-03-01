@@ -1,175 +1,146 @@
 <template>
-  <el-container style="height: 100vh">
-    <el-main>
+  <div class="user-profile-container">
+    <nav class="grok-nav">
+      <div class="nav-left">
+        <div class="nav-logo">
+          <span class="logo-symbol">///</span>
+          <span class="logo-text">VOICE ACCESS</span>
+        </div>
+      </div>
+      <div class="nav-center">
+        <!-- Optional: Profile specific nav if needed -->
+      </div>
+      <div class="nav-right">
+        <button class="grok-btn-ghost" @click="router.push('/')">HOME</button>
+        <button class="grok-btn-action" @click="handleLogout">LOGOUT</button>
+      </div>
+    </nav>
+
+    <div class="profile-main">
       <div class="me-wrapper">
         <el-card class="me-card">
-          <div class="me-header">
-            <div class="me-title">个人主页</div>
-          </div>
+          <template #header>
+            <div class="me-header">
+              <div class="me-title">USER PROFILE</div>
+              <div class="me-subtitle">Manage your identity and voiceprint</div>
+            </div>
+          </template>
+          
           <div v-if="loading" class="me-loading">
-            <span>加载中...</span>
+            <span>Loading profile...</span>
           </div>
           <div v-else>
             <div v-if="!user">
-              <el-alert
-                type="warning"
-                title="当前未登录，将跳转到登录页面"
-                show-icon
-              />
+              <el-alert type="warning" title="Not logged in" show-icon />
             </div>
             <template v-else>
-              <el-tabs v-model="activeTab">
-                <el-tab-pane label="基础信息" name="basic">
-                  <el-descriptions title="基本信息" :column="1" border>
-                    <el-descriptions-item label="用户名">
-                      {{ user.username }}
-                    </el-descriptions-item>
-                    <el-descriptions-item label="是否管理员">
-                      {{ user.is_staff ? "是" : "否" }}
-                    </el-descriptions-item>
-                    <el-descriptions-item label="是否已录入声纹">
-                      {{ user.has_voiceprint ? "是" : "否" }}
-                    </el-descriptions-item>
-                    <el-descriptions-item label="注册时间">
-                      {{ user.date_joined }}
-                    </el-descriptions-item>
-                  </el-descriptions>
+              <el-tabs v-model="activeTab" class="grok-tabs">
+                <el-tab-pane label="IDENTITY" name="basic">
+                  <div class="info-grid">
+                    <div class="info-item">
+                      <label>USERNAME</label>
+                      <div class="value">{{ user.username }}</div>
+                    </div>
+                    <div class="info-item">
+                      <label>ROLE</label>
+                      <div class="value">{{ user.is_staff ? "Administrator" : "User" }}</div>
+                    </div>
+                    <div class="info-item">
+                      <label>VOICEPRINT STATUS</label>
+                      <div class="value">
+                        <el-tag :type="user.has_voiceprint ? 'success' : 'info'" effect="dark">
+                          {{ user.has_voiceprint ? "ENROLLED" : "NOT ENROLLED" }}
+                        </el-tag>
+                      </div>
+                    </div>
+                    <div class="info-item">
+                      <label>JOINED</label>
+                      <div class="value">{{ user.date_joined }}</div>
+                    </div>
+                  </div>
                 </el-tab-pane>
-                <el-tab-pane label="声纹管理" name="voice">
-                  <el-card class="me-section" shadow="never">
-                    <template #header>
-                      <div class="section-header">
-                        <span>
-                          {{ user.has_voiceprint ? "重新录制声纹" : "首次录制声纹" }}
-                        </span>
+                
+                <el-tab-pane label="VOICEPRINT" name="voice">
+                  <div class="voice-section">
+                    <div class="section-header">
+                      <span>{{ user.has_voiceprint ? "Re-enroll Voiceprint" : "Enroll Voiceprint" }}</span>
+                      <el-button
+                        v-if="user.has_voiceprint"
+                        size="small"
+                        type="danger"
+                        plain
+                        :loading="voiceprintDeleting"
+                        @click="confirmDeleteVoiceprint"
+                      >
+                        DELETE
+                      </el-button>
+                    </div>
+                    
+                    <div class="voiceprint-summary" v-if="user.has_voiceprint">
+                      <div class="voiceprint-meta">
+                        <span>DIM: {{ voiceprintMeta?.embedding_dim || 0 }}</span>
+                        <span>SAMPLES: {{ voiceprintMeta?.embedding_count || 0 }}</span>
+                        <span>UPDATED: {{ voiceprintMeta?.updated_at || "-" }}</span>
                       </div>
-                    </template>
-                    <div class="voiceprint-summary">
-                      <div class="voiceprint-header">
-                        <span>当前声纹</span>
-                        <el-button
-                          v-if="user.has_voiceprint"
-                          size="small"
-                          type="danger"
-                          plain
-                          :loading="voiceprintDeleting"
-                          @click="confirmDeleteVoiceprint"
-                        >
-                          删除声纹
-                        </el-button>
-                      </div>
-                      <div v-if="voiceprintLoading" class="card-subtitle">
-                        正在加载声纹概览...
-                      </div>
-                      <template v-else>
-                        <div v-if="!user.has_voiceprint" class="card-subtitle">
-                          暂无已注册声纹
-                        </div>
-                        <div v-else class="voiceprint-body">
-                          <div class="voiceprint-meta">
-                            <span>特征维度 {{ voiceprintMeta?.embedding_dim || 0 }}</span>
-                            <span>样本数 {{ voiceprintMeta?.embedding_count || 0 }}</span>
-                            <span>更新时间 {{ voiceprintMeta?.updated_at || "-" }}</span>
-                          </div>
-                          <!-- 使用新组件展示声纹条形图 -->
-                          <WaveformVisualizer :values="voiceprintPreview" />
-                        </div>
-                      </template>
+                      <WaveformVisualizer :values="voiceprintPreview" />
+                    </div>
+                    <div v-else class="empty-state">
+                      No voiceprint enrolled. Please record your voice below.
                     </div>
 
-                    <div class="record-main">
-                      <div class="wave-header">
-                        <span class="wave-title">录制/上传</span>
-                      </div>
-                      <!-- 使用新组件处理录音与提交 -->
-                      <VoiceRecorder
-                        @enrolled="handleEnrolled"
-                      />
+                    <div class="record-box">
+                      <VoiceRecorder @enrolled="handleEnrolled" />
                     </div>
-                  </el-card>
+                  </div>
                 </el-tab-pane>
-                <el-tab-pane label="验证记录" name="logs">
-                  <el-card class="me-section" shadow="never">
-                    <template #header>
-                      <div class="section-header">
-                        <span>最近验证记录</span>
-                        <span class="log-hint">仅显示最近 100 条记录</span>
-                      </div>
-                    </template>
+                
+                <el-tab-pane label="LOGS" name="logs">
+                  <div class="logs-section">
                     <div class="log-toolbar">
                       <el-date-picker
                         v-model="logDateRange"
                         type="daterange"
-                        range-separator="至"
-                        start-placeholder="开始日期"
-                        end-placeholder="结束日期"
+                        range-separator="-"
+                        start-placeholder="Start"
+                        end-placeholder="End"
                         value-format="YYYY-MM-DD"
                         size="small"
+                        style="background: transparent;"
                       />
                     </div>
-                    <el-table
-                      :data="pagedLogs"
-                      size="small"
-                      border
-                      style="width: 100%"
-                    >
-                      <el-table-column prop="timestamp" label="时间" width="180" />
-                      <el-table-column
-                        prop="predicted_user"
-                        label="预测用户"
-                        width="140"
-                      />
-                      <el-table-column prop="score" label="得分" width="100" />
-                      <el-table-column prop="threshold" label="阈值" width="80" />
-                      <el-table-column prop="result" label="结果" width="90" />
-                      <el-table-column
-                        prop="door_state"
-                        label="门状态"
-                        width="90"
-                      />
+                    <el-table :data="pagedLogs" size="small" style="width: 100%">
+                      <el-table-column prop="timestamp" label="TIME" width="180" />
+                      <el-table-column prop="score" label="SCORE" width="100">
+                        <template #default="{ row }">
+                          {{ row.score ? row.score.toFixed(4) : '-' }}
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="result" label="RESULT" width="100">
+                        <template #default="{ row }">
+                          <span :class="row.result === 'ACCEPT' ? 'text-success' : 'text-warning'">
+                            {{ row.result }}
+                          </span>
+                        </template>
+                      </el-table-column>
                     </el-table>
                     <div class="log-pagination">
                       <el-pagination
-                        layout="prev, pager, next, jumper"
-                        background
+                        layout="prev, pager, next"
                         :page-size="logPageSize"
                         :current-page="logPage"
                         :total="filteredLogs.length"
                         @current-change="handleLogPageChange"
                       />
                     </div>
-                  </el-card>
-                </el-tab-pane>
-                <el-tab-pane label="账号设置" name="account">
-                  <el-card class="me-section" shadow="never">
-                    <template #header>
-                      <div class="section-header">
-                        <span>账号设置</span>
-                      </div>
-                    </template>
-                    <el-descriptions :column="1" border>
-                      <el-descriptions-item label="当前账号">
-                        {{ user.username }}
-                      </el-descriptions-item>
-                      <el-descriptions-item label="账号角色">
-                        {{ user.is_staff ? "管理员" : "普通用户" }}
-                      </el-descriptions-item>
-                      <el-descriptions-item label="声纹状态">
-                        {{ user.has_voiceprint ? "已录入" : "未录入" }}
-                      </el-descriptions-item>
-                    </el-descriptions>
-                    <div class="record-actions" style="margin-top: 12px">
-                      <el-button type="danger" @click="handleLogout">退出登录</el-button>
-                    </div>
-                  </el-card>
+                  </div>
                 </el-tab-pane>
               </el-tabs>
             </template>
           </div>
         </el-card>
       </div>
-    </el-main>
-  </el-container>
+    </div>
+  </div>
 </template>
 
 <script setup>
@@ -325,136 +296,154 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.me-wrapper {
+/* Profile Container */
+.user-profile-container {
   min-height: 100vh;
-  padding: 24px;
-  box-sizing: border-box;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+}
+
+.profile-main {
+  padding-top: 88px;
+  padding-bottom: 48px;
   display: flex;
-  align-items: center;
   justify-content: center;
-  background: #f5f7fb;
-  background-image: radial-gradient(
-      1200px circle at 0% 0%,
-      rgba(64, 158, 255, 0.12),
-      transparent 45%
-    ),
-    radial-gradient(
-      1200px circle at 100% 0%,
-      rgba(103, 232, 169, 0.12),
-      transparent 45%
-    );
 }
 
+.me-wrapper {
+  width: 100%;
+  max-width: 1000px;
+  padding: 0 24px;
+}
+
+/* Card Overrides */
 .me-card {
-  width: 900px;
-  border: 1px solid rgba(64, 158, 255, 0.15);
-  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.08);
-  backdrop-filter: blur(6px);
-}
-
-.me-title {
-  font-size: 20px;
-  font-weight: 600;
+  /* Inherits global el-card styles from theme.css */
+  min-height: 600px;
 }
 
 .me-header {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 16px;
+  flex-direction: column;
+}
+
+.me-title {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: 0.02em;
+}
+
+.me-subtitle {
+  font-size: 13px;
+  color: var(--text-tertiary);
+  margin-top: 4px;
 }
 
 .me-loading {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  padding: 40px;
+  text-align: center;
+  color: var(--text-secondary);
 }
 
-.me-section {
-  margin-top: 16px;
+/* Info Grid */
+.info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  padding: 24px;
 }
 
-.section-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.log-hint {
-  font-size: 12px;
-  color: #909399;
-}
-
-.log-toolbar {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 8px;
-}
-
-.log-pagination {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 12px;
-}
-
-.voiceprint-summary {
-  border: 1px solid #ebeef5;
-  border-radius: 4px;
-  padding: 12px;
-  margin-bottom: 12px;
-  background: #fafcff;
-}
-
-.voiceprint-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-weight: 600;
-  margin-bottom: 8px;
-}
-
-.voiceprint-body {
+.info-item {
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
+.info-item label {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-tertiary);
+  letter-spacing: 0.05em;
+}
+
+.info-item .value {
+  font-size: 16px;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+/* Voice Section */
+.voice-section {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.voiceprint-summary {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 16px;
+}
+
 .voiceprint-meta {
   display: flex;
-  gap: 16px;
+  gap: 24px;
+  margin-bottom: 16px;
+  font-family: var(--font-mono);
   font-size: 12px;
-  color: #606266;
+  color: var(--text-secondary);
 }
 
-.card-subtitle {
-  font-size: 13px;
-  color: #909399;
-  font-style: italic;
+.empty-state {
+  padding: 40px;
+  text-align: center;
+  color: var(--text-tertiary);
+  border: 1px dashed var(--border-color);
+  border-radius: 8px;
 }
 
-.record-main {
-  border: 1px solid #ebeef5;
-  border-radius: 4px;
-  padding: 12px;
+.record-box {
+  margin-top: 16px;
 }
 
-.wave-header {
+/* Logs Section */
+.logs-section {
+  padding: 24px;
+}
+
+.log-toolbar {
+  margin-bottom: 16px;
   display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  margin-bottom: 12px;
+  justify-content: flex-end;
 }
 
-.wave-title {
-  font-size: 13px;
+.text-success {
+  color: var(--accent-success);
   font-weight: 600;
-  color: #303133;
 }
 
-.record-actions {
-  margin-top: 10px;
+.text-warning {
+  color: var(--accent-warning);
+  font-weight: 600;
+}
+
+.log-pagination {
+  margin-top: 24px;
   display: flex;
-  align-items: center;
-  gap: 12px;
+  justify-content: flex-end;
 }
 </style>

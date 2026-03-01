@@ -1,199 +1,215 @@
 <template>
-  <el-container class="dashboard-container" style="height: 100vh">
-    <el-header height="60px">
-      <div class="header">
-        <div class="title">声纹门禁系统 · 智能监控中心</div>
+  <div class="dashboard-container">
+    <!-- Grok-style Navigation Bar -->
+    <nav class="grok-nav">
+      <div class="nav-left">
+        <div class="nav-logo">
+          <span class="logo-symbol">///</span>
+          <span class="logo-text">VOICE ACCESS</span>
+        </div>
       </div>
-    </el-header>
-    <el-main class="dashboard-main">
-      <el-scrollbar style="height: 100%">
-        <div class="dashboard-content">
-          <div class="dashboard-hero">
-            <div class="hero-text">
-              <div class="hero-title">智能安防仪表盘</div>
-              <div class="hero-subtitle">
-                实时监控 AI 交互、意图识别与系统健康状态
+      
+      <div class="nav-center">
+        <button 
+          v-for="tab in tabs" 
+          :key="tab.key"
+          class="nav-item" 
+          :class="{ active: activeTab === tab.key }"
+          @click="handleNavChange(tab.key)"
+        >
+          {{ tab.label }}
+        </button>
+      </div>
+
+      <div class="nav-right">
+        <el-button class="grok-btn-action" @click="refreshAll" :loading="loading">
+          REFRESH
+        </el-button>
+        <el-button class="grok-btn-ghost" @click="handleLogout">
+          LOGOUT
+        </el-button>
+      </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <div class="dashboard-main">
+      <div class="content-wrapper">
+        
+        <!-- Overview Tab -->
+        <div v-show="activeTab === 'overview'" class="tab-content fade-in">
+            <div class="overview-grid">
+              <!-- 1. Core Metrics Cards -->
+              <div class="stat-cards">
+                <el-card v-for="card in summaryCards" :key="card.title" shadow="hover" class="stat-card">
+                  <div class="stat-value">{{ card.value }}</div>
+                  <div class="stat-title">{{ card.title }}</div>
+                  <div class="stat-desc" v-if="card.desc">{{ card.desc }}</div>
+                </el-card>
               </div>
-            </div>
-            <div class="hero-actions">
-              <el-button type="primary" @click="refreshAll" :loading="loading">
-                刷新数据
-              </el-button>
-              <el-button plain @click="handleLogout">退出登录</el-button>
-            </div>
-          </div>
-          <el-tabs
-            v-model="activeTab"
-            class="apple-tabs"
-            @tab-change="handleTabChange"
-          >
-            <el-tab-pane label="智能概览" name="overview">
-               <!-- 新的概览内容，直接内联实现，移除 AdminOverviewTab 组件引用以避免文件缺失错误 -->
-               <div class="overview-grid">
-                  <!-- 1. 核心指标卡片 -->
-                  <div class="stat-cards">
-                    <el-card v-for="card in summaryCards" :key="card.title" shadow="hover" class="stat-card">
-                      <div class="stat-value">{{ card.value }}</div>
-                      <div class="stat-title">{{ card.title }}</div>
-                      <div class="stat-desc" v-if="card.desc">{{ card.desc }}</div>
-                    </el-card>
-                  </div>
 
-                  <!-- 2. 图表区域 -->
-                  <el-row :gutter="20" style="margin-top: 20px;">
-                    <el-col :span="12">
-                      <el-card shadow="hover" header="AI 意图分布">
-                        <div ref="pieChartRef" style="height: 300px;"></div>
-                      </el-card>
-                    </el-col>
-                    <el-col :span="12">
-                       <el-card shadow="hover" header="决策来源分析 (Edge vs Cloud)">
-                         <div ref="sourceChartRef" style="height: 300px;"></div>
-                       </el-card>
-                    </el-col>
-                  </el-row>
-                  
-                  <el-row :gutter="20" style="margin-top: 20px;">
-                    <el-col :span="24">
-                      <el-card shadow="hover" header="每日 AI 交互趋势">
-                        <div ref="lineChartRef" style="height: 350px;"></div>
-                      </el-card>
-                    </el-col>
-                  </el-row>
+              <!-- 2. Charts Area -->
+              <div class="charts-grid">
+                <div class="chart-col">
+                  <el-card shadow="hover" header="AI INTENT DISTRIBUTION">
+                    <div ref="pieChartRef" style="height: 300px;"></div>
+                  </el-card>
+                </div>
+                <div class="chart-col">
+                   <el-card shadow="hover" header="DECISION SOURCE (EDGE vs CLOUD)">
+                     <div ref="sourceChartRef" style="height: 300px;"></div>
+                   </el-card>
+                </div>
+              </div>
+              
+              <div class="chart-row">
+                <el-card shadow="hover" header="DAILY AI INTERACTIONS">
+                  <div ref="lineChartRef" style="height: 350px;"></div>
+                </el-card>
+              </div>
 
-                  <el-row :gutter="20" style="margin-top: 20px;">
-                     <el-col :span="24">
-                        <el-card shadow="hover" header="系统延迟热力图 (最近 50 次交互)">
-                           <div ref="latencyChartRef" style="height: 300px;"></div>
-                        </el-card>
-                     </el-col>
-                  </el-row>
-               </div>
-            </el-tab-pane>
-            <el-tab-pane label="验证日志" name="logs">
-              <AdminLogsTab
-                :logs="logs"
-                :log-total="logTotal"
-                :log-page="logPage"
-                :log-page-size="logPageSize"
-                :log-table-height="logTableHeight"
-                :log-table-wrap-ref="setLogTableWrapRef"
-                :log-filters="logFilters"
-                :format-date-time="formatDateTime"
-                :on-log-search="handleLogSearch"
-                :on-log-reset="handleLogReset"
-                :on-delete-selected-logs="handleDeleteSelectedLogs"
-                :on-log-selection-change="handleLogSelectionChange"
-                :on-log-page-change="handleLogPageChange"
-              />
-            </el-tab-pane>
-            <el-tab-pane label="用户管理" name="users">
-              <AdminUsersTab
-                :users="users"
-                :users-total="usersTotal"
-                :users-page="usersPage"
-                :users-page-size="usersPageSize"
-                :users-loading="usersLoading"
-                :user-filters="userFilters"
-                :selected-user-ids="selectedUserIds"
-                :format-date-time="formatDateTime"
-                :on-user-refresh="handleUserRefresh"
-                :on-create-user="openCreateUser"
-                :on-user-search="handleUserSearch"
-                :on-user-reset="handleUserReset"
-                :on-batch-toggle="handleBatchToggle"
-                :on-batch-clear-voiceprint="handleBatchClearVoiceprint"
-                :on-batch-reset-password="openBatchResetPassword"
-                :on-batch-delete="handleBatchDelete"
-                :on-user-selection-change="handleUserSelectionChange"
-                :on-user-page-change="handleUserPageChange"
-                :on-edit-user="openEditUser"
-                :on-reset-password="openResetPassword"
-                :on-reset-voiceprint="handleResetVoiceprint"
-                :on-delete-user="handleDeleteUser"
-              />
-            </el-tab-pane>
-            <el-tab-pane label="模型评估" name="model">
-              <AdminModelTab
-                :model-metrics="modelMetrics"
-                :model-metrics-model="modelMetricsModel"
-                :model-current="modelCurrent"
-                :model-evaluating="modelEvaluating"
-                :model-metrics-loading="modelMetricsLoading"
-                :model-metrics-error="modelMetricsError"
-                :score-norm-mode="''"
-                :score-norm-available="!!modelMetricsNorm"
-                :eval-norm-method="evalNormMethod"
-                :roc-derived="rocDerived"
-                :format-metric="formatMetric"
-                :format-percent="formatPercent"
-                :roc-chart-ref="setRocChartRef"
-                :model-switching="modelSwitching"
-                :model-list="modelList"
-                :model-target="modelTarget"
-                :active-eval="activeEval"
-                :active-eval-has-data="activeEvalHasData"
-                :active-eval-key="activeEvalKey"
-                :eval-items="evalItems"
-                :eval-detail-chart-ref="setEvalDetailChartRef"
-                :set-eval-thumb-ref="setEvalThumbRef"
-                :has-eval-data="hasEvalData"
-                :on-load-model-metrics="loadModelMetrics"
-                :on-model-evaluate="handleModelEvaluate"
-                :on-load-model-list="loadModelList"
-                :on-model-target-change="handleModelTargetChange"
-                :on-model-switch="handleModelSwitch"
-                :on-eval-norm-method-change="handleEvalNormMethodChange"
-                :on-eval-collapse="handleEvalCollapse"
-                :on-eval-card-click="handleEvalCardClick"
-                :tsne-image-url="tsneImageUrl"
-              />
-            </el-tab-pane>
-            <el-tab-pane label="系统设置" name="settings">
-              <AdminSettingsTab
-                :admin-access-logs="adminAccessLogs"
-                :admin-access-logs-loading="adminAccessLogsLoading"
-                :format-date-time="formatDateTime"
-                :threshold="threshold"
-                :threshold-draft="thresholdDraft"
-                :saving-threshold="savingThreshold"
-                :maintenance-logs-loading="maintenanceLogsLoading"
-                :maintenance-models-loading="maintenanceModelsLoading"
-                :maintenance-cache-loading="maintenanceCacheLoading"
-                :maintenance-logs-result="maintenanceLogsResult"
-                :maintenance-models-result="maintenanceModelsResult"
-                :maintenance-cache-result="maintenanceCacheResult"
-                :on-load-admin-access-logs="loadAdminAccessLogs"
-                :on-threshold-draft-change="handleThresholdDraftChange"
-                :on-save-threshold="handleSaveThreshold"
-                :on-clean-verify-logs="handleCleanVerifyLogs"
-                :on-check-models="handleCheckModels"
-                :on-clean-cache="handleCleanCache"
-              />
-            </el-tab-pane>
-            <el-tab-pane label="管理员列表" name="admins">
-              <AdminAdminsTab
-                :admin-list-unlocked="adminListUnlocked"
-                :admin-filters="adminFilters"
-                :selected-admin-ids="selectedAdminIds"
-                :admin-list="adminList"
-                :admin-list-loading="adminListLoading"
-                :format-date-time="formatDateTime"
-                :on-admin-list-refresh="handleAdminListRefresh"
-                :on-create-admin="openCreateAdmin"
-                :on-admin-search="handleAdminSearch"
-                :on-admin-reset="handleAdminReset"
-                :on-admin-batch-toggle="handleAdminBatchToggle"
-                :on-admin-batch-reset-password="openAdminBatchResetPassword"
-                :on-admin-selection-change="handleAdminSelectionChange"
-                :on-edit-admin="openEditAdmin"
-                :on-reset-admin-password="openAdminResetPassword"
-                :on-admin-toggle="handleAdminToggle"
-              />
-            </el-tab-pane>
-          </el-tabs>
-          <el-dialog
-            v-model="userDialogVisible"
+              <div class="chart-row">
+                 <el-card shadow="hover" header="SYSTEM LATENCY HEATMAP (LAST 50)">
+                    <div ref="latencyChartRef" style="height: 300px;"></div>
+                 </el-card>
+              </div>
+           </div>
+        </div>
+
+        <!-- Logs Tab -->
+        <div v-show="activeTab === 'logs'" class="tab-content fade-in">
+          <AdminLogsTab
+            :logs="logs"
+            :log-total="logTotal"
+            :log-page="logPage"
+            :log-page-size="logPageSize"
+            :log-table-height="logTableHeight"
+            :log-table-wrap-ref="setLogTableWrapRef"
+            :log-filters="logFilters"
+            :format-date-time="formatDateTime"
+            :on-log-search="handleLogSearch"
+            :on-log-reset="handleLogReset"
+            :on-delete-selected-logs="handleDeleteSelectedLogs"
+            :on-log-selection-change="handleLogSelectionChange"
+            :on-log-page-change="handleLogPageChange"
+          />
+        </div>
+
+        <!-- Users Tab -->
+        <div v-show="activeTab === 'users'" class="tab-content fade-in">
+          <AdminUsersTab
+            :users="users"
+            :users-total="usersTotal"
+            :users-page="usersPage"
+            :users-page-size="usersPageSize"
+            :users-loading="usersLoading"
+            :user-filters="userFilters"
+            :selected-user-ids="selectedUserIds"
+            :format-date-time="formatDateTime"
+            :on-user-refresh="handleUserRefresh"
+            :on-create-user="openCreateUser"
+            :on-user-search="handleUserSearch"
+            :on-user-reset="handleUserReset"
+            :on-batch-toggle="handleBatchToggle"
+            :on-batch-clear-voiceprint="handleBatchClearVoiceprint"
+            :on-batch-reset-password="openBatchResetPassword"
+            :on-batch-delete="handleBatchDelete"
+            :on-user-selection-change="handleUserSelectionChange"
+            :on-user-page-change="handleUserPageChange"
+            :on-edit-user="openEditUser"
+            :on-reset-password="openResetPassword"
+            :on-reset-voiceprint="handleResetVoiceprint"
+            :on-delete-user="handleDeleteUser"
+          />
+        </div>
+
+        <!-- Model Tab -->
+        <div v-show="activeTab === 'model'" class="tab-content fade-in">
+          <AdminModelTab
+            :model-metrics="modelMetrics"
+            :model-metrics-model="modelMetricsModel"
+            :model-current="modelCurrent"
+            :model-evaluating="modelEvaluating"
+            :model-metrics-loading="modelMetricsLoading"
+            :model-metrics-error="modelMetricsError"
+            :eval-norm-method="evalNormMethod"
+            :roc-derived="rocDerived"
+            :format-metric="formatMetric"
+            :format-percent="formatPercent"
+            :roc-chart-ref="setRocChartRef"
+            :model-switching="modelSwitching"
+            :model-list="modelList"
+            :model-target="modelTarget"
+            :active-eval="activeEval"
+            :active-eval-has-data="activeEvalHasData"
+            :active-eval-key="activeEvalKey"
+            :eval-items="evalItems"
+            :eval-detail-chart-ref="setEvalDetailChartRef"
+            :set-eval-thumb-ref="setEvalThumbRef"
+            :has-eval-data="hasEvalData"
+            :on-load-model-metrics="loadModelMetrics"
+            :on-model-evaluate="handleModelEvaluate"
+            :on-load-model-list="loadModelList"
+            :on-model-target-change="handleModelTargetChange"
+            :on-model-switch="handleModelSwitch"
+            :on-eval-norm-method-change="handleEvalNormMethodChange"
+            :on-eval-collapse="handleEvalCollapse"
+            :on-eval-card-click="handleEvalCardClick"
+            :tsne-image-url="tsneImageUrl"
+          />
+        </div>
+
+        <!-- Settings Tab -->
+        <div v-show="activeTab === 'settings'" class="tab-content fade-in">
+          <AdminSettingsTab
+            :admin-access-logs="adminAccessLogs"
+            :admin-access-logs-loading="adminAccessLogsLoading"
+            :format-date-time="formatDateTime"
+            :threshold="threshold"
+            :threshold-draft="thresholdDraft"
+            :saving-threshold="savingThreshold"
+            :maintenance-logs-loading="maintenanceLogsLoading"
+            :maintenance-models-loading="maintenanceModelsLoading"
+            :maintenance-cache-loading="maintenanceCacheLoading"
+            :maintenance-logs-result="maintenanceLogsResult"
+            :maintenance-models-result="maintenanceModelsResult"
+            :maintenance-cache-result="maintenanceCacheResult"
+            :on-load-admin-access-logs="loadAdminAccessLogs"
+            :on-threshold-draft-change="handleThresholdDraftChange"
+            :on-save-threshold="handleSaveThreshold"
+            :on-clean-verify-logs="handleCleanVerifyLogs"
+            :on-check-models="handleCheckModels"
+            :on-clean-cache="handleCleanCache"
+          />
+        </div>
+
+        <!-- Admins Tab -->
+        <div v-show="activeTab === 'admins'" class="tab-content fade-in">
+          <AdminAdminsTab
+            :admin-list-unlocked="adminListUnlocked"
+            :admin-filters="adminFilters"
+            :selected-admin-ids="selectedAdminIds"
+            :admin-list="adminList"
+            :admin-list-loading="adminListLoading"
+            :format-date-time="formatDateTime"
+            :on-admin-list-refresh="handleAdminListRefresh"
+            :on-create-admin="openCreateAdmin"
+            :on-admin-search="handleAdminSearch"
+            :on-admin-reset="handleAdminReset"
+            :on-admin-batch-toggle="handleAdminBatchToggle"
+            :on-admin-batch-reset-password="handleAdminBatchResetPassword"
+            :on-admin-selection-change="handleAdminSelectionChange"
+            :on-edit-admin="onEditAdmin"
+            :on-reset-admin-password="onResetAdminPassword"
+            :on-admin-toggle="handleAdminToggle"
+          />
+        </div>
+        
+      </div>
+    </div>
+
+    <!-- Dialogs (Keep existing) -->
+    <el-dialog
+      v-model="userDialogVisible"
             :title="userDialogTitle"
             width="420px"
           >
@@ -416,10 +432,7 @@
               </el-button>
             </template>
           </el-dialog>
-        </div>
-      </el-scrollbar>
-    </el-main>
-  </el-container>
+  </div>
 </template>
 
 <script setup>
@@ -620,6 +633,20 @@ const threshold = ref(0.7);
 const thresholdDraft = ref(0.7);
 const savingThreshold = ref(false);
 const activeTab = ref("overview");
+
+const tabs = [
+  { key: "overview", label: "OVERVIEW" },
+  { key: "logs", label: "LOGS" },
+  { key: "users", label: "USERS" },
+  { key: "model", label: "MODEL" },
+  { key: "settings", label: "SETTINGS" },
+  { key: "admins", label: "ADMINS" }
+];
+
+function handleNavChange(key) {
+  activeTab.value = key;
+  handleTabChange();
+}
 
 // const lineChartRef = ref(null); // Removed redundant declaration
 // const pieChartRef = ref(null); // Removed redundant declaration
@@ -889,19 +916,22 @@ function updateCharts() {
   // 1. Line Chart: Daily Trends (Total vs AI Interactions)
   if (lineChart) {
     lineChart.setOption({
+      backgroundColor: 'transparent',
       tooltip: { trigger: "axis" },
-      legend: { data: ["总交互次数", "AI 智能交互"] },
+      legend: { data: ["总交互次数", "AI 智能交互"], bottom: 0, textStyle: { color: '#94a3b8' } },
       grid: { left: 40, right: 40, top: 40, bottom: 40 },
       xAxis: {
         type: "category",
         data: xAxis,
         boundaryGap: true,
-        axisLine: { lineStyle: { color: "#dcdfe6" } }
+        axisLine: { lineStyle: { color: "#334155" } },
+        axisLabel: { color: "#94a3b8" }
       },
       yAxis: {
         type: "value",
         minInterval: 1,
-        splitLine: { lineStyle: { type: "dashed", color: "#ebeef5" } }
+        splitLine: { lineStyle: { type: "dashed", color: "#1e293b" } },
+        axisLabel: { color: "#94a3b8" }
       },
       series: [
         {
@@ -911,14 +941,14 @@ function updateCharts() {
           symbol: "circle",
           symbolSize: 8,
           data: totalSeries,
-          itemStyle: { color: "#409EFF" },
+          itemStyle: { color: "#3b82f6" },
           areaStyle: {
             color: {
               type: "linear",
               x: 0, y: 0, x2: 0, y2: 1,
               colorStops: [
-                { offset: 0, color: "rgba(64,158,255,0.3)" },
-                { offset: 1, color: "rgba(64,158,255,0.05)" }
+                { offset: 0, color: "rgba(59, 130, 246, 0.3)" },
+                { offset: 1, color: "rgba(59, 130, 246, 0.05)" }
               ]
             }
           }
@@ -929,7 +959,7 @@ function updateCharts() {
           barMaxWidth: 30,
           data: aiSeries,
           itemStyle: { 
-            color: "#67C23A",
+            color: "#10b981",
             borderRadius: [4, 4, 0, 0]
           }
         }
@@ -939,14 +969,17 @@ function updateCharts() {
 
   // 2. Pie Chart: Intent Distribution
   if (pieChart) {
-    const intentData = (stats.value.intent_distribution || []).map(item => ({
-      name: formatIntentLabel(item.intent),
-      value: item.count
-    }));
+    const intentData = (stats.value.intent_distribution || [])
+      .filter(item => item.intent !== "verify_only")
+      .map(item => ({
+        name: formatIntentLabel(item.intent),
+        value: item.count
+      }));
     
     pieChart.setOption({
+      backgroundColor: 'transparent',
       tooltip: { trigger: "item" },
-      legend: { bottom: 0 },
+      legend: { bottom: 0, textStyle: { color: '#94a3b8' } },
       series: [
         {
           name: "意图分布",
@@ -955,11 +988,11 @@ function updateCharts() {
           center: ["50%", "45%"],
           itemStyle: {
             borderRadius: 5,
-            borderColor: "#fff",
+            borderColor: "#0f172a",
             borderWidth: 2
           },
-          data: intentData,
-          label: { show: false }
+          label: { color: '#94a3b8' },
+          data: intentData
         }
       ]
     });
@@ -973,8 +1006,9 @@ function updateCharts() {
     }));
 
     sourceChart.setOption({
+      backgroundColor: 'transparent',
       tooltip: { trigger: "item" },
-      legend: { bottom: 0 },
+      legend: { bottom: 0, textStyle: { color: '#94a3b8' } },
       series: [
         {
           name: "决策来源",
@@ -985,8 +1019,11 @@ function updateCharts() {
           itemStyle: {
             shadowBlur: 10,
             shadowOffsetX: 0,
-            shadowColor: 'rgba(0, 0, 0, 0.5)'
-          }
+            shadowColor: 'rgba(0, 0, 0, 0.5)',
+            borderColor: "#0f172a",
+            borderWidth: 1
+          },
+          label: { color: '#94a3b8' }
         }
       ]
     });
@@ -999,6 +1036,7 @@ function updateCharts() {
     const yLatency = latencyData.map(d => d.latency_ms);
     
     latencyChart.setOption({
+      backgroundColor: 'transparent',
       tooltip: {
         trigger: 'axis',
         formatter: function (params) {
@@ -1014,18 +1052,22 @@ function updateCharts() {
       xAxis: {
         type: 'category',
         data: xTime,
-        boundaryGap: false
+        boundaryGap: false,
+        axisLine: { lineStyle: { color: "#334155" } },
+        axisLabel: { color: "#94a3b8" }
       },
       yAxis: {
         type: 'value',
         name: '耗时 (ms)',
-        splitLine: { lineStyle: { type: 'dashed' } }
+        nameTextStyle: { color: '#94a3b8' },
+        splitLine: { lineStyle: { type: 'dashed', color: "#1e293b" } },
+        axisLabel: { color: "#94a3b8" }
       },
       visualMap: {
         show: false,
         min: 0,
         max: 3000,
-        inRange: { color: ['#67C23A', '#E6A23C', '#F56C6C'] }
+        inRange: { color: ['#10b981', '#f59e0b', '#ef4444'] }
       },
       series: [{
         type: 'line',
@@ -1044,9 +1086,10 @@ function formatIntentLabel(key) {
     'open_door': '开门指令',
     'turn_on_light': '开灯指令',
     'query_knowledge': '知识问答',
-    'verify_only': '纯声纹验证',
+    'verify_only': '门禁验证（传统接口）',
     'chat': '闲聊',
-    'agent_action': '智能体动作'
+    'agent_action': '智能体动作',
+    'command': '本地指令'
   };
   return map[key] || key;
 }
@@ -1074,17 +1117,18 @@ function setPieChartRef(el) { pieChartRef.value = el; }
 // source/latency refs are bound directly in template via ref="sourceChartRef"
 
 function initCharts() {
+  const theme = 'dark';
   if (lineChartRef.value && !lineChart) {
-    lineChart = echarts.init(lineChartRef.value);
+    lineChart = echarts.init(lineChartRef.value, theme, { renderer: 'svg' });
   }
   if (pieChartRef.value && !pieChart) {
-    pieChart = echarts.init(pieChartRef.value);
+    pieChart = echarts.init(pieChartRef.value, theme, { renderer: 'svg' });
   }
   if (sourceChartRef.value && !sourceChart) {
-    sourceChart = echarts.init(sourceChartRef.value);
+    sourceChart = echarts.init(sourceChartRef.value, theme, { renderer: 'svg' });
   }
   if (latencyChartRef.value && !latencyChart) {
-    latencyChart = echarts.init(latencyChartRef.value);
+    latencyChart = echarts.init(latencyChartRef.value, theme, { renderer: 'svg' });
   }
 }
 
@@ -1227,42 +1271,83 @@ function hasEvalData(key) {
 
 function getEvalChartOption(key, compact = false) {
   const metrics = modelMetrics.value;
+  // xAI Style Constants
+  const xAI = {
+    bg: compact ? 'transparent' : '#050505', // Deep black
+    grid: '#1a1a1a', // Very subtle grid
+    textMain: '#e5e7eb', // Cool white
+    textSub: '#6b7280', // Cool gray
+    accent: '#00FFAA', // Cyan/Green glow
+    accentGlow: 'rgba(0, 255, 170, 0.25)',
+    secondary: '#7B5EFF', // Purple glow
+    secondaryGlow: 'rgba(123, 94, 255, 0.25)',
+    font: 'Inter, system-ui, sans-serif'
+  };
+
   if (key === "det") {
     const fpr = metrics.det?.fpr || [];
     const fnr = metrics.det?.fnr || [];
     const data = fpr.map((x, idx) => [x, fnr[idx] ?? 0]);
     return {
-      grid: compact ? { left: 6, right: 6, top: 6, bottom: 6 } : { left: 58, right: 28, top: 34, bottom: 52 },
+      backgroundColor: xAI.bg,
+      grid: compact ? { left: 0, right: 0, top: 0, bottom: 0 } : { left: 60, right: 40, top: 40, bottom: 60 },
+      tooltip: {
+         trigger: 'axis',
+         backgroundColor: 'rgba(0,0,0,0.8)',
+         borderColor: '#333',
+         textStyle: { color: xAI.textMain }
+      },
       xAxis: {
-        type: "value",
-        name: compact ? "" : "FPR",
-        min: 0,
+        type: "log",
+        name: compact ? "" : "FPR (False Positive Rate)",
+        min: 1e-4,
         max: 1,
-        axisLabel: compact ? { show: false } : { formatter: (v) => `${Math.round(v * 100)}%`, margin: 10 },
+        logBase: 10,
+        axisLabel: compact ? { show: false } : { 
+            color: xAI.textSub, 
+            formatter: (v) => v < 0.01 ? v.toExponential(0) : `${v*100}%` 
+        },
         nameLocation: "middle",
-        nameGap: 30,
-        axisLine: { lineStyle: { color: "#e5e7eb" } },
-        axisTick: { show: !compact }
+        nameGap: 35,
+        nameTextStyle: { color: xAI.textSub },
+        axisLine: { show: false },
+        splitLine: { show: !compact, lineStyle: { color: xAI.grid } }
       },
       yAxis: {
-        type: "value",
-        name: compact ? "" : "FNR",
-        min: 0,
+        type: "log",
+        name: compact ? "" : "FNR (False Negative Rate)",
+        min: 1e-4,
         max: 1,
-        axisLabel: compact ? { show: false } : { formatter: (v) => `${Math.round(v * 100)}%`, margin: 10 },
+        logBase: 10,
+        axisLabel: compact ? { show: false } : { 
+            color: xAI.textSub,
+            formatter: (v) => v < 0.01 ? v.toExponential(0) : `${v*100}%`
+        },
         nameLocation: "middle",
-        nameGap: 38,
+        nameGap: 45,
+        nameTextStyle: { color: xAI.textSub },
         axisLine: { show: false },
-        axisTick: { show: !compact },
-        splitLine: { lineStyle: { color: "#f3f4f6" } }
+        splitLine: { show: !compact, lineStyle: { color: xAI.grid } }
       },
       series: [
         {
           type: "line",
           smooth: true,
           symbol: "none",
-          lineStyle: { color: "#3B82F6", width: 2 },
+          lineStyle: { 
+             color: xAI.accent, 
+             width: compact ? 1.5 : 2.5,
+             shadowColor: xAI.accent,
+             shadowBlur: compact ? 0 : 10
+          },
           data
+        },
+        // Reference line
+        {
+            type: "line",
+            data: [[1e-4, 1e-4], [1, 1]],
+            lineStyle: { type: 'dashed', color: '#333', width: 1 },
+            symbol: 'none'
         }
       ]
     };
@@ -1270,37 +1355,62 @@ function getEvalChartOption(key, compact = false) {
   if (key === "mindcf") {
     const thresholds = metrics.mindcf_data?.thresholds || [];
     const dcf = metrics.mindcf_data?.dcf || [];
-    const data = thresholds
-      .map((x, idx) => [x, dcf[idx] ?? 0])
-      .filter((item) => Number.isFinite(item[0]) && Number.isFinite(item[1]))
-      .sort((a, b) => a[0] - b[0]);
+    // Downsample for visual clarity if too many points
+    const step = Math.max(1, Math.floor(thresholds.length / 200));
+    const data = [];
+    for(let i=0; i<thresholds.length; i+=step) {
+        if(Number.isFinite(thresholds[i]) && Number.isFinite(dcf[i])) {
+            data.push([thresholds[i], dcf[i]]);
+        }
+    }
+    
     return {
-      grid: compact ? { left: 6, right: 6, top: 6, bottom: 6 } : { left: 58, right: 28, top: 34, bottom: 52 },
+      backgroundColor: xAI.bg,
+      grid: compact ? { left: 0, right: 0, top: 0, bottom: 0 } : { left: 60, right: 40, top: 40, bottom: 60 },
+      tooltip: {
+         trigger: 'axis',
+         backgroundColor: 'rgba(0,0,0,0.8)',
+         borderColor: '#333',
+         textStyle: { color: xAI.textMain }
+      },
       xAxis: {
         type: "value",
-        name: compact ? "" : "阈值",
-        axisLabel: compact ? { show: false } : { formatter: (v) => v.toFixed(2), margin: 10 },
+        name: compact ? "" : "Threshold",
+        axisLabel: compact ? { show: false } : { color: xAI.textSub },
         nameLocation: "middle",
         nameGap: 30,
-        axisLine: { lineStyle: { color: "#e5e7eb" } },
-        axisTick: { show: !compact }
+        nameTextStyle: { color: xAI.textSub },
+        axisLine: { show: false },
+        splitLine: { show: false }
       },
       yAxis: {
         type: "value",
-        name: compact ? "" : "DCF",
-        axisLabel: compact ? { show: false } : { formatter: (v) => v.toFixed(2), margin: 10 },
+        name: compact ? "" : "minDCF",
+        axisLabel: compact ? { show: false } : { color: xAI.textSub },
         nameLocation: "middle",
-        nameGap: 38,
+        nameGap: 40,
+        nameTextStyle: { color: xAI.textSub },
         axisLine: { show: false },
-        axisTick: { show: !compact },
-        splitLine: { lineStyle: { color: "#f3f4f6" } }
+        splitLine: { show: !compact, lineStyle: { color: xAI.grid } }
       },
       series: [
         {
           type: "line",
           smooth: true,
           symbol: "none",
-          lineStyle: { color: "#10B981", width: 2 },
+          lineStyle: { 
+              color: xAI.secondary, 
+              width: compact ? 1.5 : 2.5,
+              shadowColor: xAI.secondary,
+              shadowBlur: compact ? 0 : 8
+          },
+          areaStyle: compact ? null : {
+              color: {
+                  type: 'linear',
+                  x: 0, y: 0, x2: 0, y2: 1,
+                  colorStops: [{offset: 0, color: xAI.secondaryGlow}, {offset: 1, color: 'transparent'}]
+              }
+          },
           data
         }
       ]
@@ -1311,41 +1421,57 @@ function getEvalChartOption(key, compact = false) {
     const same = metrics.score_dist?.same || [];
     const diff = metrics.score_dist?.diff || [];
     const centers = bins.length > 1 ? bins.slice(0, -1).map((b, i) => (b + bins[i + 1]) / 2) : [];
-    const labelInterval = centers.length > 12 ? Math.max(0, Math.ceil(centers.length / 10) - 1) : 0;
+    
     return {
-      grid: compact ? { left: 6, right: 6, top: 6, bottom: 6 } : { left: 58, right: 28, top: 34, bottom: 60 },
+      backgroundColor: xAI.bg,
+      grid: compact ? { left: 0, right: 0, top: 0, bottom: 0 } : { left: 60, right: 40, top: 40, bottom: 60 },
+      legend: compact ? { show: false } : { top: 10, textStyle: { color: xAI.textSub } },
+      tooltip: {
+         trigger: 'axis',
+         backgroundColor: 'rgba(0,0,0,0.8)',
+         borderColor: '#333',
+         textStyle: { color: xAI.textMain }
+      },
       xAxis: {
         type: "category",
-        name: compact ? "" : "得分",
+        name: compact ? "" : "Score",
         data: centers.map((v) => v.toFixed(2)),
-        axisLabel: compact ? { show: false } : { rotate: 30, interval: labelInterval, margin: 12 },
+        axisLabel: compact ? { show: false } : { 
+            color: xAI.textSub,
+            interval: 'auto'
+        },
         nameLocation: "middle",
-        nameGap: 40,
-        axisLine: { lineStyle: { color: "#e5e7eb" } },
-        axisTick: { show: !compact }
+        nameGap: 35,
+        nameTextStyle: { color: xAI.textSub },
+        axisLine: { show: false },
+        splitLine: { show: false }
       },
       yAxis: {
         type: "value",
-        name: compact ? "" : "数量",
-        axisLabel: compact ? { show: false } : { margin: 10 },
+        name: compact ? "" : "Count",
+        axisLabel: compact ? { show: false } : { show: false },
         nameLocation: "middle",
-        nameGap: 38,
+        nameGap: 30,
         axisLine: { show: false },
-        splitLine: { lineStyle: { color: "#f3f4f6" } }
+        splitLine: { show: !compact, lineStyle: { color: xAI.grid } }
       },
       series: [
         {
-          type: "bar",
-          stack: "dist",
-          barMaxWidth: compact ? 6 : 16,
-          itemStyle: { color: "rgba(59, 130, 246, 0.6)" },
+          name: 'Target (Same)',
+          type: "line",
+          smooth: true,
+          symbol: 'none',
+          lineStyle: { color: xAI.accent, width: 2 },
+          areaStyle: { opacity: 0.3, color: xAI.accent },
           data: same
         },
         {
-          type: "bar",
-          stack: "dist",
-          barMaxWidth: compact ? 6 : 16,
-          itemStyle: { color: "rgba(244, 114, 182, 0.6)" },
+          name: 'Non-Target (Diff)',
+          type: "line",
+          smooth: true,
+          symbol: 'none',
+          lineStyle: { color: xAI.secondary, width: 2 },
+          areaStyle: { opacity: 0.3, color: xAI.secondary },
           data: diff
         }
       ]
@@ -1354,48 +1480,46 @@ function getEvalChartOption(key, compact = false) {
   if (key === "calib") {
     const bins = metrics.calibration?.bins || [];
     const acc = metrics.calibration?.accuracy || [];
-    const conf = metrics.calibration?.confidence || [];
     const centers = bins.length > 1 ? bins.slice(0, -1).map((b, i) => (b + bins[i + 1]) / 2) : [];
     return {
-      grid: compact ? { left: 6, right: 6, top: 6, bottom: 6 } : { left: 58, right: 28, top: 34, bottom: 52 },
+      backgroundColor: xAI.bg,
+      grid: compact ? { left: 0, right: 0, top: 0, bottom: 0 } : { left: 60, right: 40, top: 40, bottom: 60 },
       xAxis: {
         type: "value",
-        name: compact ? "" : "置信度",
+        name: compact ? "" : "Confidence",
         min: 0,
         max: 1,
-        axisLabel: compact ? { show: false } : { formatter: (v) => `${Math.round(v * 100)}%`, margin: 10 },
+        axisLabel: compact ? { show: false } : { color: xAI.textSub },
         nameLocation: "middle",
         nameGap: 30,
-        axisLine: { lineStyle: { color: "#e5e7eb" } },
-        axisTick: { show: !compact }
+        axisLine: { show: false },
+        splitLine: { show: false }
       },
       yAxis: {
         type: "value",
-        name: compact ? "" : "准确率",
+        name: compact ? "" : "Accuracy",
         min: 0,
         max: 1,
-        axisLabel: compact ? { show: false } : { formatter: (v) => `${Math.round(v * 100)}%`, margin: 10 },
+        axisLabel: compact ? { show: false } : { color: xAI.textSub },
         nameLocation: "middle",
-        nameGap: 38,
+        nameGap: 40,
         axisLine: { show: false },
-        splitLine: { lineStyle: { color: "#f3f4f6" } }
+        splitLine: { show: !compact, lineStyle: { color: xAI.grid } }
       },
       series: [
         {
           type: "line",
           symbol: "circle",
-          symbolSize: compact ? 2 : 6,
-          lineStyle: { color: "#6366F1" },
+          symbolSize: compact ? 0 : 6,
+          lineStyle: { color: xAI.textMain, width: 2 },
+          itemStyle: { color: xAI.textMain, borderColor: xAI.bg, borderWidth: 2 },
           data: centers.map((x, i) => [x, acc[i] ?? 0])
         },
         {
           type: "line",
           symbol: "none",
-          lineStyle: { color: "rgba(17, 24, 39, 0.35)", type: "dashed" },
-          data: [
-            [0, 0],
-            [1, 1]
-          ]
+          lineStyle: { color: '#333', type: "dashed" },
+          data: [[0, 0], [1, 1]]
         }
       ]
     };
@@ -2147,9 +2271,16 @@ function handleEvalCardClick(key) {
   if (key === "tsne") {
     loadTsneImage();
   }
+  // FIX: Ensure data is passed and chart is updated
   nextTick(() => {
-    handleResize();
-    updateEvalDetailChart();
+    // Reset detail chart first to ensure clean state
+    resetEvalDetailChart();
+    // Re-initialize
+    const el = evalDetailChartRef.value;
+    if (el) {
+       evalDetailChart = ensureChart(el, evalDetailChart);
+       updateEvalDetailChart();
+    }
   });
 }
 
@@ -2416,643 +2547,377 @@ onUnmounted(() => {
 </script>
 
 <style>
+/* Dashboard Container - The Void */
 .dashboard-container {
-  background: #f5f7fb;
-  background-image: radial-gradient(
-      1200px circle at 0% 0%,
-      rgba(64, 158, 255, 0.14),
-      transparent 50%
-    ),
-    radial-gradient(
-      1200px circle at 100% 0%,
-      rgba(103, 232, 169, 0.12),
-      transparent 50%
-    );
+  min-height: 100vh;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-body);
 }
 
-.dashboard-main {
-  padding: 16px 24px 32px;
-  box-sizing: border-box;
-}
-
-.dashboard-container :deep(.el-card) {
-  border: 1px solid rgba(15, 23, 42, 0.06);
-  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.08);
-  backdrop-filter: blur(10px);
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-}
-
-.dashboard-container :deep(.el-card:hover) {
-  transform: translateY(-2px);
-  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.14);
-  border-color: rgba(64, 158, 255, 0.18);
-}
-
-.header {
+/* Grok Navigation Bar */
+.grok-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 64px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 24px;
-  font-weight: 600;
-  color: #111827;
+  padding: 0 32px;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border-color);
+  z-index: 1000;
 }
 
-/* === Overview Grid Layout === */
+.nav-left {
+  display: flex;
+  align-items: center;
+  width: 200px;
+}
+
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 18px;
+  letter-spacing: 0.05em;
+  color: var(--text-primary);
+}
+
+.logo-symbol {
+  font-size: 20px;
+  color: var(--text-primary);
+}
+
+.nav-center {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav-item {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 500;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border-radius: 4px;
+  letter-spacing: 0.05em;
+}
+
+.nav-item:hover {
+  color: var(--text-primary);
+  background: var(--bg-surface-hover);
+}
+
+.nav-item.active {
+  color: var(--text-primary);
+  background: var(--bg-surface);
+  box-shadow: 0 0 0 1px var(--border-color);
+}
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 200px;
+  justify-content: flex-end;
+}
+
+.grok-btn-action {
+  background: var(--text-primary) !important;
+  color: var(--bg-primary) !important;
+  border: none !important;
+  font-family: var(--font-mono) !important;
+  font-weight: 600 !important;
+  font-size: 12px !important;
+  padding: 8px 16px !important;
+  height: 32px !important;
+  border-radius: 4px !important;
+  letter-spacing: 0.05em !important;
+}
+
+.grok-btn-action:hover {
+  background: #e4e4e7 !important;
+  transform: translateY(-1px);
+}
+
+.grok-btn-ghost {
+  background: transparent !important;
+  color: var(--text-secondary) !important;
+  border: 1px solid var(--border-color) !important;
+  font-family: var(--font-mono) !important;
+  font-weight: 500 !important;
+  font-size: 12px !important;
+  padding: 8px 16px !important;
+  height: 32px !important;
+  border-radius: 4px !important;
+}
+
+.grok-btn-ghost:hover {
+  border-color: var(--text-primary) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Main Content */
+.dashboard-main {
+  padding-top: 88px; /* 64px nav + 24px padding */
+  padding-left: 32px;
+  padding-right: 32px;
+  padding-bottom: 48px;
+  min-height: 100vh;
+}
+
+.content-wrapper {
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+.fade-in {
+  animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Grid Layouts */
 .overview-grid {
-  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 }
 
 .stat-cards {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 20px;
-  margin-bottom: 24px;
+  gap: 16px;
 }
 
 .stat-card {
-  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  /* Styles handled by theme.css overrides for el-card */
 }
 
 .stat-value {
-  font-size: 28px;
+  font-family: var(--font-display);
+  font-size: 36px;
   font-weight: 600;
-  color: #303133;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+  line-height: 1.1;
   margin-bottom: 8px;
 }
 
 .stat-title {
-  font-size: 14px;
-  color: #909399;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .stat-desc {
-  font-size: 12px;
-  color: #c0c4cc;
+  font-size: 13px;
+  color: var(--text-tertiary);
   margin-top: 4px;
 }
 
-.dashboard-content {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 8px 0 40px;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.dashboard-hero {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 24px 28px;
-  border-radius: 24px;
-  background: rgba(255, 255, 255, 0.8);
-  border: 1px solid rgba(15, 23, 42, 0.08);
-  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.08);
-  backdrop-filter: blur(12px);
-}
-
-.hero-title {
-  font-size: 22px;
-  font-weight: 600;
-  color: #111827;
-}
-
-.hero-subtitle {
-  margin-top: 6px;
-  font-size: 13px;
-  color: #6b7280;
-}
-
-.hero-actions {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.apple-tabs :deep(.el-tabs__header) {
-  margin: 0 0 16px;
-}
-
-.apple-tabs :deep(.el-tabs__nav-wrap::after) {
-  height: 0;
-}
-
-.apple-tabs :deep(.el-tabs__nav) {
-  display: flex;
-  align-items: center;
-}
-
-.apple-tabs :deep(.el-tabs__item) {
-  height: 38px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  line-height: 1;
-  padding-top: 0;
-  padding-bottom: 0;
-  padding: 0 20px;
-  box-sizing: border-box;
-  margin-right: 10px;
-  border-radius: 20px;
-  color: #111827;
-  background: rgba(255, 255, 255, 0.85);
-  border: 1px solid rgba(15, 23, 42, 0.08);
-  font-weight: 500;
-  transition: all 0.2s ease;
-}
-
-.apple-tabs :deep(.el-tabs__item.is-active) {
-  color: #0f172a;
-  background: #ffffff;
-  border-color: rgba(15, 23, 42, 0.16);
-  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.12);
-}
-
-.apple-tabs :deep(.el-tabs__active-bar) {
-  height: 0;
-}
-
-.section-stack {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.placeholder-card {
-  padding: 16px 12px;
-  min-height: 200px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-}
-
-.placeholder-title {
-  font-size: 16px;
-  font-weight: 600;
-  color: #1f2937;
-}
-
-.placeholder-desc {
-  font-size: 13px;
-  color: #6b7280;
-}
-
-.settings-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-}
-
-.settings-title {
-  font-size: 15px;
-  font-weight: 600;
-  color: #1f2937;
-}
-
-.settings-form {
-  max-width: 520px;
-}
-
-.settings-meta {
-  margin-top: 8px;
-  font-size: 12px;
-  color: #9ca3af;
-}
-
-.settings-actions {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.maintenance-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.maintenance-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 12px;
-  border-radius: 10px;
-  background: rgba(15, 23, 42, 0.04);
-  font-size: 13px;
-  color: #374151;
-}
-
-.model-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-}
-
-.model-right-stack {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.metric-grid {
+.charts-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
 }
 
-.metric-card {
-  padding: 10px 12px;
-  border-radius: 12px;
-  background: rgba(15, 23, 42, 0.04);
+.chart-col {
   display: flex;
   flex-direction: column;
-  gap: 4px;
 }
 
-.metric-card-label {
-  font-size: 12px;
+.chart-row {
+  width: 100%;
+}
+
+/* Thumbnails Fix */
+/* Eval Tab Group (Button-like) */
+.eval-tab-group {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+  margin-bottom: 24px;
+}
+
+.eval-tab-btn {
+  padding: 8px 16px;
+  background: transparent;
+  border: 1px solid #333;
+  border-radius: 20px; /* Pill shape */
   color: #6b7280;
-}
-
-.metric-card-value {
-  font-size: 16px;
-  font-weight: 600;
-  color: #111827;
-}
-
-.metric-grid :deep(.el-statistic__number) {
-  font-weight: 600;
-}
-
-.model-metrics {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.metric-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  font-family: 'Inter', system-ui, sans-serif;
   font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
 }
 
-.metric-label {
-  color: #6b7280;
-}
-
-.metric-value {
-  color: #111827;
-  font-weight: 600;
-}
-
-.metric-hint {
-  margin-top: 12px;
-  padding: 10px 12px;
-  border-radius: 10px;
-  background: rgba(15, 23, 42, 0.04);
-  font-size: 12px;
-  color: #6b7280;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
+.eval-section-title {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 18px; /* 加大 */
+  font-weight: 700; /* 加粗 */
+  color: #e5e7eb;
+  letter-spacing: -0.02em;
+  margin-top: 32px;
+  margin-bottom: 16px;
 }
 
 .metric-hint-title {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 18px; /* 加大 */
+  font-weight: 700; /* 加粗 */
+  color: #e5e7eb;
+  letter-spacing: -0.02em;
+  margin-bottom: 16px;
+}
+
+.eval-tab-btn:hover {
+  border-color: #666;
+  color: #e5e7eb;
+}
+
+.eval-tab-btn.is-active {
+  background: #1a1a1a;
+  border-color: #00FFAA;
+  color: #00FFAA;
+  box-shadow: 0 0 10px rgba(0, 255, 170, 0.15);
+}
+
+/* Eval Detail Inline View */
+.eval-detail-inline {
+  background: #0A0A0A;
+  border: 1px solid #1a1a1a;
+  border-radius: 8px;
+  padding: 24px;
+  margin-top: 24px;
+}
+
+.eval-detail-header-inline {
+  margin-bottom: 24px;
+}
+
+.eval-detail-title-inline {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 18px;
   font-weight: 600;
-  color: #374151;
+  color: #e5e7eb;
+  margin-bottom: 4px;
 }
 
-.metric-hint-item {
-  line-height: 1.4;
-}
-
-.eval-grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 12px;
-}
-
-.eval-panel {
-  padding: 12px;
-  border-radius: 14px;
-  background: rgba(15, 23, 42, 0.04);
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  min-height: 120px;
-  cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-  border: 1px solid rgba(15, 23, 42, 0.04);
-}
-
-.eval-panel:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.12);
-  border-color: rgba(64, 158, 255, 0.18);
-}
-
-.eval-panel.is-active {
-  border-color: rgba(64, 158, 255, 0.32);
-  box-shadow: 0 12px 28px rgba(64, 158, 255, 0.18);
-}
-
-.eval-title {
-  font-size: 13px;
-  font-weight: 600;
-  color: #111827;
-}
-
-.eval-subtitle {
-  font-size: 12px;
-  color: #9ca3af;
-}
-
-.eval-thumb {
-  margin-top: 6px;
-  border-radius: 10px;
-  background: linear-gradient(145deg, rgba(59, 130, 246, 0.12), rgba(16, 185, 129, 0.12));
-  border: 1px dashed rgba(59, 130, 246, 0.25);
-  height: 54px;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 12px;
-  color: #6b7280;
-}
-
-.eval-thumb-canvas {
-  width: 100%;
-  height: 100%;
-}
-
-.eval-thumb-empty {
-  font-size: 12px;
-  color: #9ca3af;
-}
-
-.eval-detail-card {
-  overflow: hidden;
-}
-
-.eval-detail-body {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 12px;
-}
-
-.eval-detail-text {
+.eval-detail-subtitle-inline {
   font-size: 13px;
   color: #6b7280;
-}
-
-.eval-detail-chart {
-  min-height: 250px;
-  border-radius: 12px;
-  background: rgba(15, 23, 42, 0.04);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #9ca3af;
-  font-size: 13px;
-  padding: 8px;
-  box-sizing: border-box;
 }
 
 .eval-detail-canvas {
   width: 100%;
-  height: 100%;
-  min-height: 250px;
+  height: 400px; /* Height for inline charts */
+  background: transparent;
 }
 
-.eval-detail-empty {
-  padding: 12px;
-  color: #9ca3af;
-}
-
-.eval-detail-note {
-  padding: 10px 12px;
-  border-radius: 10px;
-  background: rgba(15, 23, 42, 0.04);
-  font-size: 12px;
-  color: #6b7280;
-}
-
-.model-switch {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.roc-chart {
-  width: 100%;
-  height: 260px;
-  margin-top: 14px;
-}
-
-@media (max-width: 1200px) {
-  .metric-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-  .eval-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-.eval-expand-enter-active,
-.eval-expand-leave-active {
-  transition: all 0.25s ease;
-}
-
-.eval-expand-enter-from,
-.eval-expand-leave-to {
-  opacity: 0;
-  transform: translateY(-8px) scale(0.98);
-  max-height: 0;
-}
-
-.model-empty {
-  font-size: 13px;
-  color: #9ca3af;
-  text-align: center;
-  padding: 24px 0;
-}
-
-.title {
-  font-size: 18px;
-  font-weight: 600;
-}
-
-.apple-tabs :deep(#tab-overview),
-.apple-tabs :deep(#tab-logs),
-.apple-tabs :deep(#tab-users),
-.apple-tabs :deep(#tab-model),
-.apple-tabs :deep(#tab-settings),
-.apple-tabs :deep(#tab-admins) {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 68px;
-  padding-left: 18px;
-  padding-right: 18px;
-  line-height: 1;
-}
-
-.apple-tabs :deep(#tab-overview) {
-  transform: translateX(2px);
-}
-
-.apple-tabs :deep(#tab-settings) {
-  transform: translateX(-2px);
-}
-
-.card-label {
-  font-size: 13px;
-  color: #6b7280;
-}
-
-.card-header {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.card-subtitle {
-  font-size: 12px;
-  color: #9ca3af;
-}
-
-.card-value {
-  margin-top: 6px;
-  font-size: 22px;
-  font-weight: 600;
-  color: #111827;
-}
-
-.stat-card {
-  border-radius: 18px;
-  background: linear-gradient(145deg, #ffffff, #f7f9fc);
-}
-
+/* Override Element Plus Card for Dark Mode */
 .panel-card {
-  border-radius: 18px;
+  background: #0A0A0A !important;
+  border: 1px solid #1a1a1a !important;
+  color: #e5e7eb !important;
+}
+
+.panel-card .el-card__header {
+  border-bottom: 1px solid #1a1a1a !important;
+  padding: 24px 32px !important;
+}
+
+.panel-card .el-card__body {
+  padding: 32px !important;
+}
+
+/* Metric Items */
+.metric-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.metric-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.metric-label {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #6b7280;
+  margin-bottom: 8px;
+}
+
+.metric-value {
+  font-family: 'Inter', monospace;
+  font-size: 24px;
+  color: #e5e7eb;
+  font-weight: 500;
+}
+
+.metric-value.highlight {
+  color: #00FFAA;
+  text-shadow: 0 0 10px rgba(0, 255, 170, 0.3);
+}
+
+/* Settings & Other Panels */
+.settings-header, .model-header, .log-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0; /* Header padding handles this */
+}
+
+.settings-title, .eval-title, .log-title {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 20px; /* 加大标题 */
+  font-weight: 600;
+  color: #e5e7eb;
+  letter-spacing: -0.02em;
+  margin-bottom: 6px;
 }
 
 .threshold-box {
-  font-size: 13px;
-}
-
-.threshold-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.threshold-label {
-  color: #909399;
+  padding: 32px;
+  background: var(--bg-surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-color);
 }
 
 .threshold-text {
+  font-family: var(--font-display);
+  font-size: 32px;
   font-weight: 600;
+  color: var(--text-primary);
 }
 
-.log-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.log-title {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.log-actions {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin-left: auto;
-}
-
-.log-filter-form {
-  margin-top: 10px;
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 4px 8px;
-}
-
-.user-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-}
-
-.user-title {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.user-actions {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.user-filter-form {
-  margin-top: 12px;
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 4px 8px;
-}
-
-.user-batch {
-  margin-top: 10px;
-  padding: 10px 12px;
-  background: rgba(15, 23, 42, 0.04);
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.user-batch-info {
-  font-size: 12px;
-  color: #6b7280;
-}
-
-.user-batch-actions {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.user-action-stack {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-
-.time-text {
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-  color: #111827;
+/* Scrollbar within content */
+.el-scrollbar__wrap {
+  overflow-x: hidden;
 }
 </style>

@@ -18,13 +18,13 @@ from .config import (
     FEATURE_TYPE_MFCC_DELTA,
     EMBEDDING_DIM
 )
-from .ecapa_tdnn import LightECAPA
-from .dataset import (
+from .core.ecapa_tdnn import LightECAPA
+from .core.dataset import (
     extract_feature_tensor,
     infer_feature_type_from_feat_dim,
     get_feature_dim
 )
-from .vector_store import VectorStore
+from .services.vector_store import VectorStore
 
 logger = logging.getLogger("voice_engine")
 

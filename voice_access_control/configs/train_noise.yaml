@@ -7,22 +7,30 @@ model:
   emb_dim: 192
   feat_dim: 39      # MFCC-Delta (13*3)
   n_channels: 1024  # Base ECAPA channels
+  dropout: 0.1      # Dropout rate
 
 dataset:
-  feature_dir: "data/processed" # Raw wavs for on-the-fly augmentation
+  # Professional Split Mode for Noise Training
+  # Train on RAW wavs (for on-the-fly augmentation)
+  train_dir: "data/raw/mini_vox/train" 
   mode: "raw"
+  
+  # Validate on CLEAN features (standard benchmark)
+  val_dir: "data/features/mfcc_delta_v2/valid"
+  
   noise_dir: "data/noise"       # Directory containing noise wavs
   feature_type: "mfcc_delta"
   n_mels: 40
-  loader_workers: 4 # Windows set to 0 if issues arise, else 4
+  loader_workers: 0 # Windows set to 0 if issues arise, else 4
 
 training:
   batch_size: 32
-  epochs: 50
+  epochs: 100
   lr: 0.001
   optimizer: "adam"  # adam, adamw
-  loss: "ce"         # ce (CrossEntropy), aam (AAMSoftmax)
+  loss: "aam"         # ce (CrossEntropy), aam (AAMSoftmax)
   device: "cuda"     # cuda, cpu
+  weight_decay: 0.0001 # Weight decay (L2 penalty)
   
   # AAM-Softmax Params
   aam_s: 30.0
@@ -38,5 +46,5 @@ paths:
   feature_tag: "mfcc_delta_noise"
 
 evaluation:
-  eer_interval: 5
+  eer_interval: 1
   eer_pairs: 20000

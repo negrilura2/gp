@@ -16,8 +16,8 @@ if ROOT not in sys.path:
 
 from scripts import FEATURES_DIR, REPORTS_DIR
 from voice_engine.config import DEFAULT_MODEL_PATH, EMBEDDING_DIM
-from voice_engine.dataset import SpeakerDataset, pad_collate
-from voice_engine.ecapa_tdnn import LightECAPA
+from voice_engine.core.dataset import SpeakerDataset, pad_collate
+from voice_engine.core.ecapa_tdnn import LightECAPA
 
 
 def resolve_feature_dir(feature_dir, feature_type):

@@ -1,0 +1,79 @@
+version: '3.8'
+
+# 专为轻薄本/低配置环境优化的 Docker Compose 配置
+# 特点：
+# 1. 使用 CPU 版 PyTorch (镜像体积小，无 GPU 开销)
+# 2. 移除 MySQL 和 Redis，改用 SQLite (大幅降低内存占用)
+# 3. 使用轻量级 Embedding 模型
+# 4. 前端使用开发模式 (方便调试，生产环境建议 build 后用 Nginx)
+
+services:
+  ai_service:
+    build: 
+      context: .
+      dockerfile: Dockerfile.cpu
+    container_name: voice_access_ai_laptop
+    ports:
+      - "9000:9000"
+    volumes:
+      - .:/app
+      - ./data:/app/data
+      - ./models:/app/models
+    env_file:
+      - .env.docker
+    environment:
+      - APP_ENV=docker
+      - PYTHONUNBUFFERED=1
+      # 强制使用 SQLite
+      - DB_ENGINE=django.db.backends.sqlite3
+      - DB_NAME=/app/data/db.sqlite3
+      # 强制使用 CPU
+      - VOICE_ENGINE_DEVICE=cpu
+      # 使用轻量级模型 (80MB vs 500MB)
+      - RAG_EMBEDDING_MODEL=sentence-transformers/all-MiniLM-L6-v2
+      # 降低 Worker 数量
+      - WEB_CONCURRENCY=1
+    # 启动命令：使用 uvicorn
+    command: uvicorn voice_engine.ai_app:app --host 0.0.0.0 --port 9000 --reload
+    restart: unless-stopped
+
+  backend:
+    build: 
+      context: .
+      dockerfile: Dockerfile.cpu
+    container_name: voice_access_backend_laptop
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+      - ./data:/app/data
+      - ./models:/app/models
+    env_file:
+      - .env.docker
+    environment:
+      - APP_ENV=docker
+      - PYTHONUNBUFFERED=1
+      # 强制使用 SQLite
+      - DB_ENGINE=django.db.backends.sqlite3
+      - DB_NAME=/app/data/db.sqlite3
+      - AI_SERVICE_URL=http://ai_service:9000
+    command: >
+      sh -c "python backend/manage.py migrate &&
+             python backend/manage.py runserver 0.0.0.0:8000"
+    restart: unless-stopped
+    depends_on:
+      - ai_service
+
+  frontend:
+    build: ./frontend
+    container_name: voice_access_frontend_laptop
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - VITE_API_TARGET=http://backend:8000
+    depends_on:
+      - backend
+    restart: unless-stopped

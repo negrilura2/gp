@@ -6,17 +6,22 @@ model:
   name: "ecapa_tdnn"
   emb_dim: 192
   feat_dim: 39      # MFCC-Delta (13*3)
-  n_channels: 1024  # Base ECAPA channels
+  n_channels: 128   # Aggressively Reduced channels (was 256)
+  dropout: 0.3      # Increased dropout (was 0.2)
 
 dataset:
   feature_dir: "data/features"
-  feature_type: "mfcc_delta"
+  feature_type: "mfcc_delta" # mfcc_delta, logmel
   n_mels: 40
   loader_workers: 0 # Windows 下设为 0
+  
+  # Professional Split Mode
+  train_dir: "data/features/mfcc_delta/train"
+  val_dir:   "data/features/mfcc_delta/valid"
 
 training:
   batch_size: 32
-  epochs: 60
+  epochs: 100
   lr: 0.001
   optimizer: "adam"  # adam, adamw
   loss: "aam"         # ce (CrossEntropy), aam (AAMSoftmax)
@@ -24,11 +29,11 @@ training:
   
   # AAM-Softmax 参数
   aam_s: 30.0
-  aam_m: 0.2
+  aam_m: 0.35
 
   # Early Stopping
-  early_stop: true
-  patience: 5
+  early_stop: false
+  patience: 20
 
 paths:
   save_dir: "checkpoints"
@@ -36,5 +41,5 @@ paths:
   feature_tag: "default"
 
 evaluation:
-  eer_interval: 5
+  eer_interval: 1
   eer_pairs: 20000

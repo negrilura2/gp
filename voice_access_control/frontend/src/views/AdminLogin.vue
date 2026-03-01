@@ -82,30 +82,27 @@ onMounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #f5f7fb;
-  background-image: radial-gradient(
-      1200px circle at 0% 0%,
-      rgba(64, 158, 255, 0.12),
-      transparent 45%
-    ),
-    radial-gradient(
-      1200px circle at 100% 0%,
-      rgba(103, 232, 169, 0.12),
-      transparent 45%
-    );
+  padding: 24px;
+  background-color: var(--bg-primary);
+  background-image: radial-gradient(1000px circle at 10% -20%, rgba(56, 189, 248, 0.2), transparent 50%),
+    radial-gradient(900px circle at 90% 0%, rgba(167, 139, 250, 0.2), transparent 55%),
+    linear-gradient(180deg, rgba(5, 6, 10, 0.6), rgba(5, 6, 10, 0.98));
 }
 
 .login-card {
   width: 360px;
-  border: 1px solid rgba(64, 158, 255, 0.15);
-  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.08);
-  backdrop-filter: blur(6px);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  box-shadow: 0 24px 50px rgba(5, 10, 24, 0.5);
+  backdrop-filter: blur(16px);
+  background: linear-gradient(160deg, rgba(14, 22, 38, 0.95), rgba(7, 10, 20, 0.9));
 }
 
 .login-title {
-  font-size: 18px;
-  font-weight: 600;
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 700;
   margin-bottom: 16px;
   text-align: center;
+  letter-spacing: 0.4px;
 }
 </style>

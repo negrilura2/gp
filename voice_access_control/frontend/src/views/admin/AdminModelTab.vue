@@ -62,15 +62,31 @@
         </div>
         <div class="metric-hint">
           <div class="metric-hint-title">指标说明</div>
-          <div class="metric-hint-item">AUC：ROC 曲线下面积，越接近 1 越好</div>
-          <div class="metric-hint-item">EER：等错误率，越低越好</div>
-          <div class="metric-hint-item">TPR：通过率（真正率），越高越好</div>
-          <div class="metric-hint-item">FPR：误识率（假接受率），越低越好</div>
-          <div class="metric-hint-item">FAR：误识率（在当前阈值下的假接受率）</div>
-          <div class="metric-hint-item">FRR：漏识率（在当前阈值下的假拒绝率）</div>
-          <div class="metric-hint-item">虚线为随机猜测基线，曲线越靠左上越优</div>
+          <div class="metric-hint-grid">
+            <div class="metric-hint-item"><span>AUC</span> <span>ROC 曲线下面积，越接近 1 越好</span></div>
+            <div class="metric-hint-item"><span>EER</span> <span>等错误率，越低越好</span></div>
+            <div class="metric-hint-item"><span>TPR</span> <span>通过率（真正率），越高越好</span></div>
+            <div class="metric-hint-item"><span>FPR</span> <span>误识率（假接受率），越低越好</span></div>
+            <div class="metric-hint-item"><span>FAR</span> <span>当前阈值下的误识率</span></div>
+            <div class="metric-hint-item"><span>FRR</span> <span>当前阈值下的漏识率</span></div>
+          </div>
+          <div class="metric-hint-note">虚线为随机猜测基线，曲线越靠左上越优</div>
         </div>
         <div class="roc-chart" :ref="rocChartRef"></div>
+        
+        <!-- Eval Thumbnails (Moved here) -->
+        <div class="eval-section-title">扩展评估指标</div>
+        <div class="eval-tab-group">
+          <div
+            v-for="item in evalItems"
+            :key="item.key"
+            class="eval-tab-btn"
+            :class="{ 'is-active': activeEvalKey === item.key }"
+            @click="onEvalCardClick(item.key)"
+          >
+            {{ item.title }}
+          </div>
+        </div>
       </el-card>
     </el-col>
     <el-col :span="12">
@@ -109,6 +125,8 @@
             </el-button>
           </div>
         </el-card>
+        
+        <!-- Eval Detail View (Inline) -->
         <transition name="eval-expand" mode="out-in">
           <el-card v-if="activeEval" shadow="never" class="panel-card eval-detail-card">
             <template #header>
@@ -138,39 +156,7 @@
       </div>
     </el-col>
   </el-row>
-  <el-row :gutter="16" style="margin-top: 16px">
-    <el-col :span="24">
-      <el-card shadow="never" class="panel-card">
-        <template #header>
-          <div class="model-header">
-            <div>
-              <div class="settings-title">扩展评估</div>
-              <div class="card-subtitle">新增指标与图表</div>
-            </div>
-          </div>
-        </template>
-        <div class="eval-grid">
-          <div
-            v-for="item in evalItems"
-            :key="item.key"
-            class="eval-panel"
-            :class="{ 'is-active': activeEvalKey === item.key }"
-            @click="onEvalCardClick(item.key)"
-          >
-            <div class="eval-title">{{ item.title }}</div>
-            <div class="eval-subtitle">{{ item.subtitle }}</div>
-            <div class="eval-thumb">
-              <div v-if="item.key === 'tsne' && tsneImageUrl" class="eval-thumb-image">
-                <img :src="tsneImageUrl" />
-              </div>
-              <div v-else-if="hasEvalData(item.key)" class="eval-thumb-canvas" :ref="setEvalThumbRef(item.key)"></div>
-              <div v-else class="eval-thumb-empty">暂无数据</div>
-            </div>
-          </div>
-        </div>
-      </el-card>
-    </el-col>
-  </el-row>
+  <!-- Removed bottom eval grid row -->
 </template>
 
 <script setup>

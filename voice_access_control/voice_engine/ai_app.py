@@ -24,10 +24,10 @@ from django.contrib.auth.models import User
 from api.models import VerifyLog
 # ------------------
 
-from voice_engine.agent_service import AgentService
+from voice_engine.services.agent_service import AgentService
 from .service import VoiceService
-from .stt_service import STTService
-from .stream_processor import AudioBuffer
+from .services.stt_service import STTService
+from .services.stream_processor import AudioBuffer
 
 logger = logging.getLogger("voice_engine.api")
 

@@ -1,132 +1,122 @@
 <template>
-  <el-container style="height: 100vh">
-    <el-main>
-      <div class="verify-wrapper">
-        <el-card class="verify-card">
-          <div class="verify-header">
-            <div class="verify-title">声纹识别 & 智能助手</div>
-            <div class="verify-actions">
-              <el-button size="small" @click="handleEntry">
-                {{ hasToken ? "个人中心" : "登录" }}
-              </el-button>
-              <el-button
-                v-if="hasToken"
-                size="small"
-                type="danger"
-                plain
-                @click="handleLogout"
-              >
-                退出登录
-              </el-button>
-            </div>
-          </div>
-          <div class="record-section">
-            <div class="record-header">实时对话 (WebSocket)</div>
-            <div class="record-main">
-              <div class="wave-header">
-                <span class="wave-title">声波图</span>
-                <span class="wave-subtitle">请清晰说话，系统将自动识别身份并执行指令</span>
-              </div>
-              <canvas ref="waveCanvasRef" class="wave-canvas"></canvas>
-              <div class="record-actions">
-                <el-button
-                  :type="isStreaming ? 'danger' : 'primary'"
-                  @click="toggleStreaming"
-                >
-                  {{ isStreaming ? "停止对话" : "开始对话" }}
-                </el-button>
-                <span class="record-hint">
-                  {{ statusMessage }}
-                </span>
-              </div>
-              
-              <!-- Agent 交互结果展示 -->
-              <div v-if="agentResult" class="agent-result-box">
-                <div class="agent-header">
-                  <span class="agent-title">助手回复</span>
-                  <el-tag size="small" :type="agentResult.identity.status === 'ACCEPT' ? 'success' : 'warning'">
-                    {{ agentResult.identity.user }} ({{ agentResult.identity.score?.toFixed(2) }})
-                  </el-tag>
-                </div>
-                <div class="agent-content">
-                  <p><strong>你说:</strong> {{ agentResult.text }}</p>
-                  <p v-if="agentResult.agent?.response">
-                    <strong>助手:</strong> {{ agentResult.agent.response }}
-                  </p>
-                  <p v-else-if="agentResult.agent?.message" class="error-text">
-                    <strong>错误:</strong> {{ agentResult.agent.message }}
-                  </p>
-                </div>
-              </div>
-
-            </div>
-          </div>
-          
-          <el-divider>旧版文件上传</el-divider>
-          
-          <el-collapse>
-            <el-collapse-item title="上传录音文件 (Legacy)" name="1">
-              <el-form label-width="80px">
-                <el-form-item label="音频文件">
-                  <input
-                    ref="fileInputRef"
-                    class="file-input"
-                    type="file"
-                    accept=".wav"
-                    @change="onFileChange"
-                  />
-                  <el-button size="small" @click="triggerFileSelect">选择文件</el-button>
-                  <span class="file-hint">{{ fileLabel }}</span>
-                </el-form-item>
-                <el-form-item>
-                  <el-button
-                    type="primary"
-                    :loading="loading"
-                    @click="handleVerify"
-                  >
-                    开始识别
-                  </el-button>
-                </el-form-item>
-              </el-form>
-              <div v-if="result" class="result-block">
-                <el-alert
-                  :title="resultTitle"
-                  :type="resultType"
-                  show-icon
-                />
-                <div class="result-detail">
-                  <div>预测用户：{{ result.predicted_user }}</div>
-                  <div>得分：{{ result.score }}</div>
-                  <div>阈值：{{ result.threshold }}</div>
-                </div>
-              </div>
-            </el-collapse-item>
-          </el-collapse>
-
-        </el-card>
+  <div class="voice-verify-container">
+    <!-- Grok Navigation -->
+    <nav class="verify-nav">
+      <div class="nav-logo">
+        <span class="logo-symbol">///</span>
+        <span class="logo-text">VOICE ACCESS</span>
       </div>
-    </el-main>
-  </el-container>
-  <el-dialog v-model="loginVisible" title="登录" width="360px" center>
-    <el-form @submit.prevent>
-      <el-form-item label="用户名">
-        <el-input v-model="loginUsername" autocomplete="username" />
-      </el-form-item>
-      <el-form-item label="密码">
-        <el-input
-          v-model="loginPassword"
-          type="password"
-          show-password
-          autocomplete="current-password"
-        />
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" :loading="loginLoading" @click="handleLogin">
-          登录
-        </el-button>
-      </el-form-item>
-    </el-form>
-  </el-dialog>
+      <div class="nav-actions">
+        <button v-if="!hasToken" @click="handleEntry" class="grok-btn-ghost">LOGIN</button>
+        <template v-else>
+          <button @click="handleEntry" class="grok-btn-ghost">PROFILE</button>
+          <button @click="handleLogout" class="grok-btn-ghost">LOGOUT</button>
+        </template>
+      </div>
+    </nav>
+
+    <!-- Hero Content -->
+    <main class="verify-hero">
+      <div class="hero-content">
+        <h1 class="hero-title">Voice Access</h1>
+        
+        <!-- Status / Prompt -->
+        <div class="hero-status">
+          <span v-if="isStreaming" class="status-live">
+            <span class="pulse-dot"></span> Listening...
+          </span>
+          <span v-else>{{ statusMessage || 'Identity Verification System' }}</span>
+        </div>
+
+        <!-- Result Display -->
+        <div class="result-card" :class="[resultStatusClass, { 'is-idle': !hasResult }]">
+          <div class="result-header">
+            <span class="result-label">VERIFICATION RESULT</span>
+            <span class="result-score" v-if="currentScore">{{ (currentScore * 100).toFixed(1) }}% MATCH</span>
+          </div>
+          <div class="result-body" v-if="hasResult">
+            <div class="result-user">{{ currentUserIdentity || 'Unknown' }}</div>
+            <div class="result-status">{{ currentStatus }}</div>
+          </div>
+          <div class="result-body is-placeholder" v-else>
+            <div class="result-user placeholder-line"></div>
+            <div class="result-status placeholder-line short"></div>
+          </div>
+          <div class="result-message" v-if="agentResult?.agent?.response">
+            "{{ agentResult.agent.response }}"
+          </div>
+          <div class="result-message stream-hint" v-else>
+            <span v-if="isStreaming" class="streaming-dots">Streaming response</span>
+            <span v-else>Awaiting voice input</span>
+          </div>
+        </div>
+
+        <!-- Input Area (Grok Style) -->
+        <div class="input-container">
+          <div class="input-actions solo">
+            <button class="action-btn upload-btn" @click="triggerFileSelect" title="Upload Audio">
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+            </button>
+            <button
+              class="mic-btn"
+              :class="{ active: isStreaming }"
+              @click="toggleStreaming"
+            >
+              <div class="mic-icon">
+                <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+                  <path d="M19 10v2a7 7 0 0 1-14 0v-2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M12 19v4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M8 23h8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+            </button>
+          </div>
+          <!-- Hidden File Input -->
+          <input
+            ref="fileInputRef"
+            class="hidden-input"
+            type="file"
+            accept=".wav"
+            @change="onFileChange"
+          />
+        </div>
+        
+        <div class="file-info" v-if="file">
+           Selected: {{ file.name }}
+           <button class="text-btn" @click="handleVerify">Start Analysis</button>
+        </div>
+
+      </div>
+
+      <!-- Waveform Background -->
+      <div class="wave-bg">
+        <canvas ref="waveCanvasRef"></canvas>
+      </div>
+    </main>
+
+    <!-- Login Dialog -->
+    <el-dialog v-model="loginVisible" title="LOGIN" width="360px" center append-to-body class="grok-dialog">
+      <el-form @submit.prevent>
+        <el-form-item label="USERNAME">
+          <el-input v-model="loginUsername" autocomplete="username" />
+        </el-form-item>
+        <el-form-item label="PASSWORD">
+          <el-input
+            v-model="loginPassword"
+            type="password"
+            show-password
+            autocomplete="current-password"
+          />
+        </el-form-item>
+        <el-form-item>
+          <el-button class="grok-btn-action" :loading="loginLoading" @click="handleLogin" style="width: 100%">
+            ENTER
+          </el-button>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
+  </div>
 </template>
 
 <script setup>
@@ -166,6 +156,32 @@ const loginVisible = ref(false);
 const loginUsername = ref("");
 const loginPassword = ref("");
 const loginLoading = ref(false);
+
+const currentUserIdentity = computed(() => {
+  if (agentResult.value?.identity) return agentResult.value.identity.user;
+  if (result.value?.predicted_user) return result.value.predicted_user;
+  return null;
+});
+
+const currentScore = computed(() => {
+  if (agentResult.value?.identity) return agentResult.value.identity.score;
+  if (result.value?.score) return result.value.score;
+  return null;
+});
+
+const currentStatus = computed(() => {
+  if (agentResult.value?.identity) return agentResult.value.identity.status;
+  if (result.value?.result) return result.value.result;
+  return null;
+});
+
+const resultStatusClass = computed(() => {
+  const status = currentStatus.value;
+  if (status === 'ACCEPT') return 'status-success';
+  if (status === 'REJECT') return 'status-warning';
+  return 'status-neutral';
+});
+const hasResult = computed(() => Boolean(agentResult.value || result.value));
 
 let mediaStream = null;
 let mediaRecorder = null;
@@ -335,10 +351,13 @@ function drawWave() {
     }
 
     ctx.clearRect(0, 0, width, height);
-    ctx.fillStyle = "#000000";
-    ctx.fillRect(0, 0, width, height);
-    ctx.lineWidth = 1.5;
-    ctx.strokeStyle = "#67E8A9";
+    // ctx.fillStyle = "#000000"; // Removed to keep transparent
+    // ctx.fillRect(0, 0, width, height);
+    
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = "#06b6d4"; // Cyan
+    ctx.shadowBlur = 15;
+    ctx.shadowColor = "rgba(6, 182, 212, 0.8)";
     const centerY = height / 2;
 
     if (waveHistory.length > 0) {
@@ -989,133 +1008,375 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-.verify-wrapper {
+/* Grok Theme for Voice Verify */
+.voice-verify-container {
   min-height: 100vh;
-  padding: 24px;
-  box-sizing: border-box;
+  width: 100vw;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
   display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #f5f7fb;
-  background-image: radial-gradient(
-      1200px circle at 0% 0%,
-      rgba(64, 158, 255, 0.12),
-      transparent 45%
-    ),
-    radial-gradient(
-      1200px circle at 100% 0%,
-      rgba(103, 232, 169, 0.12),
-      transparent 45%
-    );
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  font-family: var(--font-body);
 }
 
-.verify-card {
-  width: 520px;
-  border: 1px solid rgba(64, 158, 255, 0.15);
-  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.08);
-  backdrop-filter: blur(6px);
-}
-
-.verify-header {
+/* Nav */
+.verify-nav {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 80px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 16px;
+  padding: 0 48px;
+  z-index: 50;
 }
 
-.verify-actions {
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 20px;
+  letter-spacing: 0.05em;
+  color: var(--text-primary);
+}
+
+.logo-symbol {
+  font-size: 24px;
+}
+
+.nav-actions {
+  display: flex;
+  gap: 16px;
+}
+
+.grok-btn-ghost {
+  background: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 500;
+  padding: 10px 24px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 0.05em;
+}
+
+.grok-btn-ghost:hover {
+  border-color: var(--text-primary);
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* Hero */
+.verify-hero {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 10;
+  padding-bottom: 100px;
+}
+
+.hero-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 800px;
+  padding: 0 24px;
+  text-align: center;
+  position: relative;
+  z-index: 2;
+}
+
+.hero-title {
+  font-family: var(--font-display);
+  font-size: 120px;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  margin-bottom: 24px;
+  background: linear-gradient(180deg, #fff 0%, #aaa 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  opacity: 0.9;
+  text-shadow: 0 0 80px rgba(255, 255, 255, 0.15);
+}
+
+.hero-status {
+  font-family: var(--font-mono);
+  font-size: 16px;
+  color: var(--text-secondary);
+  margin-bottom: 48px;
+  min-height: 24px;
+  letter-spacing: 0.05em;
+}
+
+.status-live {
+  color: var(--accent-secondary);
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-.verify-title {
-  font-size: 20px;
-  font-weight: 600;
+.pulse-dot {
+  width: 8px;
+  height: 8px;
+  background: currentColor;
+  border-radius: 50%;
+  animation: pulse 1.5s infinite;
 }
 
-.result-block {
-  margin-top: 16px;
+@keyframes pulse {
+  0% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.5); }
+  100% { opacity: 1; transform: scale(1); }
 }
 
-.result-detail {
-  margin-top: 12px;
-  font-size: 14px;
-  line-height: 1.6;
+/* Input Area */
+.input-container {
+  width: 100%;
+  max-width: 640px;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  margin-top: 120px;
 }
 
-.result-subtitle {
-  margin-bottom: 8px;
-  color: #909399;
+.input-actions {
+  display: flex;
+  align-items: center;
+  gap: 18px;
 }
 
-.record-section {
-  margin-bottom: 16px;
+.input-actions.solo {
+  background: transparent;
+  padding: 0;
 }
 
-.record-header {
-  font-size: 14px;
-  font-weight: 600;
-  margin-bottom: 8px;
-}
-
-.record-main {
-  border: 1px solid #ebeef5;
-  border-radius: 4px;
+.action-btn {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  cursor: pointer;
   padding: 12px;
+  border-radius: 999px;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.file-input {
+.action-btn:hover {
+  color: var(--text-primary);
+  border-color: var(--text-primary);
+  box-shadow: 0 0 18px rgba(255, 255, 255, 0.15);
+}
+
+.mic-btn {
+  background: var(--text-primary);
+  color: var(--bg-primary);
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 0 22px rgba(255, 255, 255, 0.25);
+}
+
+.mic-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+}
+
+.mic-btn.active {
+  background: var(--accent-danger);
+  color: #fff;
+  animation: pulse-ring 2s infinite;
+}
+
+@keyframes pulse-ring {
+  0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+  70% { box-shadow: 0 0 0 15px rgba(239, 68, 68, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+}
+
+.hidden-input {
   display: none;
 }
 
-.file-hint {
-  font-size: 12px;
-  color: #909399;
-  margin-left: 8px;
-}
-
-.wave-header {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  margin-bottom: 6px;
-}
-
-.wave-title {
+.file-info {
+  margin-top: 12px;
   font-size: 13px;
-  font-weight: 600;
-  color: #303133;
-}
-
-.wave-subtitle {
-  font-size: 12px;
-  color: #909399;
-}
-
-.wave-canvas {
-  width: 100%;
-  height: 120px;
-  display: block;
-  background: #000000;
-  border-radius: 4px;
-  border: 1px solid #1f2d3d;
-}
-
-.record-actions {
-  margin-top: 10px;
+  color: var(--text-secondary);
   display: flex;
   align-items: center;
   gap: 12px;
 }
 
-.record-hint {
+.text-btn {
+  background: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  padding: 4px 12px;
+  border-radius: 4px;
+  cursor: pointer;
   font-size: 12px;
-  color: #909399;
 }
 
-.playback {
-  margin-top: 10px;
+/* Result Card */
+.result-card {
+  margin-bottom: 32px;
+  background: rgba(20, 20, 20, 0.9);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 24px;
+  width: 100%;
+  max-width: 400px;
+  text-align: left;
+  backdrop-filter: blur(20px);
+  transition: all 0.35s ease;
+  position: relative;
+  z-index: 3;
+}
+
+.result-card.status-success {
+  border-color: rgba(16, 185, 129, 0.5);
+  box-shadow: 0 0 30px rgba(16, 185, 129, 0.15);
+}
+
+.result-card.status-warning {
+  border-color: rgba(239, 68, 68, 0.5);
+  box-shadow: 0 0 30px rgba(239, 68, 68, 0.15);
+}
+
+.result-card.is-idle {
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: none;
+  opacity: 0.7;
+}
+
+.result-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.result-body {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 12px;
+}
+
+.result-body.is-placeholder {
+  gap: 16px;
+}
+
+.result-user {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.result-status {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.status-success .result-status { color: var(--accent-success); }
+.status-warning .result-status { color: var(--accent-danger); }
+
+.result-message {
+  font-size: 14px;
+  color: var(--text-secondary);
+  font-style: italic;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.stream-hint {
+  font-style: normal;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-tertiary);
+}
+
+.streaming-dots::after {
+  content: " ···";
+  animation: dots 1.5s infinite;
+}
+
+@keyframes dots {
+  0% { content: " ·"; }
+  33% { content: " ··"; }
+  66% { content: " ···"; }
+  100% { content: " ·"; }
+}
+
+.placeholder-line {
+  height: 18px;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.08));
+  border-radius: 6px;
+  width: 160px;
+  animation: shimmer 1.8s infinite;
+}
+
+.placeholder-line.short {
+  width: 80px;
+  height: 14px;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200px 0; }
+  100% { background-position: 200px 0; }
+}
+
+/* Wave Background */
+.wave-bg {
+  position: absolute;
+  top: 68%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(720px, 88vw);
+  height: 120px;
+  z-index: 0;
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+.wave-bg canvas {
+  width: 100%;
+  height: 100%;
+}
+
+/* Transitions */
+.fade-slide-enter-active, .fade-slide-leave-active {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.fade-slide-enter-from, .fade-slide-leave-to {
+  opacity: 0;
+  transform: translateY(20px);
 }
 </style>

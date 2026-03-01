@@ -5,7 +5,7 @@ import pandas as pd
 # Add project root to path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from voice_engine.knowledge_service import KnowledgeService
+from voice_engine.services.knowledge_service import KnowledgeService
 
 def view_knowledge():
     print("Connecting to Knowledge Base (ChromaDB)...", flush=True)

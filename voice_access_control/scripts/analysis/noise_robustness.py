@@ -10,8 +10,8 @@ if ROOT not in sys.path:
     sys.path.insert(0, ROOT)
 
 from scripts import PROCESSED_DIR, FEATURES_DIR, REPORTS_DIR
-from voice_engine.ecapa_tdnn import LightECAPA
-from voice_engine.dataset import SpeakerDataset, pad_collate
+from voice_engine.core.ecapa_tdnn import LightECAPA
+from voice_engine.core.dataset import SpeakerDataset, pad_collate
 from torch.utils.data import DataLoader, Subset
 from voice_engine.config import (
     SAMPLE_RATE,
@@ -22,12 +22,12 @@ from voice_engine.config import (
     FEATURE_TYPE_LOGMEL,
     VALID_FEATURE_TYPES
 )
-from voice_engine.dataset import (
+from voice_engine.core.dataset import (
     extract_feature_from_signal,
     load_and_resample,
     add_noise
 )
-from voice_engine.metrics import build_templates
+from voice_engine.core.metrics import build_templates
 from voice_engine.config import SAMPLE_RATE
 import soundfile as sf
 import scipy.signal

@@ -110,6 +110,8 @@ def _get_default_device():
 
 DEFAULT_DEVICE = _get_default_device()
 
+# Score Normalization Stats Path
+SCORE_NORM_PATH = get_path_env("SCORE_NORM_PATH", os.path.join(ROOT_DIR, "reports", "score_norm"))
 
 # -----------------------------------------------------------------------------
 # 4. 特征类型定义
@@ -119,5 +121,12 @@ FEATURE_TYPE_MFCC_DELTA = "mfcc_delta"
 FEATURE_TYPE_LOGMEL = "logmel"
 
 VALID_FEATURE_TYPES = [FEATURE_TYPE_MFCC, FEATURE_TYPE_MFCC_DELTA, FEATURE_TYPE_LOGMEL]
+
+# -----------------------------------------------------------------------------
+# 5. LLM Configuration (DeepSeek)
+# -----------------------------------------------------------------------------
+DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY", "")
+DEEPSEEK_BASE_URL = os.getenv("DEEPSEEK_BASE_URL", "https://api.deepseek.com")
+DEEPSEEK_MODEL = os.getenv("DEEPSEEK_MODEL", "deepseek-chat")
 
 

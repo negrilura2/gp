@@ -8,7 +8,7 @@ project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 if project_root not in sys.path:
     sys.path.append(project_root)
 
-from voice_engine.knowledge_service import KnowledgeService
+from voice_engine.services.knowledge_service import KnowledgeService
 import chromadb
 from chromadb.config import Settings
 import numpy as np

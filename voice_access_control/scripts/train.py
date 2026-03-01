@@ -9,7 +9,7 @@ ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 if ROOT not in sys.path:
     sys.path.insert(0, ROOT)
 
-from voice_engine.trainer import Trainer
+from voice_engine.core.trainer import Trainer
 
 def load_config(path):
     with open(path, "r", encoding="utf-8") as f:

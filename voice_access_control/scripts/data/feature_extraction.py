@@ -28,7 +28,7 @@ from voice_engine.config import (
     FEATURE_TYPE_LOGMEL,
     DEFAULT_N_MELS
 )
-from voice_engine.dataset import extract_feature_numpy
+from voice_engine.core.dataset import extract_feature_numpy
 
 def process_one(args):
     wav_path, out_dir, feature_type, n_mels = args
@@ -94,11 +94,31 @@ def main():
     for user_dir in in_root.iterdir():
         if not user_dir.is_dir():
             continue
+            
         wav_list = [w for w in user_dir.iterdir() if w.suffix.lower() == ".wav"]
-        print(f"\n🎤 正在提取用户 {user_dir.name} ，共 {len(wav_list)} 条")
-        out_dir = out_root / user_dir.name
-        os.makedirs(out_dir, exist_ok=True)
-        tasks = [(str(w), str(out_dir), feature_type, n_mels) for w in wav_list]
+        if not wav_list:
+            continue
+            
+        print(f"\n🎤 正在提取目录 {user_dir.name} ，共 {len(wav_list)} 条")
+        
+        # Check if filenames contain ID prefix (VoxCeleb style: id10001-video-00001.wav)
+        # We group tasks by (out_dir, wav_path)
+        tasks = []
+        
+        for w in wav_list:
+            # Try to parse ID from filename
+            fname = w.name
+            if fname.startswith("id") and "-" in fname:
+                # mini_vox flat structure: id10001-video-00001.wav
+                spk_id = fname.split("-")[0]
+                target_out_dir = out_root / user_dir.name / spk_id # Preserve split structure: out_root/train/id10001
+            else:
+                # Standard structure: user01/001.wav -> out_root/user01
+                target_out_dir = out_root / user_dir.name
+            
+            os.makedirs(target_out_dir, exist_ok=True)
+            tasks.append((str(w), str(target_out_dir), feature_type, n_mels))
+
         start_all = time.perf_counter()
         
         # Determine workers
@@ -126,7 +146,7 @@ def main():
             except KeyboardInterrupt:
                 raise
         cost_all = time.perf_counter() - start_all
-        print(f"✅ 用户 {user_dir.name} 完成，用时 {cost_all:.2f}s")
+        print(f"✅ 目录 {user_dir.name} 完成，用时 {cost_all:.2f}s")
 
 
 if __name__ == "__main__":

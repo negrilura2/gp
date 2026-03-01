@@ -26,11 +26,11 @@ if ROOT not in sys.path:
 
 from scripts import FEATURES_DIR, MODELS_DIR, REPORTS_DIR
 
-from voice_engine.ecapa_tdnn import LightECAPA
-from voice_engine.dataset import SpeakerDataset, pad_collate
+from voice_engine.core.ecapa_tdnn import LightECAPA
+from voice_engine.core.dataset import SpeakerDataset, pad_collate
 from torch.utils.data import DataLoader
-from voice_engine.metrics import extract_all_embeddings
-from voice_engine.metrics import (
+from voice_engine.core.metrics import extract_all_embeddings
+from voice_engine.core.metrics import (
     compute_pairs_scores,
     compute_cohort_stats,
     apply_score_norm,
