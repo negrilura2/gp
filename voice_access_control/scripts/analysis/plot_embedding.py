@@ -24,7 +24,7 @@ def resolve_feature_dir(feature_dir, feature_type):
     if not os.path.isdir(feature_dir):
         return feature_dir
     base_name = os.path.basename(os.path.normpath(feature_dir))
-    feature_names = {"mfcc", "mfcc_delta", "logmel"}
+    feature_names = {"mfcc_delta", "logmel"}
     if base_name not in feature_names:
         cand = os.path.join(feature_dir, feature_type)
         if os.path.isdir(cand):

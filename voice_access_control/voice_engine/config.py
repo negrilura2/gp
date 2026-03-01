@@ -116,11 +116,10 @@ SCORE_NORM_PATH = get_path_env("SCORE_NORM_PATH", os.path.join(ROOT_DIR, "report
 # -----------------------------------------------------------------------------
 # 4. 特征类型定义
 # -----------------------------------------------------------------------------
-FEATURE_TYPE_MFCC = "mfcc"
 FEATURE_TYPE_MFCC_DELTA = "mfcc_delta"
 FEATURE_TYPE_LOGMEL = "logmel"
 
-VALID_FEATURE_TYPES = [FEATURE_TYPE_MFCC, FEATURE_TYPE_MFCC_DELTA, FEATURE_TYPE_LOGMEL]
+VALID_FEATURE_TYPES = [FEATURE_TYPE_MFCC_DELTA, FEATURE_TYPE_LOGMEL]
 
 # -----------------------------------------------------------------------------
 # 5. LLM Configuration (DeepSeek)

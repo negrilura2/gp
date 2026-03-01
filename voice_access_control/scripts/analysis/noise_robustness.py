@@ -17,7 +17,6 @@ from voice_engine.config import (
     SAMPLE_RATE,
     DEFAULT_N_MELS,
     EMBEDDING_DIM,
-    FEATURE_TYPE_MFCC,
     FEATURE_TYPE_MFCC_DELTA,
     FEATURE_TYPE_LOGMEL,
     VALID_FEATURE_TYPES
@@ -78,7 +77,7 @@ def main():
     parser.add_argument("--feature_dir", default=None)
     parser.add_argument("--processed_dir", default=None)
     parser.add_argument("--out_dir", default=None)
-    parser.add_argument("--feature_type", choices=["mfcc", "mfcc_delta", "logmel"], default=None)
+    parser.add_argument("--feature_type", choices=["mfcc_delta", "logmel"], default=None)
     parser.add_argument("--n_mels", type=int, default=None)
     parser.add_argument("--snr_list", default=None)
     parser.add_argument("--noise_wav", default=None)
@@ -104,7 +103,7 @@ def main():
     noise_cfg = analysis_cfg.get("noise", {})
     
     feature_type = args.feature_type or noise_cfg.get("feature_type", "mfcc_delta")
-    n_mels = args.n_mels or noise_cfg.get("n_mels", 40)
+    n_mels = args.n_mels or noise_cfg.get("n_mels", DEFAULT_N_MELS)
     
     # snr_list handling: config might be list, cli is string
     snr_val = args.snr_list or noise_cfg.get("snr_list", "clean,20,10")
@@ -137,7 +136,7 @@ def main():
 
     os.makedirs(out_dir, exist_ok=True)
     if os.path.isdir(feature_dir):
-        feature_type_names = {"mfcc", "mfcc_delta", "logmel"}
+        feature_type_names = {"mfcc_delta", "logmel"}
         base_name = os.path.basename(os.path.normpath(feature_dir))
         candidate = os.path.join(feature_dir, feature_type)
         if base_name not in feature_type_names and os.path.isdir(candidate):

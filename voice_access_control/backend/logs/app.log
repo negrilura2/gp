@@ -12704,3 +12704,15 @@ NameError: name 'user_count' is not defined
 [2026-03-01 17:31:32,981] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\voice_engine\config.py changed, reloading.
 [2026-03-01 17:31:34,442] INFO django.utils.autoreload Watching for file changes with StatReloader
 [2026-03-01 17:34:05,094] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-03-01 18:41:34,590] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\voice_engine\config.py changed, reloading.
+[2026-03-01 18:41:38,611] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-03-01 18:42:10,041] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\voice_engine\config.py changed, reloading.
+[2026-03-01 18:42:11,424] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-03-01 18:49:14,210] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\voice_engine\core\dataset.py changed, reloading.
+[2026-03-01 18:49:15,901] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-03-01 18:56:14,832] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\voice_engine\core\dataset.py changed, reloading.
+[2026-03-01 18:56:16,780] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-03-01 19:02:47,233] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\voice_engine\core\dataset.py changed, reloading.
+[2026-03-01 19:02:49,155] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-03-01 19:03:35,300] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\voice_engine\core\trainer.py changed, reloading.
+[2026-03-01 19:03:36,858] INFO django.utils.autoreload Watching for file changes with StatReloader

@@ -49,6 +49,9 @@ class TDNNBlock(nn.Module):
 class LightECAPA(nn.Module):
     def __init__(self, feat_dim=39, channels=512, emb_dim=192, n_speakers=None, dropout=0.1):
         super().__init__()
+        # Input Normalization: Crucial for Log-Mel features
+        self.inst_norm = nn.InstanceNorm1d(feat_dim)
+        
         self.layer1 = TDNNBlock(feat_dim, channels, kern=5, dropout=dropout)
         self.layer2 = TDNNBlock(channels, channels, kern=3, dropout=dropout)
         self.se = SEBlock(channels)
@@ -68,6 +71,7 @@ class LightECAPA(nn.Module):
 
     def forward(self, x, lengths=None, return_embedding=False):
         # x: (B, C, T)
+        x = self.inst_norm(x)
         x = self.layer1(x)
         x = self.layer2(x)
         x = self.se(x)

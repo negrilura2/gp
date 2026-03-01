@@ -6,34 +6,39 @@ model:
   name: "ecapa_tdnn"
   emb_dim: 192
   feat_dim: 39      # MFCC-Delta (13*3)
-  n_channels: 128   # Aggressively Reduced channels (was 256)
-  dropout: 0.3      # Increased dropout (was 0.2)
+  n_channels: 256 # Aggressively Reduced channels (was 256)
+  dropout: 0.2      # Increased dropout (was 0.2)
+  #pretrained_path: "checkpoints/ecapa_mfcc_delta_best.pth" # Optional: Load pretrained model
+  pretrained_path: "checkpoints/noise_augmented/ecapa_mfcc_delta_best.pth" # Optional: Load pretrained model
 
 dataset:
   feature_dir: "data/features"
-  feature_type: "mfcc_delta" # mfcc_delta, logmel
+  feature_type: "mfcc_delta" # mfcc_delta, logmel 
   n_mels: 40
   loader_workers: 0 # Windows 下设为 0
   
-  # Professional Split Mode
+  # # Professional Split Mode
   train_dir: "data/features/mfcc_delta/train"
   val_dir:   "data/features/mfcc_delta/valid"
+
+  # train_dir: "data/features/logmel/train"
+  # val_dir:   "data/features/logmel/valid"
 
 training:
   batch_size: 32
   epochs: 100
-  lr: 0.001
+  lr: 0.0001       # Lower LR for stability (was 0.001)
   optimizer: "adam"  # adam, adamw
-  loss: "aam"         # ce (CrossEntropy), aam (AAMSoftmax)
+  loss: "aam"         # Switch to CE for easier convergence (was aam)
   device: "cuda"     # cuda, cpu
   
   # AAM-Softmax 参数
   aam_s: 30.0
-  aam_m: 0.35
+  aam_m: 0.2
 
   # Early Stopping
-  early_stop: false
-  patience: 20
+  early_stop: true
+  patience: 30
 
 paths:
   save_dir: "checkpoints"
@@ -41,5 +46,5 @@ paths:
   feature_tag: "default"
 
 evaluation:
-  eer_interval: 1
+  eer_interval: 2
   eer_pairs: 20000

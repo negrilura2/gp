@@ -6,7 +6,7 @@ model:
   path: "checkpoints/ecapa_mfcc_delta_best.pth"
 
 dataset:
-  feature_dir: "data/features"
+  feature_dir: "data/features/mfcc_delta"
   noise_dir: null # Set to path (e.g. "data/noise") to enable noise augmentation
 
 evaluation:

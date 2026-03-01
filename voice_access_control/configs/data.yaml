@@ -7,4 +7,4 @@ dataset:
   out_root: "data/features"
   feature_type: "mfcc_delta" # mfcc_delta, logmel
   n_mels: 40
-  workers: 0 # 0 for auto-detect (max cpu - 1), 1 for single thread
+  workers: 1 # 0 for auto-detect (max cpu - 1), 1 for single thread

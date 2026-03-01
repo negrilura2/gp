@@ -72,7 +72,7 @@ def get_default_feature_dir_for_eval():
             candidates.append(path)
     if not candidates:
         return root
-    preferred = ("logmel", "mfcc_delta", "mfcc")
+    preferred = ("logmel", "mfcc_delta")
     for pref in preferred:
         for path in candidates:
             if os.path.basename(path) == pref:
@@ -88,8 +88,6 @@ def get_feature_dir_for_model(model_path):
         type_name = "logmel"
     elif "mfcc_delta" in name:
         type_name = "mfcc_delta"
-    elif "mfcc" in name:
-        type_name = "mfcc"
     if type_name:
         cand = os.path.join(root, type_name)
         if os.path.isdir(cand) and count_files(cand, {".npy"}) > 0:

@@ -6,17 +6,17 @@ model:
   name: "ecapa_tdnn"
   emb_dim: 192
   feat_dim: 39      # MFCC-Delta (13*3)
-  n_channels: 1024  # Base ECAPA channels
-  dropout: 0.1      # Dropout rate
+  n_channels: 256 # Base ECAPA channels
+  dropout: 0.2      # Dropout rate
 
 dataset:
   # Professional Split Mode for Noise Training
   # Train on RAW wavs (for on-the-fly augmentation)
-  train_dir: "data/raw/mini_vox/train" 
+  train_dir: "data/processed/train" 
   mode: "raw"
   
   # Validate on CLEAN features (standard benchmark)
-  val_dir: "data/features/mfcc_delta_v2/valid"
+  val_dir: "data/features/mfcc_delta/valid"
   
   noise_dir: "data/noise"       # Directory containing noise wavs
   feature_type: "mfcc_delta"
@@ -28,17 +28,17 @@ training:
   epochs: 100
   lr: 0.001
   optimizer: "adam"  # adam, adamw
-  loss: "aam"         # ce (CrossEntropy), aam (AAMSoftmax)
+  loss: "ce"         # ce (CrossEntropy), aam (AAMSoftmax)
   device: "cuda"     # cuda, cpu
   weight_decay: 0.0001 # Weight decay (L2 penalty)
   
   # AAM-Softmax Params
   aam_s: 30.0
-  aam_m: 0.2
+  aam_m: 0.3
 
   # Early Stopping
   early_stop: true
-  patience: 10
+  patience: 25
 
 paths:
   save_dir: "checkpoints/noise_augmented"

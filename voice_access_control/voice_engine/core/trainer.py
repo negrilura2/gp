@@ -48,7 +48,6 @@ def train_epoch(model, loader, opt, device, loss_type, loss_fn):
         labels = labels.to(device)
         
         # Add slight noise to training data to prevent exact memorization
-        # Only add noise if model is training
         if model.training:
              noise = torch.randn_like(feats) * 0.005 
              feats = feats + noise
@@ -62,7 +61,7 @@ def train_epoch(model, loader, opt, device, loss_type, loss_fn):
             loss = loss_fn(logits, labels)
         loss.backward()
         
-        # Gradient Clipping to prevent exploding gradients
+        # Gradient Clipping
         torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=3.0)
         
         opt.step()
@@ -70,7 +69,9 @@ def train_epoch(model, loader, opt, device, loss_type, loss_fn):
         preds = torch.argmax(logits, dim=1)
         total_correct += (preds == labels).sum().item()
         total_count += labels.numel()
-    avg_loss = total_loss / (batch_idx + 1)
+    
+    steps = batch_idx + 1
+    avg_loss = total_loss / steps if steps > 0 else 0.0
     acc = total_correct / total_count if total_count else 0.0
     return avg_loss, acc
 
@@ -79,11 +80,21 @@ def evaluate(model, loader, device, loss_type, loss_fn):
     total_loss = 0.0
     total_correct = 0
     total_count = 0
+    
+    # Check output dim to avoid crash on Open Set labels
+    out_dim = model.classifier.out_features if hasattr(model, 'classifier') else 0
+    
     with torch.no_grad():
         for batch_idx, (feats, lengths, labels) in enumerate(loader):
             feats = feats.to(device)
             lengths = lengths.to(device)
             labels = labels.to(device)
+            
+            # Check for invalid labels (Open Set protection)
+            if labels.max() >= out_dim:
+                # Skip batch or just don't compute loss
+                continue
+
             if loss_type == "aam":
                 emb = model(feats, lengths, return_embedding=True)
                 loss, logits = loss_fn(emb, labels, model.classifier.weight)
@@ -94,8 +105,13 @@ def evaluate(model, loader, device, loss_type, loss_fn):
             preds = torch.argmax(logits, dim=1)
             total_correct += (preds == labels).sum().item()
             total_count += labels.numel()
-    avg_loss = total_loss / (batch_idx + 1)
-    acc = total_correct / total_count if total_count else 0.0
+            
+    steps = batch_idx + 1 if 'batch_idx' in locals() else 0
+    if steps == 0 or total_count == 0:
+        return 0.0, 0.0
+
+    avg_loss = total_loss / steps
+    acc = total_correct / total_count
     return avg_loss, acc
 
 class Trainer:
@@ -126,7 +142,8 @@ class Trainer:
         
         self.dropout = cfg.get("model", {}).get("dropout", 0.1)
         self.channels = cfg.get("model", {}).get("n_channels", 512)
-        self.weight_decay = cfg.get("training", {}).get("weight_decay", 1e-3) # Increased from 1e-4
+        self.weight_decay = cfg.get("training", {}).get("weight_decay", 1e-3) 
+        self.pretrained_path = cfg.get("model", {}).get("pretrained_path", None)
 
         exp_cfg = cfg.get("experiment", {}) if isinstance(cfg.get("experiment", {}), dict) else {}
         exp_name = exp_cfg.get("name")
@@ -155,17 +172,13 @@ class Trainer:
             from .dataset import NoiseAugmentor
             augmentor = NoiseAugmentor(self.noise_dir)
 
-        # Check for explicit train/val directories (Professional Mode)
         train_dir = self.cfg.get("dataset", {}).get("train_dir")
         val_dir = self.cfg.get("dataset", {}).get("val_dir")
         
-        # Auto-resolve feature directory based on feature_type
-        # If data/features/logmel exists, use it instead of data/features
         dataset_root = self.feature_dir
         if self.dataset_mode == 'feature':
             potential_subdir = os.path.join(self.feature_dir, self.feature_type)
             if os.path.isdir(potential_subdir):
-                # Only use auto-detection if explicit paths are not provided or don't exist
                 if not (train_dir and os.path.exists(train_dir)):
                     print(f"Auto-detected feature subdirectory: {potential_subdir}")
                     dataset_root = potential_subdir
@@ -181,29 +194,50 @@ class Trainer:
             train_ds = SpeakerDataset(
                 train_dir,
                 mode=self.dataset_mode,
-                augmentor=augmentor, # Augment only train? usually yes.
+                augmentor=augmentor,
                 feature_type=self.feature_type,
                 n_mels=self.n_mels,
                 spec_augment=True,
             )
+            
+            # Try Closed-Set Validation first (assume Valid speakers are in Train)
+            # This allows computing Classification Loss/Accuracy correctly.
+            print("Attempting Closed-Set Validation (applying Train label mapping to Val)...")
+            
+            # Determine validation mode: if Val Dir points to Features, force 'feature' mode
+            # unless config explicitly says otherwise (but usually val_dir in config implies a specific type)
+            val_mode = self.dataset_mode
+            if "features" in val_dir and self.dataset_mode == "raw":
+                 print(f"Notice: Training in 'raw' mode but Validation dir seems to be features ('{val_dir}'). Switching Validation mode to 'feature'.")
+                 val_mode = "feature"
+
             val_ds = SpeakerDataset(
                 val_dir,
-                mode=self.dataset_mode,
-                augmentor=None, # No augmentation for validation usually
+                mode=val_mode,
+                augmentor=None,
                 feature_type=self.feature_type,
                 n_mels=self.n_mels,
-                class_mapping=train_ds.spk2idx, # Share mapping from train to val
+                class_mapping=train_ds.spk2idx, # Share mapping
                 spec_augment=False,
             )
-            # Combine spk2idx?
-            # Issue: Train and Val might have different speaker sets (Open Set) or same (Closed Set).
-            # For training classifier, we need a unified speaker map if it's closed set.
-            # If open set (AAM/Metric learning), we typically train on Train speakers.
-            # Validation computes EER on Val speakers.
-            # So model n_speakers should be len(train_ds.spk2idx).
             
-            # We assume train_ds has the speakers we want to classify/embed.
-            ds = train_ds # for reference
+            # Fallback for Open-Set (if Valid speakers are disjoint from Train)
+            if len(val_ds) == 0:
+                print("Warning: No validation samples found with Train mapping (Open-Set detected).")
+                print("         Reloading Validation set without label mapping.")
+                val_ds = SpeakerDataset(
+                    val_dir,
+                    mode=val_mode,
+                    augmentor=None,
+                    feature_type=self.feature_type,
+                    n_mels=self.n_mels,
+                    class_mapping=None, # Independent mapping
+                    spec_augment=False,
+                )
+            else:
+                print(f"Successfully loaded {len(val_ds)} validation samples using Train mapping.")
+
+            ds = train_ds 
             
         else:
             print(f"Loading single dataset from {dataset_root} (mode={self.dataset_mode}) and doing random split...")
@@ -213,20 +247,13 @@ class Trainer:
                 augmentor=augmentor,
                 feature_type=self.feature_type,
                 n_mels=self.n_mels,
-                spec_augment=False # Init with False, we will create specific subsets later
+                spec_augment=False 
             )
             print(f"Found {len(ds)} utterances, {len(ds.spk2idx)} speakers.")
             
             idxs = list(range(len(ds)))
             train_idx, val_idx = train_test_split(idxs, test_size=0.1, random_state=42)
-            train_ds = Subset(ds, train_idx)
-            val_ds = Subset(ds, val_idx)
             
-            # Apply SpecAugment ONLY to Training Set (via custom collate or wrapper)
-            # Since Subset just wraps the original dataset, we can't easily change the flag inside it.
-            # But our SpeakerDataset checks self.spec_augment.
-            # We can hack it by creating two datasets or changing the flag dynamically (not thread safe).
-            # BETTER: Re-init dataset twice.
             print("Re-initializing datasets for Train/Val split to ensure correct augmentation...")
             train_ds_full = SpeakerDataset(
                 dataset_root,
@@ -234,7 +261,7 @@ class Trainer:
                 augmentor=augmentor,
                 feature_type=self.feature_type,
                 n_mels=self.n_mels,
-                spec_augment=True # Enable for train
+                spec_augment=True 
             )
             val_ds_full = SpeakerDataset(
                 dataset_root,
@@ -242,10 +269,11 @@ class Trainer:
                 augmentor=None,
                 feature_type=self.feature_type,
                 n_mels=self.n_mels,
-                spec_augment=False # Disable for val
+                spec_augment=False 
             )
             train_ds = Subset(train_ds_full, train_idx)
             val_ds = Subset(val_ds_full, val_idx)
+            # In random split mode, speakers are shared, so class_mapping is consistent implicitly
 
         n_spk = len(train_ds.spk2idx) if hasattr(train_ds, "spk2idx") else len(ds.spk2idx)
         print(f"Training on {len(train_ds)} samples, {n_spk} speakers.")
@@ -263,24 +291,52 @@ class Trainer:
         self.train_loader = DataLoader(train_ds, batch_size=self.batch_size, shuffle=True, collate_fn=pad_collate, num_workers=num_workers)
         self.val_loader = DataLoader(val_ds, batch_size=self.batch_size, shuffle=False, collate_fn=pad_collate, num_workers=num_workers)
 
-        # Model
+        # Check for label consistency between Train and Val
+        self.val_label_mismatch = False
+        if hasattr(train_ds, "dataset") and isinstance(train_ds, Subset):
+             # Random split from same parent -> Consistent
+             pass
+        elif hasattr(train_ds, "spk2idx") and hasattr(val_ds, "spk2idx"):
+             # Explicit split -> Check if mappings are identical
+             if train_ds.spk2idx != val_ds.spk2idx:
+                 print("Notice: Validation set has different speaker-to-label mapping than Training set.")
+                 print("        Classification Loss/Accuracy on Validation set will be meaningless (Open Set).")
+                 print("        Will rely on EER for validation metrics.")
+                 self.val_label_mismatch = True
+
         sample_feat, _ = ds[0]
-        feat_dim = int(sample_feat.shape[0])
+        # sample_feat is (T, D) for features, so dim is shape[1]. If raw audio (T,), dim is 1.
+        feat_dim = int(sample_feat.shape[1]) if sample_feat.ndim > 1 else 1
         print(f"Feature dim: {feat_dim}, Channels: {self.channels}, Dropout: {self.dropout}")
         
         self.model = LightECAPA(feat_dim=feat_dim, channels=self.channels, emb_dim=192, n_speakers=n_spk, dropout=self.dropout).to(self.device)
 
-        # Optimizer
+        # Load Pretrained Weights if available
+        if self.pretrained_path and os.path.exists(self.pretrained_path):
+            print(f"Loading pretrained weights from {self.pretrained_path}...")
+            try:
+                state_dict = torch.load(self.pretrained_path, map_location=self.device)
+                
+                # Filter out mismatching keys (e.g. classification head if n_speakers changed)
+                model_dict = self.model.state_dict()
+                filtered_dict = {k: v for k, v in state_dict.items() if k in model_dict and v.shape == model_dict[k].shape}
+                
+                if len(filtered_dict) < len(state_dict):
+                    print(f"Warning: {len(state_dict) - len(filtered_dict)} layers were skipped due to shape mismatch (e.g. classifier head).")
+                
+                model_dict.update(filtered_dict)
+                self.model.load_state_dict(model_dict)
+                print("Pretrained weights loaded successfully.")
+            except Exception as e:
+                print(f"Error loading pretrained weights: {e}")
+
         if self.optimizer_type == "adamw":
             self.optimizer = optim.AdamW(self.model.parameters(), lr=self.lr, weight_decay=self.weight_decay)
         else:
             self.optimizer = optim.Adam(self.model.parameters(), lr=self.lr, weight_decay=self.weight_decay)
 
-        # Scheduler (Cosine Annealing) with Warmup
-        # T_max is the number of epochs. eta_min is the minimum LR.
         self.scheduler = CosineAnnealingLR(self.optimizer, T_max=self.epochs, eta_min=1e-6)
 
-        # Loss
         if self.loss_type == "aam":
             self.loss_fn = AAMSoftmaxLoss(s=self.aam_s, m=self.aam_m).to(self.device)
         else:
@@ -292,24 +348,34 @@ class Trainer:
         patience_counter = 0
         history = []
         total_time = 0.0
+        
         for epoch in range(self.epochs):
             start = time.time()
             loss_train, acc_train = train_epoch(self.model, self.train_loader, self.optimizer, self.device, self.loss_type, self.loss_fn)
-            loss_val, acc_val = evaluate(self.model, self.val_loader, self.device, self.loss_type, self.loss_fn)
+            
+            # Evaluate Loss/Acc
+            if self.val_label_mismatch:
+                loss_val, acc_val = 0.0, 0.0
+                val_msg = "Val Loss=N/A (OpenSet) Acc=N/A"
+            else:
+                loss_val, acc_val = evaluate(self.model, self.val_loader, self.device, self.loss_type, self.loss_fn)
+                val_msg = f"Val Loss={loss_val:.4f} Acc={acc_val:.4f}"
+            
             dur = time.time() - start
             total_time += dur
             
             print(f"Epoch {epoch+1}/{self.epochs} | T={dur:.1f}s | "
-                  f"Train Loss={loss_train:.4f} Acc={acc_train:.4f} | "
-                  f"Val Loss={loss_val:.4f} Acc={acc_val:.4f}")
+                  f"Train Loss={loss_train:.4f} Acc={acc_train:.4f} | {val_msg}")
             
             # TensorBoard logging
             current_lr = self.optimizer.param_groups[0]['lr']
             self.writer.add_scalar("LR", current_lr, epoch + 1)
             self.writer.add_scalar("Loss/train", loss_train, epoch + 1)
             self.writer.add_scalar("Accuracy/train", acc_train, epoch + 1)
-            self.writer.add_scalar("Loss/val", loss_val, epoch + 1)
-            self.writer.add_scalar("Accuracy/val", acc_val, epoch + 1)
+            
+            if not self.val_label_mismatch:
+                self.writer.add_scalar("Loss/val", loss_val, epoch + 1)
+                self.writer.add_scalar("Accuracy/val", acc_val, epoch + 1)
             
             self.scheduler.step()
 
@@ -317,37 +383,54 @@ class Trainer:
             if (epoch + 1) % self.eer_interval == 0:
                 print("Computing EER...")
                 embs, labels = collect_embeddings(self.model, self.val_loader, self.device)
-                eer = compute_eer_from_embeddings(embs, labels, max_pairs=self.eer_pairs)
-                if eer is not None:
-                    print(f"  => EER: {eer:.4f}")
-                    self.writer.add_scalar("EER/val", eer, epoch + 1)
-                    eer_value = float(eer)
+                
+                # If Open Set, labels are 0..N_val.
+                # EER needs at least 2 speakers.
+                if len(np.unique(labels)) < 2:
+                    print("  => EER: Skipped (Need at least 2 speakers)")
+                else:
+                    eer = compute_eer_from_embeddings(embs, labels, max_pairs=self.eer_pairs)
+                    if eer is not None:
+                        print(f"  => EER: {eer:.4f}")
+                        self.writer.add_scalar("EER/val", eer, epoch + 1)
+                        eer_value = float(eer)
 
+            # Save logic: Prefer EER if available, else Val Loss
+            save_best = False
             if eer_value is not None:
                 if best_eer is None or eer_value < best_eer:
                     best_eer = eer_value
-                    patience_counter = 0
-                    save_name = f"ecapa_{self.feature_type}_best.pth"
-                    save_path = os.path.join(self.save_dir, save_name)
-                    torch.save(self.model.state_dict(), save_path)
-                    
-                    meta_name = f"ecapa_{self.feature_type}_best.json"
-                    meta_path = os.path.join(self.save_dir, meta_name)
-                    with open(meta_path, "w") as f:
-                        json.dump({
-                            "feature_type": self.feature_type,
-                            "n_mels": self.n_mels,
-                            "feat_dim": self.model.layer1.conv.weight.shape[1],
-                            "emb_dim": EMBEDDING_DIM,
-                            "model_type": "LightECAPA"
-                        }, f, indent=2)
-                    
-                    print(f"  => Saved best model to {save_name} (EER={eer_value:.4f}).")
-                else:
+                    save_best = True
+                    print(f"  => New Best EER: {best_eer:.4f}")
+            # Fallback if EER is not computed this epoch or never
+            elif best_eer is None and loss_val > 0:
+                 # Logic for loss-based saving?
+                 # Current code only saves on EER improvement.
+                 pass
+
+            if save_best:
+                patience_counter = 0
+                save_name = f"ecapa_{self.feature_type}_best.pth"
+                save_path = os.path.join(self.save_dir, save_name)
+                torch.save(self.model.state_dict(), save_path)
+                
+                meta_name = f"ecapa_{self.feature_type}_best.json"
+                meta_path = os.path.join(self.save_dir, meta_name)
+                with open(meta_path, "w") as f:
+                    json.dump({
+                        "feature_type": self.feature_type,
+                        "n_mels": self.n_mels,
+                        "feat_dim": self.model.layer1.conv.weight.shape[1],
+                        "emb_dim": EMBEDDING_DIM,
+                        "model_type": "LightECAPA"
+                    }, f, indent=2)
+            else:
+                if eer_value is not None: # Only count patience if we computed EER
                     patience_counter += 1
                     if self.early_stop and patience_counter >= self.patience:
                         print("Early stopping.")
                         break
+            
             history.append(
                 {
                     "epoch": epoch + 1,
@@ -359,11 +442,11 @@ class Trainer:
                     "time_sec": float(dur),
                 }
             )
+        
         last_name = f"ecapa_{self.feature_type}_last.pth"
         last_path = os.path.join(self.save_dir, last_name)
         torch.save(self.model.state_dict(), last_path)
         
-        # Save metadata for last model
         meta_name = f"ecapa_{self.feature_type}_last.json"
         meta_path = os.path.join(self.save_dir, meta_name)
         with open(meta_path, "w") as f:

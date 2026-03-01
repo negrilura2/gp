@@ -10,6 +10,7 @@ if ROOT not in sys.path:
     sys.path.insert(0, ROOT)
 
 from voice_engine.core.trainer import Trainer
+from voice_engine.config import MODELS_DIR
 
 def load_config(path):
     with open(path, "r", encoding="utf-8") as f:
@@ -22,6 +23,7 @@ def main():
     parser.add_argument("--early_stop", action="store_true")
     parser.add_argument("--no_early_stop", action="store_true")
     parser.add_argument("--patience", type=int, default=None)
+    parser.add_argument("--save_dir", type=str, default=None, help="Override save directory")
     args = parser.parse_args()
 
     if not os.path.exists(args.config):
@@ -31,6 +33,8 @@ def main():
     print(f"Loading config from {args.config}")
     cfg = load_config(args.config)
     training_cfg = cfg.setdefault("training", {})
+    paths_cfg = cfg.setdefault("paths", {})
+
     if args.epochs is not None:
         training_cfg["epochs"] = args.epochs
     if args.patience is not None:
@@ -40,8 +44,13 @@ def main():
     if args.no_early_stop:
         training_cfg["early_stop"] = False
     
+    # Allow overriding save_dir via CLI or default to config constant
+    if args.save_dir:
+        paths_cfg["save_dir"] = args.save_dir
+    elif not paths_cfg.get("save_dir"):
+        paths_cfg["save_dir"] = str(MODELS_DIR)
+
     trainer = Trainer(cfg)
-    trainer.setup()
     trainer.fit()
 
 if __name__ == "__main__":

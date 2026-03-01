@@ -6,6 +6,7 @@ import pandas as pd
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from voice_engine.services.knowledge_service import KnowledgeService
+from voice_engine.config import DATA_DIR
 
 def view_knowledge():
     print("Connecting to Knowledge Base (ChromaDB)...", flush=True)
@@ -41,11 +42,10 @@ def view_knowledge():
         
         print(df.to_string(index=False), flush=True)
         
-        persist_dir = os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data", "chroma_knowledge")))
+        persist_dir = os.path.join(DATA_DIR, "chroma_knowledge")
         print(f"\n[Storage Info]", flush=True)
         print(f"Type: Local File-based Vector Database (SQLite + Parquet)", flush=True)
         print(f"Path: {persist_dir}", flush=True)
-        print(f"Note: This is NOT stored in MySQL. It is a specialized vector store.", flush=True)
 
     except Exception as e:
         import traceback
