@@ -1,0 +1,15 @@
+# configs/summarize_experiments.yaml
+# 实验结果汇总配置文件
+# 对应脚本: scripts/analysis/summarize_experiments.py
+# 功能: 绘制训练损失/准确率曲线，汇总不同ScoreNorm方法的EER结果
+#
+# 使用方法:
+# 1. 汇总所有实验: python -m scripts.analysis.summarize_experiments
+
+paths:
+  # Input directories
+  strategy_dir: "reports/strategy"
+  score_norm_dir: "reports/score_norm"
+  
+  # Output directory (for summary images and json)
+  out_dir: "reports"

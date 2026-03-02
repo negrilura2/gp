@@ -1,0 +1,23 @@
+# configs/record_and_verify.yaml
+# 录音注册与验证配置文件
+# 对应脚本: scripts/audio/record_and_verify.py
+#
+# 使用方法:
+# 1. 注册新用户: python -m scripts.audio.record_and_verify enroll user01
+# 2. 验证用户:   python -m scripts.audio.record_and_verify verify
+# 3. 指定阈值:   python -m scripts.audio.record_and_verify verify --threshold 0.8
+
+model:
+  path: "checkpoints/ecapa_mfcc_delta_best.pth"
+  threshold: 0.75
+
+audio:
+  sample_rate: 16000
+  duration: 3
+  
+enrollment:
+  n_recordings: 3
+  
+paths:
+  recordings_dir: "data/recordings"
+  enroll_dir: "data/enroll"

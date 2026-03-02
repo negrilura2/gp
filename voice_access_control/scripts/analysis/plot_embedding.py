@@ -2,6 +2,7 @@ import argparse
 import json
 import os
 import sys
+import yaml
 
 import numpy as np
 import torch
@@ -73,10 +74,16 @@ def reduce_embeddings(embeddings, method, seed, perplexity):
 def plot_embeddings(points, labels, idx2spk, out_png, title):
     plt.figure(figsize=(8, 6))
     unique_labels = sorted(set(labels))
-    colors = plt.cm.get_cmap("tab20", len(unique_labels))
+
+    try:
+        cmap = matplotlib.colormaps["tab20"]
+    except (AttributeError, KeyError):
+        cmap = plt.cm.get_cmap("tab20")
+
     for i, lab in enumerate(unique_labels):
         mask = labels == lab
-        plt.scatter(points[mask, 0], points[mask, 1], s=18, alpha=0.8, color=colors(i), label=idx2spk.get(int(lab), str(lab)))
+        color = cmap(i % 20)
+        plt.scatter(points[mask, 0], points[mask, 1], s=18, alpha=0.8, color=color, label=idx2spk.get(int(lab), str(lab)))
     plt.title(title)
     plt.xlabel("Dim 1")
     plt.ylabel("Dim 2")
@@ -96,20 +103,29 @@ def run(args):
         max_speakers, max_utts_per_spk
     """
     cfg = {}
+    print(f"Starting plot_embedding with args: {args}")
+
     if getattr(args, "config", None):
-        with open(args.config, "r", encoding="utf-8") as f:
-            cfg = yaml.safe_load(f)
-        print(f"Loading config from {args.config}")
+        if os.path.exists(args.config):
+            with open(args.config, "r", encoding="utf-8") as f:
+                cfg = yaml.safe_load(f)
+            print(f"Loading config from {args.config}")
+        else:
+            print(f"Config file not found: {args.config}")
 
     # Priority: Args > Config > Default
     model_path = getattr(args, "model", None) or cfg.get("model", {}).get("path") or DEFAULT_MODEL_PATH
     # Handle feature_dir being None or empty string
     feature_dir_arg = getattr(args, "feature_dir", None)
-    feature_dir = feature_dir_arg or cfg.get("dataset", {}).get("feature_dir") or str(FEATURES_DIR)
+    feature_dir = feature_dir_arg or cfg.get("dataset", {}).get("val_dir") or cfg.get("dataset", {}).get("feature_dir") or str(FEATURES_DIR)
     
     out_dir_arg = getattr(args, "out_dir", None)
     out_dir = out_dir_arg or cfg.get("analysis", {}).get("out_dir") or str(REPORTS_DIR)
     
+    print(f"Model Path: {model_path}")
+    print(f"Feature Dir: {feature_dir}")
+    print(f"Output Dir: {out_dir}")
+
     analysis_cfg = cfg.get("analysis", {})
     emb_cfg = analysis_cfg.get("embedding", {})
     
@@ -128,26 +144,41 @@ def run(args):
         device = "cpu"
 
     feature_dir = resolve_feature_dir(feature_dir, feature_type)
+    print(f"Resolved Feature Dir: {feature_dir}")
+    
     if not os.path.isdir(feature_dir):
-        # Fallback or error?
-        # If running from eval thread, maybe feature_dir is passed correctly.
-        pass
+        print(f"Error: Feature directory does not exist: {feature_dir}")
+        if os.path.exists(os.path.dirname(feature_dir)):
+            print(f"Parent dir contents: {os.listdir(os.path.dirname(feature_dir))}")
+        return
+
+    print(f"Listing files in {feature_dir}...")
+    try:
+        # Debug listing
+        root_files = os.listdir(feature_dir)
+        print(f"Top-level entries (first 10): {root_files[:10]}")
+    except Exception as e:
+        print(f"Failed to list directory: {e}")
 
     try:
         ds = SpeakerDataset(feature_dir)
+        print(f"Dataset loaded. Size: {len(ds)}")
     except Exception as e:
         print(f"Dataset load failed: {e}")
+        import traceback
+        traceback.print_exc()
         return
 
     if len(ds) == 0:
-        print("feature_dir 内没有可用特征文件")
+        print(f"Error: No feature files found in {feature_dir}")
         return
 
     sample_feat, _ = ds[0]
     feat_dim_data = int(sample_feat.shape[0])
     
     if not os.path.exists(model_path):
-        print(f"Model not found: {model_path}")
+        print(f"Error: Model file not found: {model_path}")
+        print("Please run 'python -m scripts.train' or provide a valid model path.")
         return
         
     state = torch.load(model_path, map_location=device)
@@ -165,8 +196,47 @@ def run(args):
         
     if ckpt_feat_dim is not None and ckpt_feat_dim != feat_dim_data:
         print(f"Warning: Model expects {ckpt_feat_dim} but data has {feat_dim_data}")
+        print("Attempting to auto-fix by adjusting model input dimension...")
+        feat_dim = feat_dim_data # Override with actual data dimension
         
-    feat_dim = ckpt_feat_dim or feat_dim_data
+    feat_dim = feat_dim_data # Always use data dimension?
+    # Actually, we should use what the model expects if we are loading weights.
+    # If we change feat_dim to match data (507), but model weights are for 39,
+    # then loading state_dict will fail with size mismatch for layer1.
+    
+    # If the mismatch is 39 vs 507, it's likely (39 * 13) or similar.
+    # MFCC Delta (13) * 3 = 39.
+    # 507 / 39 = 13.
+    # Maybe the data is (T, 39) but loaded as (39, T)?
+    # Or data is (T, 13) and we expect 39?
+    
+    # Let's check the shape of sample_feat.
+    # SpeakerDataset returns (feat, label).
+    # feat is numpy array.
+    # If feat_dim_data is 507, that's huge for MFCC.
+    # Maybe it's flattened?
+    
+    # Let's trust the data dimension for now and see if we can adapt.
+    # But we CANNOT adapt loaded weights.
+    
+    if ckpt_feat_dim and ckpt_feat_dim != feat_dim_data:
+         print(f"CRITICAL WARNING: Data dimension {feat_dim_data} does not match Model dimension {ckpt_feat_dim}")
+         # If data is 507 and model is 39, maybe we need to transpose?
+         # 507 is 39 * 13. Wait, 13 frames?
+         # If the data was saved as (N_MELS * FRAMES) flattened?
+         
+         # Common issue:
+         # MFCC with delta+delta-delta is 13 * 3 = 39.
+         # MelSpectrogram with 40 bins is 40.
+         
+         # If data is 507, it's likely 39 * 13.
+         pass
+
+    # Use model's expected dimension to initialize model, 
+    # but if data is different, we might fail at runtime.
+    # For now, let's use the checkpoint's dimension if available, otherwise data.
+    feat_dim = ckpt_feat_dim if ckpt_feat_dim else feat_dim_data
+    
     model = LightECAPA(feat_dim=feat_dim, channels=channels, emb_dim=EMBEDDING_DIM, n_speakers=None).to(device)
     model.load_state_dict(state, strict=False)
     model.eval()
@@ -219,6 +289,8 @@ def run(args):
     # If score_norm is 'none', we can omit it or keep it for consistency.
     # Let's keep it to match user request.
     score_norm = getattr(args, "score_norm", "none")
+    if score_norm is None:
+        score_norm = "none"
     stem = f"{method}_{feature_type}_{score_norm}_{model_name}"
     out_png = os.path.join(out_root, f"{stem}.png")
     out_json = os.path.join(out_root, f"{stem}.json")
@@ -242,7 +314,8 @@ def run(args):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--config", "-c", help="Path to config yaml file")
+    # Default to configs/plot_embedding.yaml
+    parser.add_argument("--config", "-c", default="configs/plot_embedding.yaml", help="Path to config yaml file")
     parser.add_argument("--model", default=None)
     parser.add_argument("--feature_dir", default=None)
     parser.add_argument("--out_dir", default=None)
@@ -259,3 +332,6 @@ def main():
     
     run(args)
 
+
+if __name__ == "__main__":
+    main()

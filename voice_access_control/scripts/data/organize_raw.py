@@ -5,7 +5,13 @@ import random
 from pathlib import Path
 
 # Configuration
-SOURCE_ROOT = Path("data/mini_vox")
+# Try to find source in potential locations (handle Chinese folder name)
+POTENTIAL_SOURCES = [
+    Path("data/数据/mini_vox"),
+    Path("data/mini_vox"),
+]
+SOURCE_ROOT = next((p for p in POTENTIAL_SOURCES if p.exists()), Path("data/mini_vox"))
+
 DEST_ROOT = Path("data/raw")
 TRAIN_SRC = SOURCE_ROOT / "train"
 VALID_SRC = SOURCE_ROOT / "valid"

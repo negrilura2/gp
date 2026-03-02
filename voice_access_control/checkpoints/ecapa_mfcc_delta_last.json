@@ -1,7 +1,0 @@
-{
-  "feature_type": "mfcc_delta",
-  "n_mels": 40,
-  "feat_dim": 39,
-  "emb_dim": 192,
-  "model_type": "LightECAPA"
-}

@@ -1,0 +1,29 @@
+# configs/plot_embedding.yaml
+# 声纹可视化配置文件 (t-SNE/PCA)
+# 对应脚本: scripts/analysis/plot_embedding.py
+#
+# 使用方法:
+# 1. 默认t-SNE可视化: python -m scripts.analysis.plot_embedding
+# 2. 使用PCA降维:    python -m scripts.analysis.plot_embedding --method pca
+# 3. 指定模型:       python -m scripts.analysis.plot_embedding --model checkpoints/my_model.pth
+
+model:
+  path: "checkpoints/ecapa_mfcc_delta_best.pth"
+
+dataset:
+  # Use validation set for embedding visualization
+  feature_dir: "data/features/mfcc_delta/valid"
+  
+
+analysis:
+  out_dir: "reports"
+  batch_size: 32
+  device: "cuda"
+  seed: 42
+  
+  embedding:
+    feature_type: "mfcc_delta"
+    method: "tsne" # tsne or pca
+    perplexity: 30
+    max_speakers: 10
+    max_utts_per_spk: 20

@@ -2,6 +2,7 @@ import argparse
 import json
 import os
 import sys
+import yaml
 
 import matplotlib
 
@@ -129,18 +130,34 @@ def summarize_score_norm(score_norm_dir, out_path):
     print(f"Saved score_norm summary to {out_path}")
 
 
+def load_config(path):
+    with open(path, "r", encoding="utf-8") as f:
+        return yaml.safe_load(f)
+
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--strategy_dir", default=os.path.join("reports", "strategy"))
-    parser.add_argument("--score_norm_dir", default=os.path.join("reports", "score_norm"))
-    parser.add_argument("--out_dir", default="reports")
+    parser.add_argument("--config", "-c", default="configs/summarize_experiments.yaml", help="Path to config yaml file")
+    parser.add_argument("--strategy_dir", default=None)
+    parser.add_argument("--score_norm_dir", default=None)
+    parser.add_argument("--out_dir", default=None)
     args = parser.parse_args()
 
-    strategy_png = os.path.join(args.out_dir, "strategy", "strategy_curves.png")
-    plot_strategy_curves(args.strategy_dir, strategy_png)
+    cfg = {}
+    if args.config and os.path.exists(args.config):
+        print(f"Loading config from {args.config}")
+        cfg = load_config(args.config)
 
-    score_norm_summary = os.path.join(args.out_dir, "score_norm", "summary.json")
-    summarize_score_norm(args.score_norm_dir, score_norm_summary)
+    paths_cfg = cfg.get("paths", {})
+    strategy_dir = args.strategy_dir or paths_cfg.get("strategy_dir") or os.path.join("reports", "strategy")
+    score_norm_dir = args.score_norm_dir or paths_cfg.get("score_norm_dir") or os.path.join("reports", "score_norm")
+    out_dir = args.out_dir or paths_cfg.get("out_dir") or "reports"
+
+    strategy_png = os.path.join(out_dir, "strategy", "strategy_curves.png")
+    plot_strategy_curves(strategy_dir, strategy_png)
+
+    score_norm_summary = os.path.join(out_dir, "score_norm", "summary.json")
+    summarize_score_norm(score_norm_dir, score_norm_summary)
+
 
 
 if __name__ == "__main__":

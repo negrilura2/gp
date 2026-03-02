@@ -1,0 +1,45 @@
+# configs/noise_robustness.yaml
+# 噪声鲁棒性测试配置
+# 对应脚本: scripts/analysis/noise_robustness.py
+#
+# 使用方法:
+# 1. 默认白噪声测试: python -m scripts.analysis.noise_robustness
+# 2. 自定义噪声文件: 修改下方 noise_wav 为 wav 文件路径
+# 3. 指定模型测试: python -m scripts.analysis.noise_robustness --model_path checkpoints/noise_augmented/ecapa_mfcc_delta_best.pth
+
+model:
+  path: "checkpoints/ecapa_mfcc_delta_best.pth"
+
+dataset:
+  # Validation set features for template creation
+  feature_dir: "data/features/mfcc_delta/valid"
+  
+  # Raw audio for noise addition
+  processed_dir: "data/processed"
+
+analysis:
+  out_dir: "reports"
+  batch_size: 32
+  device: "cuda"
+  seed: 42
+  
+  noise:
+    feature_type: "mfcc_delta"
+    n_mels: 40
+    
+    # SNR levels to test
+    snr_list: 
+      - "clean"
+      - "20"
+      - "10"
+      - "0"
+    
+    # Noise file path
+    # Options: 
+    #   - "white" (default, internal generation)
+    #   - "data/noise/your_noise_file.wav" (custom file)
+    noise_wav: "data/noise.wav"
+    
+    # Limit speakers for faster analysis
+    max_speakers: 15
+    max_utts_per_spk: 5

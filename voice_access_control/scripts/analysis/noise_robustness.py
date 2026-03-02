@@ -30,14 +30,33 @@ from voice_engine.core.metrics import build_templates
 from voice_engine.config import SAMPLE_RATE
 import soundfile as sf
 import scipy.signal
+import matplotlib.pyplot as plt
+
 
 def evaluate_noise(model, templates, spk2idx, processed_root, feature_type, snr_db, device, n_mels, seed, noise_y, max_utts_per_spk=5):
     rng = np.random.RandomState(seed)
     total = 0
     correct = 0
     for spk, idx in spk2idx.items():
-        spk_dir = os.path.join(processed_root, spk)
-        if not os.path.isdir(spk_dir):
+        # processed_root is like "data/processed", but files might be in "data/processed/valid/spk_id"
+        # We need to find where the wav files for this speaker are.
+        
+        # Try direct path (legacy)
+        spk_dir_candidates = [
+            os.path.join(processed_root, spk),
+            os.path.join(processed_root, "valid", spk),
+            os.path.join(processed_root, "train", spk),
+            os.path.join(processed_root, "test", spk),
+        ]
+        
+        spk_dir = None
+        for cand in spk_dir_candidates:
+            if os.path.isdir(cand) and any(f.endswith(".wav") for f in os.listdir(cand)):
+                spk_dir = cand
+                break
+        
+        if not spk_dir:
+            # print(f"Warning: Wav files for speaker {spk} not found in {processed_root}")
             continue
         utt_count = 0
         for name in os.listdir(spk_dir):
@@ -72,7 +91,8 @@ def load_config(path):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--config", "-c", help="Path to config yaml file")
+    # Default to configs/noise_robustness.yaml
+    parser.add_argument("--config", "-c", default="configs/noise_robustness.yaml", help="Path to config yaml file")
     parser.add_argument("--model_path", default=None)
     parser.add_argument("--feature_dir", default=None)
     parser.add_argument("--processed_dir", default=None)
@@ -95,7 +115,7 @@ def main():
 
     # Priority: CLI > Config > Default
     model_path = args.model_path or cfg.get("model", {}).get("path") or "checkpoints/ecapa_best.pth"
-    feature_dir = args.feature_dir or cfg.get("dataset", {}).get("feature_dir") or str(FEATURES_DIR)
+    feature_dir = args.feature_dir or cfg.get("dataset", {}).get("val_dir") or cfg.get("dataset", {}).get("feature_dir") or str(FEATURES_DIR)
     processed_dir = args.processed_dir or cfg.get("dataset", {}).get("processed_dir") or str(PROCESSED_DIR)
     out_dir = args.out_dir or cfg.get("analysis", {}).get("out_dir") or str(REPORTS_DIR)
     
@@ -145,24 +165,53 @@ def main():
     if len(ds) == 0:
         raise ValueError("feature_dir 内没有可用特征文件")
     sample_feat, _ = ds[0]
-    feat_dim = int(sample_feat.shape[0])
+    if sample_feat.ndim == 2:
+        feat_dim_data = int(sample_feat.shape[1])
+    else:
+        feat_dim_data = 1
     n_spk = len(ds.spk2idx)
     
-    print(f"DEBUG: Initializing model with feat_dim={feat_dim}, n_spk={n_spk}, device={device}")
+    print(f"DEBUG: Initializing model (data_feat_dim={feat_dim_data}, n_spk={n_spk}, device={device})")
+    
+    state = torch.load(model_path, map_location=device)
+    
+    ckpt_feat_dim = None
+    model_channels = None
+    w = state.get("layer1.conv.weight")
+    if w is None:
+        w = state.get("module.layer1.conv.weight")
+    if w is not None:
+        model_channels = int(w.shape[0])
+        ckpt_feat_dim = int(w.shape[1])
+        print(f"DEBUG: Inferred from checkpoint -> feat_dim={ckpt_feat_dim}, channels={model_channels}")
+    else:
+        model_channels = 256
+        ckpt_feat_dim = feat_dim_data
+        print(f"WARNING: layer1.conv.weight not found in checkpoint, fallback feat_dim={ckpt_feat_dim}, channels={model_channels}")
+    
+    feat_dim = ckpt_feat_dim or feat_dim_data
+    
     try:
-        model = LightECAPA(feat_dim=feat_dim, emb_dim=EMBEDDING_DIM, n_speakers=n_spk).to(device)
+        model = LightECAPA(
+            feat_dim=feat_dim,
+            channels=model_channels,
+            emb_dim=EMBEDDING_DIM,
+            n_speakers=None,  # Only embedding needed, avoid classifier mismatch
+        ).to(device)
+        model.load_state_dict(state, strict=False)
     except RuntimeError as e:
-        if "out of memory" in str(e):
-            print("ERROR: GPU OOM during model init. Switching to CPU.")
-            device = "cpu"
-            torch.cuda.empty_cache()
-            model = LightECAPA(feat_dim=feat_dim, emb_dim=EMBEDDING_DIM, n_speakers=n_spk).to(device)
+        if "size mismatch" in str(e) and "256" in str(e):
+            print("ERROR: Size mismatch detected, retrying with channels=256")
+            model_channels = 256
+            model = LightECAPA(
+                feat_dim=feat_dim,
+                channels=model_channels,
+                emb_dim=EMBEDDING_DIM,
+                n_speakers=None,
+            ).to(device)
+            model.load_state_dict(state, strict=False)
         else:
             raise
-    
-    print(f"DEBUG: Loading model state from {model_path}")
-    state = torch.load(model_path, map_location=device)
-    model.load_state_dict(state, strict=False)
     
     # Enable memory optimization
     if device == "cuda":
@@ -214,11 +263,14 @@ def main():
 
     noise_y = None
     noise_tag = "white"
-    if noise_wav:
+    
+    # Check if noise_wav is specified and not "white"
+    if noise_wav and str(noise_wav).lower() != "white":
         print(f"DEBUG: Checking noise file: {noise_wav}")
         if not os.path.isfile(noise_wav):
-            print(f"DEBUG: Noise file not found: {noise_wav}")
-            raise FileNotFoundError(noise_wav)
+            print(f"Error: Noise file not found: {noise_wav}")
+            # Fallback to white noise or exit? Let's exit to be safe.
+            return
         
         print(f"DEBUG: Reading noise file: {noise_wav}")
         # 使用统一的 load_and_resample
@@ -226,6 +278,9 @@ def main():
         print(f"DEBUG: Noise file read. Shape: {noise_y.shape}, SR: {sr_n}")
         
         noise_tag = os.path.splitext(os.path.basename(noise_wav))[0]
+    else:
+        print("DEBUG: Using internal White Noise generator.")
+        noise_tag = "white"
     
     print(f"DEBUG: Starting evaluation loops. SNR list: {snr_list}")
     

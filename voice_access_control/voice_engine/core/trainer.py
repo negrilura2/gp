@@ -144,6 +144,7 @@ class Trainer:
         self.channels = cfg.get("model", {}).get("n_channels", 512)
         self.weight_decay = cfg.get("training", {}).get("weight_decay", 1e-3) 
         self.pretrained_path = cfg.get("model", {}).get("pretrained_path", None)
+        self.save_last = cfg.get("training", {}).get("save_last", True)
 
         exp_cfg = cfg.get("experiment", {}) if isinstance(cfg.get("experiment", {}), dict) else {}
         exp_name = exp_cfg.get("name")
@@ -443,20 +444,21 @@ class Trainer:
                 }
             )
         
-        last_name = f"ecapa_{self.feature_type}_last.pth"
-        last_path = os.path.join(self.save_dir, last_name)
-        torch.save(self.model.state_dict(), last_path)
-        
-        meta_name = f"ecapa_{self.feature_type}_last.json"
-        meta_path = os.path.join(self.save_dir, meta_name)
-        with open(meta_path, "w") as f:
-            json.dump({
-                "feature_type": self.feature_type,
-                "n_mels": self.n_mels,
-                "feat_dim": self.model.layer1.conv.weight.shape[1],
-                "emb_dim": EMBEDDING_DIM,
-                "model_type": "LightECAPA"
-            }, f, indent=2)
+        if self.save_last:
+            last_name = f"ecapa_{self.feature_type}_last.pth"
+            last_path = os.path.join(self.save_dir, last_name)
+            torch.save(self.model.state_dict(), last_path)
+            
+            meta_name = f"ecapa_{self.feature_type}_last.json"
+            meta_path = os.path.join(self.save_dir, meta_name)
+            with open(meta_path, "w") as f:
+                json.dump({
+                    "feature_type": self.feature_type,
+                    "n_mels": self.n_mels,
+                    "feat_dim": self.model.layer1.conv.weight.shape[1],
+                    "emb_dim": EMBEDDING_DIM,
+                    "model_type": "LightECAPA"
+                }, f, indent=2)
 
         run_name = f"earlystop_pat{self.patience}" if self.early_stop else f"fixed_{self.epochs}ep"
         summary = {

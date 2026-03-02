@@ -50,7 +50,8 @@ def load_config(path):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--config", "-c", help="Path to config yaml file")
+    # Default to configs/feature_extraction.yaml
+    parser.add_argument("--config", "-c", default="configs/feature_extraction.yaml", help="Path to config yaml file")
     parser.add_argument("--in_root", default=None)
     parser.add_argument("--out_root", default=None)
     parser.add_argument("--feature_type", choices=[FEATURE_TYPE_MFCC_DELTA, FEATURE_TYPE_LOGMEL], default=None)

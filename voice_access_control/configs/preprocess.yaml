@@ -1,0 +1,20 @@
+# configs/preprocess.yaml
+# 数据预处理配置文件
+# 对应脚本: scripts/data/preprocess.py
+# 功能: 重采样(16k)、单声道转换、静音消除、数据集划分
+#
+# 使用方法:
+# 1. 默认处理: python -m scripts.data.preprocess
+# 2. 指定输入目录: python -m scripts.data.preprocess --in_root data/raw_new
+
+dataset:
+  # Raw input data (e.g. MiniVox or VoxCeleb)
+  # Preprocess script will look for train/valid/test subdirectories here
+  in_root: "data/raw"
+  
+  # Processed output (resampled/normalized)
+  out_root: "data/processed"
+  
+  # Whether to split validation set into valid/test
+  # Set to false if data is already split (e.g. by organize_raw.py)
+  split_valid: false

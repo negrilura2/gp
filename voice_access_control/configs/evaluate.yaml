@@ -1,0 +1,31 @@
+# configs/evaluate.yaml
+# 模型评估配置文件
+# 对应脚本: scripts/evaluate.py
+#
+# 使用方法:
+# 1. 评估默认模型: python -m scripts.evaluate
+# 2. 评估指定模型: python -m scripts.evaluate --model checkpoints/my_model.pth
+# 3. 启用ScoreNorm: python -m scripts.evaluate --score_norm znorm
+
+model:
+  path: "checkpoints/ecapa_mfcc_delta_best.pth"
+
+dataset:
+  # Using validation set to avoid leakage
+  # Change to "data/features/mfcc_delta/test" for final evaluation
+  feature_dir: "data/features/mfcc_delta/valid"
+  
+  # For noise augmentation (requires raw wavs)
+  processed_dir: "data/processed" 
+  
+  noise_dir: "data/noise"
+
+evaluation:
+  max_pairs: 20000
+  score_norm: "none" # none, znorm, tnorm, snorm
+  cohort_speakers: 20
+  cohort_utts_per_spk: 5
+  cohort_seed: 42
+
+paths:
+  out_dir: "reports"

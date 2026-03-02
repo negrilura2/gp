@@ -416,7 +416,8 @@ def run_eval(args):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--config", "-c", help="Path to config yaml file")
+    # Default to configs/evaluate.yaml
+    parser.add_argument("--config", "-c", default="configs/evaluate.yaml", help="Path to config yaml file")
     parser.add_argument("--model", help="Model path")
     parser.add_argument("--feature_dir", help="Feature directory")
     parser.add_argument("--out_dir", help="Output directory")

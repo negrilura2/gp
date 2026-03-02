@@ -18,7 +18,8 @@ def load_config(path):
 
 def main():
     parser = argparse.ArgumentParser(description="Train voice recognition model from config")
-    parser.add_argument("--config", "-c", required=True, help="Path to config yaml file")
+    # Default to configs/train.yaml
+    parser.add_argument("--config", "-c", default="configs/train.yaml", help="Path to config yaml file")
     parser.add_argument("--epochs", type=int, default=None)
     parser.add_argument("--early_stop", action="store_true")
     parser.add_argument("--no_early_stop", action="store_true")

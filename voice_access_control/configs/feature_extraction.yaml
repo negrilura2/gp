@@ -1,0 +1,23 @@
+# configs/feature_extraction.yaml
+# 特征提取配置文件
+# 对应脚本: scripts/data/feature_extraction.py
+#
+# 使用方法:
+# 1. 提取MFCC Delta特征: python -m scripts.data.feature_extraction
+# 2. 提取LogMel特征: python -m scripts.data.feature_extraction --feature_type logmel
+
+dataset:
+  # Input: Processed raw audio (resampled/normalized)
+  in_root: "data/processed"
+  
+  # Output: Extracted features (npy files)
+  out_root: "data/features"
+  
+  # Type: mfcc_delta or logmel
+  feature_type: "mfcc_delta"
+  
+  # Parameters
+  n_mels: 40
+  
+  # Workers: 0 for Windows compatibility
+  workers: 0

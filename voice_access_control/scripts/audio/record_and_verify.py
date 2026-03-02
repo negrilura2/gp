@@ -99,40 +99,48 @@ def verify_by_file(wav_path, model_path=None, threshold=0.75):
     print(f"Verification Result: {result}")
 
 
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--config", "-c", help="Path to config yaml file")
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Record audio for enrollment or verification")
+    parser.add_argument("action", choices=["enroll", "verify"], nargs="?", help="Action to perform")
+    parser.add_argument("user_id", nargs="?", help="User ID for enrollment")
     
-    sub = parser.add_subparsers(dest="cmd")
-
-    p_en = sub.add_parser("enroll")
-    p_en.add_argument("user_id")
-    p_en.add_argument("--n", type=int, default=3, help="录音条数（交互模式）")
-    p_en.add_argument("--wav_dir", type=str, default=None, help="若提供 wav_dir, 从文件夹导入")
-    p_en.add_argument("--model_path", type=str, default=None)
-    p_en.add_argument("--duration", type=float, default=3.0)
-
-    p_v = sub.add_parser("verify")
-    p_v.add_argument("--wav", type=str, default=None, help="若提供 wav 文件则使用该文件，否则录音")
-    p_v.add_argument("--model_path", type=str, default=None)
-    p_v.add_argument("--threshold", type=float, default=0.75)
-    p_v.add_argument("--duration", type=float, default=3.0)
+    # Default to configs/record_and_verify.yaml
+    parser.add_argument("--config", "-c", default="configs/record_and_verify.yaml", help="Path to config yaml file")
+    
+    parser.add_argument("--n", type=int, default=3, help="Number of utterances to record")
+    parser.add_argument("--duration", type=int, default=3, help="Duration of each recording in seconds")
+    parser.add_argument("--wav_dir", help="Directory containing wav files for enrollment")
+    parser.add_argument("--wav", help="Wav file for verification")
+    parser.add_argument("--model", help="Path to model checkpoint")
+    parser.add_argument("--threshold", type=float, default=0.75, help="Verification threshold")
 
     args = parser.parse_args()
+
+    # Load config if available
+    cfg = {}
+    if args.config and os.path.exists(args.config):
+        cfg = load_config(args.config)
     
-    if args.cmd == "enroll":
-        if args.wav_dir:
-            enroll_from_dir(args.user_id, args.wav_dir, args.model_path)
-        else:
-            enroll_interactive(args.user_id, n=args.n, duration=args.duration, model_path=args.model_path)
+    # Priority: CLI > Config > Default
+    model_path = args.model or cfg.get("model", {}).get("path") or DEFAULT_MODEL_PATH
+    threshold = args.threshold or cfg.get("model", {}).get("threshold") or 0.75
+    duration = args.duration or cfg.get("audio", {}).get("duration") or 3
+    
+    if args.action == "enroll":
+        if not args.user_id:
+            print("Error: user_id is required for enrollment")
+            sys.exit(1)
             
-    elif args.cmd == "verify":
-        if args.wav:
-            verify_by_file(args.wav, model_path=args.model_path, threshold=args.threshold)
+        if args.wav_dir:
+            enroll_from_dir(args.user_id, args.wav_dir, model_path=model_path)
         else:
-            verify_interactive(duration=args.duration, model_path=args.model_path, threshold=args.threshold)
+            n_recs = args.n or cfg.get("enrollment", {}).get("n_recordings") or 3
+            enroll_interactive(args.user_id, n=n_recs, duration=duration, model_path=model_path)
+            
+    elif args.action == "verify":
+        if args.wav:
+            verify_by_file(args.wav, model_path=model_path, threshold=threshold)
+        else:
+            verify_interactive(duration=duration, model_path=model_path, threshold=threshold)
     else:
         parser.print_help()
-
-if __name__ == "__main__":
-    main()

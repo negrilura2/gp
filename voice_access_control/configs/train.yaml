@@ -1,0 +1,52 @@
+# configs/train.yaml
+# 训练配置文件
+# 对应脚本: scripts/train.py
+#
+# 使用方法:
+# 1. 默认训练: python -m scripts.train
+# 2. 指定配置: python -m scripts.train --config configs/train.yaml
+# 3. 覆盖参数: python -m scripts.train --epochs 50 --save_dir checkpoints/new_exp
+
+model:
+  name: "ecapa_tdnn"
+  emb_dim: 192
+  feat_dim: 39      # MFCC-Delta (13*3)
+  n_channels: 256 # Reduced channels
+  dropout: 0.2
+  pretrained_path: "checkpoints/ecapa_mfcc_delta_best.pth"
+
+dataset:
+  feature_dir: "data/features"
+  feature_type: "mfcc_delta"
+  n_mels: 40
+  loader_workers: 0 # Windows compatibility
+  
+  # Dataset split paths
+  train_dir: "data/features/mfcc_delta/train"
+  val_dir:   "data/features/mfcc_delta/valid"
+
+training:
+  batch_size: 32
+  epochs: 100
+  lr: 0.0001
+  optimizer: "adam"
+  loss: "aam"
+  device: "cuda"
+  
+  # AAM-Softmax Params
+  aam_s: 30.0
+  aam_m: 0.1
+
+  # Early Stopping
+  early_stop: true
+  patience: 20
+  save_last: false
+
+paths:
+  save_dir: "checkpoints"
+  log_dir: "reports/metrics"
+  feature_tag: "default"
+
+evaluation:
+  eer_interval: 2
+  eer_pairs: 20000
