@@ -13974,3 +13974,6 @@ For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/St
 [2026-03-02 19:27:33,293] INFO django.server "GET /api/roc/?t=1772450852917&norm_method=znorm HTTP/1.1" 200 453498
 [2026-03-02 19:27:33,393] INFO django.server "GET /api/models/ HTTP/1.1" 200 1215
 [2026-03-02 22:58:40,787] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6057
+[2026-03-02 23:42:40,318] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6057
+[2026-03-03 00:15:05,507] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\backend\backend\__init__.py changed, reloading.
+[2026-03-03 00:15:09,575] INFO django.utils.autoreload Watching for file changes with StatReloader
