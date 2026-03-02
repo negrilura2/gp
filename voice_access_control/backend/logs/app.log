@@ -12716,3 +12716,988 @@ NameError: name 'user_count' is not defined
 [2026-03-01 19:02:49,155] INFO django.utils.autoreload Watching for file changes with StatReloader
 [2026-03-01 19:03:35,300] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\voice_engine\core\trainer.py changed, reloading.
 [2026-03-01 19:03:36,858] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-03-02 16:29:52,584] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-03-02 16:35:43,864] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\voice_engine\config.py changed, reloading.
+[2026-03-02 16:35:45,124] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-03-02 16:43:28,561] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\voice_engine\config.py changed, reloading.
+[2026-03-02 16:43:30,000] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-03-02 16:44:16,502] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\voice_engine\config.py changed, reloading.
+[2026-03-02 16:44:17,718] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-03-02 16:50:48,480] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\voice_engine\config.py changed, reloading.
+[2026-03-02 16:50:49,881] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-03-02 16:53:37,246] INFO api 用户登录: admin
+[2026-03-02 16:53:37,255] INFO django.server "POST /api/login/ HTTP/1.1" 200 99
+[2026-03-02 16:53:37,278] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-03-02 16:53:37,497] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 6053
+[2026-03-02 16:53:37,513] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-03-02 16:53:37,513] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 5109
+[2026-03-02 16:53:37,546] INFO django.server "GET /api/users/?page=1&is_staff=false HTTP/1.1" 200 625
+[2026-03-02 16:53:37,563] INFO django.server "GET /api/admin-access-logs/ HTTP/1.1" 200 2584
+[2026-03-02 16:53:37,646] INFO django.server "GET /api/roc/?t=1772441617439&norm_method=snorm HTTP/1.1" 200 630184
+[2026-03-02 16:53:37,671] INFO django.server "GET /api/analysis/embedding/image/?method=tsne&score_norm=none HTTP/1.1" 200 66492
+[2026-03-02 16:53:37,683] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 16:53:37,735] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 5109
+[2026-03-02 16:53:37,793] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 1044
+[2026-03-02 16:53:39,280] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 16:53:39,828] INFO django.server "GET /api/models/ HTTP/1.1" 200 1190
+[2026-03-02 16:53:40,779] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 16:53:40,872] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 5109
+[2026-03-02 16:53:42,279] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 16:53:43,350] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 5109
+[2026-03-02 16:53:43,776] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 16:53:44,715] INFO django.server "GET /api/models/ HTTP/1.1" 200 1190
+[2026-03-02 16:53:44,724] INFO django.server "GET /api/analysis/embedding/image/?method=tsne&score_norm=snorm HTTP/1.1" 200 70627
+[2026-03-02 16:53:44,763] INFO django.server "GET /api/roc/?t=1772441624701&norm_method=snorm HTTP/1.1" 200 630184
+[2026-03-02 16:53:45,279] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 16:53:46,781] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 16:53:48,281] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 16:53:49,778] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 16:53:51,279] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 16:53:52,778] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 16:53:54,279] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 16:53:55,778] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 16:53:57,278] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 16:53:58,780] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 16:53:59,067] ERROR django.request Internal Server Error: /api/models/switch/
+Traceback (most recent call last):
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\views\decorators\csrf.py", line 56, in wrapper_view
+    return view_func(*args, **kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\django\views\generic\base.py", line 105, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 515, in dispatch
+    response = self.handle_exception(exc)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 475, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 486, in raise_uncaught_exception
+    raise exc
+  File "D:\anaconda\envs\voice_access\lib\site-packages\rest_framework\views.py", line 512, in dispatch
+    response = handler(request, *args, **kwargs)
+  File "D:\traepg\gp\voice_access_control\backend\api\views\admin.py", line 280, in post
+    set_model_path(path)
+  File "D:\traepg\gp\voice_access_control\backend\api\model_loader.py", line 218, in set_model_path
+    _service.reload(model_path=model_path)
+  File "D:\traepg\gp\voice_access_control\backend\api\model_loader.py", line 139, in reload
+    resp.raise_for_status()
+  File "D:\anaconda\envs\voice_access\lib\site-packages\httpx\_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Server error '502 Bad Gateway' for url 'http://localhost:9000/reload'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/502
+[2026-03-02 16:53:59,070] ERROR django.server "POST /api/models/switch/ HTTP/1.1" 500 113493
+[2026-03-02 16:54:00,279] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 16:54:01,782] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 16:54:03,278] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 16:54:04,778] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 16:54:06,277] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 16:54:07,781] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 16:54:09,279] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 16:54:10,780] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 16:54:12,278] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 16:54:13,781] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 16:54:15,276] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 16:54:16,778] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 16:54:18,278] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 16:54:19,777] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 16:54:21,277] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 16:54:22,778] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 16:54:24,279] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 16:54:25,777] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 16:54:27,277] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 16:54:28,778] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 16:54:30,278] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 16:54:31,778] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 16:54:33,278] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 16:54:34,779] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 16:54:36,279] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 16:54:37,778] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 16:54:39,278] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 16:54:40,779] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 16:54:42,278] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 16:54:43,778] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 16:54:45,279] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 16:54:46,777] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 17:01:52,036] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-03-02 17:02:36,768] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-03-02 17:02:37,116] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-03-02 17:02:37,134] INFO django.server "GET /api/users/?page=1&is_staff=false HTTP/1.1" 200 625
+[2026-03-02 17:02:37,153] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 6053
+[2026-03-02 17:02:37,181] INFO django.server "GET /api/admin-access-logs/ HTTP/1.1" 200 2584
+[2026-03-02 17:02:37,184] INFO django.server "GET /api/analysis/embedding/image/?method=tsne&score_norm=none HTTP/1.1" 200 66492
+[2026-03-02 17:02:37,251] INFO django.server "GET /api/roc/?t=1772442157079&norm_method=snorm HTTP/1.1" 200 630184
+[2026-03-02 17:02:37,255] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 17:02:37,263] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 5109
+[2026-03-02 17:02:37,301] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 5109
+[2026-03-02 17:02:37,372] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 1044
+[2026-03-02 17:02:37,390] INFO django.server "GET /api/models/ HTTP/1.1" 200 1215
+[2026-03-02 17:02:38,840] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 17:02:39,210] INFO django.server "GET /api/models/ HTTP/1.1" 200 1215
+[2026-03-02 17:02:39,219] INFO django.server "GET /api/analysis/embedding/image/?method=tsne&score_norm=snorm HTTP/1.1" 200 70627
+[2026-03-02 17:02:39,253] INFO django.server "GET /api/roc/?t=1772442159198&norm_method=snorm HTTP/1.1" 200 630184
+[2026-03-02 17:02:40,339] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 17:02:41,838] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 17:02:43,340] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 17:02:44,840] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 17:02:46,339] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 17:02:46,783] INFO django.server "POST /api/models/switch/ HTTP/1.1" 200 39
+[2026-03-02 17:02:47,839] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 17:02:49,338] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 17:02:50,839] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 17:02:52,339] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 17:02:53,839] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 17:02:55,340] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 17:02:56,839] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 17:02:58,340] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 17:02:59,838] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 17:03:01,340] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 17:03:02,838] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 17:03:02,951] INFO django.server "GET /api/analysis/embedding/image/?method=tsne&score_norm=none HTTP/1.1" 200 66492
+[2026-03-02 17:03:02,991] INFO django.server "GET /api/roc/?t=1772442182943&norm_method=none HTTP/1.1" 200 343577
+[2026-03-02 17:03:04,339] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 17:03:05,838] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 17:03:07,341] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 17:03:08,839] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 17:03:10,339] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 17:03:11,266] INFO django.server "GET /api/analysis/embedding/image/?method=tsne&score_norm=none HTTP/1.1" 200 66492
+[2026-03-02 17:03:11,845] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 17:03:13,339] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 17:03:14,839] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 17:03:16,340] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 17:03:17,838] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 17:03:19,341] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 17:03:20,839] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 17:03:22,339] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 17:03:23,840] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 17:03:25,339] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 17:03:26,839] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 17:03:28,339] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 17:03:29,840] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 17:03:31,339] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 17:03:32,842] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 17:03:34,339] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 17
+[2026-03-02 17:09:47,157] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-03-02 17:09:59,920] INFO api 用户登录: admin
+[2026-03-02 17:09:59,926] INFO django.server "POST /api/login/ HTTP/1.1" 200 99
+[2026-03-02 17:09:59,956] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-03-02 17:10:00,140] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 6053
+[2026-03-02 17:10:00,173] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 5109
+[2026-03-02 17:10:00,185] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-03-02 17:10:00,211] INFO django.server "GET /api/users/?page=1&is_staff=false HTTP/1.1" 200 625
+[2026-03-02 17:10:00,238] INFO django.server "GET /api/admin-access-logs/ HTTP/1.1" 200 2584
+[2026-03-02 17:10:00,328] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 1044
+[2026-03-02 17:10:00,338] WARNING django.request Not Found: /api/analysis/embedding/image/
+[2026-03-02 17:10:00,338] WARNING django.server "GET /api/analysis/embedding/image/?method=tsne&score_norm=none HTTP/1.1" 404 37
+[2026-03-02 17:10:00,347] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:10:00,349] WARNING django.server "GET /api/roc/?t=1772442600110&norm_method=snorm HTTP/1.1" 404 43
+[2026-03-02 17:10:00,360] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 17
+[2026-03-02 17:10:00,393] INFO django.server "GET /api/models/ HTTP/1.1" 200 1215
+[2026-03-02 17:10:00,416] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:10:00,422] WARNING django.server "GET /api/roc/?t=1772442600361&norm_method=tnorm HTTP/1.1" 404 43
+[2026-03-02 17:10:00,428] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 5109
+[2026-03-02 17:10:00,442] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:10:00,444] WARNING django.server "GET /api/roc/?t=1772442600426&norm_method=znorm HTTP/1.1" 404 43
+[2026-03-02 17:10:00,491] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:10:00,491] WARNING django.server "GET /api/roc/?t=1772442600476&norm_method=none HTTP/1.1" 404 42
+[2026-03-02 17:10:02,175] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 5109
+[2026-03-02 17:10:03,050] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 5109
+[2026-03-02 17:10:03,738] WARNING django.request Not Found: /api/analysis/embedding/image/
+[2026-03-02 17:10:03,740] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:10:03,741] INFO django.server "GET /api/models/ HTTP/1.1" 200 1215
+[2026-03-02 17:10:03,741] WARNING django.server "GET /api/analysis/embedding/image/?method=tsne&score_norm=none HTTP/1.1" 404 37
+[2026-03-02 17:10:03,741] WARNING django.server "GET /api/roc/?t=1772442603727&norm_method=snorm HTTP/1.1" 404 43
+[2026-03-02 17:10:03,769] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:10:03,769] WARNING django.server "GET /api/roc/?t=1772442603758&norm_method=tnorm HTTP/1.1" 404 43
+[2026-03-02 17:10:03,780] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:10:03,782] WARNING django.server "GET /api/roc/?t=1772442603773&norm_method=znorm HTTP/1.1" 404 43
+[2026-03-02 17:10:03,793] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:10:03,794] WARNING django.server "GET /api/roc/?t=1772442603785&norm_method=none HTTP/1.1" 404 42
+[2026-03-02 17:10:06,383] INFO django.server "POST /api/models/switch/ HTTP/1.1" 200 39
+[2026-03-02 17:10:10,525] INFO django.server "POST /api/roc/evaluate/ HTTP/1.1" 200 137
+[2026-03-02 17:10:11,200] ERROR api Eval thread failed: cannot import name 'REPORTS_DIR' from 'voice_engine.config' (D:\traepg\gp\voice_access_control\voice_engine\config.py)
+[2026-03-02 17:10:12,037] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 298
+[2026-03-02 17:10:59,656] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\voice_engine\config.py changed, reloading.
+[2026-03-02 17:11:01,003] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-03-02 17:11:39,261] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-03-02 17:11:39,566] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-03-02 17:11:39,582] INFO django.server "GET /api/users/?page=1&is_staff=false HTTP/1.1" 200 625
+[2026-03-02 17:11:39,607] WARNING django.request Not Found: /api/analysis/embedding/image/
+[2026-03-02 17:11:39,613] WARNING django.server "GET /api/analysis/embedding/image/?method=tsne&score_norm=none HTTP/1.1" 404 37
+[2026-03-02 17:11:39,642] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:11:39,642] WARNING django.server "GET /api/roc/?t=1772442699514&norm_method=snorm HTTP/1.1" 404 43
+[2026-03-02 17:11:39,651] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 6053
+[2026-03-02 17:11:39,660] INFO django.server "GET /api/admin-access-logs/ HTTP/1.1" 200 2584
+[2026-03-02 17:11:39,682] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 298
+[2026-03-02 17:11:39,689] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 5109
+[2026-03-02 17:11:39,726] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 5109
+[2026-03-02 17:11:39,729] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:11:39,731] WARNING django.server "GET /api/roc/?t=1772442699718&norm_method=tnorm HTTP/1.1" 404 43
+[2026-03-02 17:11:39,808] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:11:39,810] WARNING django.server "GET /api/roc/?t=1772442699798&norm_method=znorm HTTP/1.1" 404 43
+[2026-03-02 17:11:39,819] INFO django.server "GET /api/models/ HTTP/1.1" 200 1215
+[2026-03-02 17:11:39,835] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:11:39,836] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 1044
+[2026-03-02 17:11:39,836] WARNING django.server "GET /api/roc/?t=1772442699818&norm_method=none HTTP/1.1" 404 42
+[2026-03-02 17:11:40,153] WARNING django.request Not Found: /api/analysis/embedding/image/
+[2026-03-02 17:11:40,155] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:11:40,156] WARNING django.server "GET /api/analysis/embedding/image/?method=tsne&score_norm=none HTTP/1.1" 404 37
+[2026-03-02 17:11:40,158] WARNING django.server "GET /api/roc/?t=1772442700142&norm_method=snorm HTTP/1.1" 404 43
+[2026-03-02 17:11:40,158] INFO django.server "GET /api/models/ HTTP/1.1" 200 1215
+[2026-03-02 17:11:40,174] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:11:40,176] WARNING django.server "GET /api/roc/?t=1772442700167&norm_method=tnorm HTTP/1.1" 404 43
+[2026-03-02 17:11:40,187] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:11:40,188] WARNING django.server "GET /api/roc/?t=1772442700180&norm_method=znorm HTTP/1.1" 404 43
+[2026-03-02 17:11:40,200] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:11:40,200] WARNING django.server "GET /api/roc/?t=1772442700191&norm_method=none HTTP/1.1" 404 42
+[2026-03-02 17:11:41,697] INFO django.server "POST /api/models/switch/ HTTP/1.1" 200 39
+[2026-03-02 17:11:47,641] INFO django.server "POST /api/models/switch/ HTTP/1.1" 200 55
+[2026-03-02 17:11:49,803] INFO django.server "POST /api/roc/evaluate/ HTTP/1.1" 200 137
+[2026-03-02 17:11:50,334] ERROR api Eval thread failed: name 'Path' is not defined
+[2026-03-02 17:11:51,313] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 247
+[2026-03-02 17:12:16,734] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\scripts\evaluate.py changed, reloading.
+[2026-03-02 17:12:18,271] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-03-02 17:13:10,705] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:13:10,705] WARNING django.request Not Found: /api/analysis/embedding/image/
+[2026-03-02 17:13:10,705] WARNING django.server "GET /api/roc/?t=1772442790389&norm_method=snorm HTTP/1.1" 404 43
+[2026-03-02 17:13:10,706] WARNING django.server "GET /api/analysis/embedding/image/?method=tsne&score_norm=none HTTP/1.1" 404 37
+[2026-03-02 17:13:10,725] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:13:10,725] WARNING django.server "GET /api/roc/?t=1772442790717&norm_method=tnorm HTTP/1.1" 404 43
+[2026-03-02 17:13:10,736] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:13:10,737] WARNING django.server "GET /api/roc/?t=1772442790728&norm_method=znorm HTTP/1.1" 404 43
+[2026-03-02 17:13:10,748] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:13:10,748] WARNING django.server "GET /api/roc/?t=1772442790740&norm_method=none HTTP/1.1" 404 42
+[2026-03-02 17:13:13,466] INFO django.server "POST /api/roc/evaluate/ HTTP/1.1" 200 137
+[2026-03-02 17:13:14,132] ERROR api Eval thread failed: Feature dimension mismatch. Please regenerate features with correct config.
+[2026-03-02 17:13:14,977] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 645
+[2026-03-02 17:16:05,096] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\scripts\evaluate.py changed, reloading.
+[2026-03-02 17:16:06,492] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-03-02 17:26:24,396] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-03-02 17:26:24,752] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-03-02 17:26:24,780] INFO django.server "GET /api/users/?page=1&is_staff=false HTTP/1.1" 200 625
+[2026-03-02 17:26:24,801] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 6053
+[2026-03-02 17:26:24,827] WARNING django.request Not Found: /api/analysis/embedding/image/
+[2026-03-02 17:26:24,829] INFO django.server "GET /api/admin-access-logs/ HTTP/1.1" 200 2584
+[2026-03-02 17:26:24,829] WARNING django.server "GET /api/analysis/embedding/image/?method=tsne&score_norm=none HTTP/1.1" 404 37
+[2026-03-02 17:26:24,840] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 5109
+[2026-03-02 17:26:24,850] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:26:24,853] WARNING django.server "GET /api/roc/?t=1772443584724&norm_method=snorm HTTP/1.1" 404 43
+[2026-03-02 17:26:24,853] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 645
+[2026-03-02 17:26:24,876] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 5109
+[2026-03-02 17:26:24,948] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 1044
+[2026-03-02 17:26:24,970] INFO django.server "GET /api/models/ HTTP/1.1" 200 1231
+[2026-03-02 17:26:25,010] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:26:25,011] WARNING django.server "GET /api/roc/?t=1772443585002&norm_method=tnorm HTTP/1.1" 404 43
+[2026-03-02 17:26:25,137] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:26:25,137] WARNING django.server "GET /api/roc/?t=1772443585113&norm_method=znorm HTTP/1.1" 404 43
+[2026-03-02 17:26:25,155] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:26:25,157] WARNING django.server "GET /api/roc/?t=1772443585146&norm_method=none HTTP/1.1" 404 42
+[2026-03-02 17:26:26,103] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:26:26,106] WARNING django.server "GET /api/roc/?t=1772443586094&norm_method=snorm HTTP/1.1" 404 43
+[2026-03-02 17:26:26,109] WARNING django.request Not Found: /api/analysis/embedding/image/
+[2026-03-02 17:26:26,109] INFO django.server "GET /api/models/ HTTP/1.1" 200 1231
+[2026-03-02 17:26:26,111] WARNING django.server "GET /api/analysis/embedding/image/?method=tsne&score_norm=none HTTP/1.1" 404 37
+[2026-03-02 17:26:26,132] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:26:26,132] WARNING django.server "GET /api/roc/?t=1772443586123&norm_method=tnorm HTTP/1.1" 404 43
+[2026-03-02 17:26:26,148] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:26:26,149] WARNING django.server "GET /api/roc/?t=1772443586141&norm_method=znorm HTTP/1.1" 404 43
+[2026-03-02 17:26:26,162] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:26:26,162] WARNING django.server "GET /api/roc/?t=1772443586154&norm_method=none HTTP/1.1" 404 42
+[2026-03-02 17:26:30,211] INFO django.server "POST /api/models/switch/ HTTP/1.1" 200 55
+[2026-03-02 17:26:31,127] INFO django.server "POST /api/roc/evaluate/ HTTP/1.1" 200 137
+[2026-03-02 17:26:31,684] ERROR api Eval thread failed: local variable 'final_feature_dir' referenced before assignment
+[2026-03-02 17:26:32,638] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 454
+[2026-03-02 17:26:59,977] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\scripts\evaluate.py changed, reloading.
+[2026-03-02 17:27:01,451] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-03-02 17:27:57,053] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-03-02 17:27:57,269] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-03-02 17:27:57,287] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 6053
+[2026-03-02 17:27:57,314] WARNING django.request Not Found: /api/analysis/embedding/image/
+[2026-03-02 17:27:57,318] WARNING django.server "GET /api/analysis/embedding/image/?method=tsne&score_norm=none HTTP/1.1" 404 37
+[2026-03-02 17:27:57,320] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 5109
+[2026-03-02 17:27:57,332] INFO django.server "GET /api/users/?page=1&is_staff=false HTTP/1.1" 200 625
+[2026-03-02 17:27:57,346] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:27:57,350] WARNING django.server "GET /api/roc/?t=1772443677221&norm_method=snorm HTTP/1.1" 404 43
+[2026-03-02 17:27:57,351] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 454
+[2026-03-02 17:27:57,372] INFO django.server "GET /api/admin-access-logs/ HTTP/1.1" 200 2584
+[2026-03-02 17:27:57,393] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 5109
+[2026-03-02 17:27:57,484] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:27:57,485] WARNING django.server "GET /api/roc/?t=1772443677469&norm_method=tnorm HTTP/1.1" 404 43
+[2026-03-02 17:27:57,495] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 1044
+[2026-03-02 17:27:57,507] INFO django.server "GET /api/models/ HTTP/1.1" 200 1231
+[2026-03-02 17:27:57,541] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:27:57,541] WARNING django.server "GET /api/roc/?t=1772443677533&norm_method=znorm HTTP/1.1" 404 43
+[2026-03-02 17:27:57,567] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:27:57,568] WARNING django.server "GET /api/roc/?t=1772443677558&norm_method=none HTTP/1.1" 404 42
+[2026-03-02 17:27:58,977] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:27:58,979] WARNING django.request Not Found: /api/analysis/embedding/image/
+[2026-03-02 17:27:58,979] WARNING django.server "GET /api/roc/?t=1772443678966&norm_method=snorm HTTP/1.1" 404 43
+[2026-03-02 17:27:58,981] WARNING django.server "GET /api/analysis/embedding/image/?method=tsne&score_norm=none HTTP/1.1" 404 37
+[2026-03-02 17:27:58,981] INFO django.server "GET /api/models/ HTTP/1.1" 200 1231
+[2026-03-02 17:27:58,999] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:27:58,999] WARNING django.server "GET /api/roc/?t=1772443678990&norm_method=tnorm HTTP/1.1" 404 43
+[2026-03-02 17:27:59,010] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:27:59,012] WARNING django.server "GET /api/roc/?t=1772443679003&norm_method=znorm HTTP/1.1" 404 43
+[2026-03-02 17:27:59,021] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:27:59,022] WARNING django.server "GET /api/roc/?t=1772443679014&norm_method=none HTTP/1.1" 404 42
+[2026-03-02 17:28:00,220] INFO django.server "POST /api/roc/evaluate/ HTTP/1.1" 200 137
+[2026-03-02 17:28:00,926] ERROR api Eval thread failed: Feature dimension mismatch: Model expects 39, but data has 419. Please regenerate features or check config.
+[2026-03-02 17:28:01,733] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 1051
+[2026-03-02 17:28:51,172] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\scripts\evaluate.py changed, reloading.
+[2026-03-02 17:28:52,890] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-03-02 17:29:17,656] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-03-02 17:29:17,880] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-03-02 17:29:17,902] INFO django.server "GET /api/users/?page=1&is_staff=false HTTP/1.1" 200 625
+[2026-03-02 17:29:17,933] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 6053
+[2026-03-02 17:29:17,949] WARNING django.request Not Found: /api/analysis/embedding/image/
+[2026-03-02 17:29:17,955] WARNING django.server "GET /api/analysis/embedding/image/?method=tsne&score_norm=none HTTP/1.1" 404 37
+[2026-03-02 17:29:17,958] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:29:17,958] INFO django.server "GET /api/admin-access-logs/ HTTP/1.1" 200 2584
+[2026-03-02 17:29:17,962] WARNING django.server "GET /api/roc/?t=1772443757837&norm_method=snorm HTTP/1.1" 404 43
+[2026-03-02 17:29:17,976] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 1051
+[2026-03-02 17:29:17,980] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 5109
+[2026-03-02 17:29:18,026] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 5109
+[2026-03-02 17:29:18,100] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:29:18,102] WARNING django.server "GET /api/roc/?t=1772443758085&norm_method=tnorm HTTP/1.1" 404 43
+[2026-03-02 17:29:18,157] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 1044
+[2026-03-02 17:29:18,164] INFO django.server "GET /api/models/ HTTP/1.1" 200 1231
+[2026-03-02 17:29:18,171] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:29:18,172] WARNING django.server "GET /api/roc/?t=1772443758160&norm_method=znorm HTTP/1.1" 404 43
+[2026-03-02 17:29:18,195] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:29:18,196] WARNING django.server "GET /api/roc/?t=1772443758185&norm_method=none HTTP/1.1" 404 42
+[2026-03-02 17:29:18,614] WARNING django.request Not Found: /api/analysis/embedding/image/
+[2026-03-02 17:29:18,616] WARNING django.server "GET /api/analysis/embedding/image/?method=tsne&score_norm=none HTTP/1.1" 404 37
+[2026-03-02 17:29:18,617] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:29:18,619] INFO django.server "GET /api/models/ HTTP/1.1" 200 1231
+[2026-03-02 17:29:18,619] WARNING django.server "GET /api/roc/?t=1772443758604&norm_method=snorm HTTP/1.1" 404 43
+[2026-03-02 17:29:18,642] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:29:18,642] WARNING django.server "GET /api/roc/?t=1772443758635&norm_method=tnorm HTTP/1.1" 404 43
+[2026-03-02 17:29:18,653] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:29:18,653] WARNING django.server "GET /api/roc/?t=1772443758646&norm_method=znorm HTTP/1.1" 404 43
+[2026-03-02 17:29:18,669] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:29:18,670] WARNING django.server "GET /api/roc/?t=1772443758658&norm_method=none HTTP/1.1" 404 42
+[2026-03-02 17:29:19,960] INFO django.server "POST /api/models/switch/ HTTP/1.1" 200 55
+[2026-03-02 17:29:20,589] INFO django.server "POST /api/roc/evaluate/ HTTP/1.1" 200 137
+[2026-03-02 17:29:21,335] ERROR api Eval thread failed: too many values to unpack (expected 2)
+[2026-03-02 17:29:22,102] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 4916
+[2026-03-02 17:29:58,540] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\scripts\evaluate.py changed, reloading.
+[2026-03-02 17:30:00,016] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-03-02 17:30:38,885] INFO django.server "POST /api/roc/evaluate/ HTTP/1.1" 200 137
+[2026-03-02 17:30:40,398] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 17:30:41,898] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 17:30:42,596] ERROR api Eval thread failed: continuous format is not supported
+[2026-03-02 17:30:43,394] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 4920
+[2026-03-02 17:31:31,318] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\voice_engine\core\metrics.py changed, reloading.
+[2026-03-02 17:31:32,732] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-03-02 17:32:01,121] INFO django.server "POST /api/roc/evaluate/ HTTP/1.1" 200 137
+[2026-03-02 17:32:02,633] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 17:32:04,137] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 17:32:04,556] ERROR api Eval thread failed: continuous format is not supported
+[2026-03-02 17:32:05,639] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 4920
+[2026-03-02 17:35:20,881] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\scripts\evaluate.py changed, reloading.
+[2026-03-02 17:35:22,631] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-03-02 17:35:53,595] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-03-02 17:35:53,810] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 6053
+[2026-03-02 17:35:53,816] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 5109
+[2026-03-02 17:35:53,819] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-03-02 17:35:53,849] INFO django.server "GET /api/users/?page=1&is_staff=false HTTP/1.1" 200 625
+[2026-03-02 17:35:53,867] INFO django.server "GET /api/admin-access-logs/ HTTP/1.1" 200 2584
+[2026-03-02 17:35:53,881] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:35:53,885] WARNING django.server "GET /api/roc/?t=1772444153762&norm_method=snorm HTTP/1.1" 404 43
+[2026-03-02 17:35:53,897] WARNING django.request Not Found: /api/analysis/embedding/image/
+[2026-03-02 17:35:53,899] WARNING django.server "GET /api/analysis/embedding/image/?method=tsne&score_norm=none HTTP/1.1" 404 37
+[2026-03-02 17:35:53,922] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 4920
+[2026-03-02 17:35:53,979] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 5109
+[2026-03-02 17:35:54,033] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:35:54,034] WARNING django.server "GET /api/roc/?t=1772444154018&norm_method=tnorm HTTP/1.1" 404 43
+[2026-03-02 17:35:54,052] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 1044
+[2026-03-02 17:35:54,071] INFO django.server "GET /api/models/ HTTP/1.1" 200 1231
+[2026-03-02 17:35:54,115] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:35:54,115] WARNING django.server "GET /api/roc/?t=1772444154098&norm_method=znorm HTTP/1.1" 404 43
+[2026-03-02 17:35:54,141] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:35:54,143] WARNING django.server "GET /api/roc/?t=1772444154132&norm_method=none HTTP/1.1" 404 42
+[2026-03-02 17:35:56,652] WARNING django.request Not Found: /api/analysis/embedding/image/
+[2026-03-02 17:35:56,654] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:35:56,654] WARNING django.server "GET /api/analysis/embedding/image/?method=tsne&score_norm=none HTTP/1.1" 404 37
+[2026-03-02 17:35:56,655] WARNING django.server "GET /api/roc/?t=1772444156640&norm_method=snorm HTTP/1.1" 404 43
+[2026-03-02 17:35:56,655] INFO django.server "GET /api/models/ HTTP/1.1" 200 1231
+[2026-03-02 17:35:56,681] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:35:56,683] WARNING django.server "GET /api/roc/?t=1772444156674&norm_method=tnorm HTTP/1.1" 404 43
+[2026-03-02 17:35:56,692] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:35:56,694] WARNING django.server "GET /api/roc/?t=1772444156685&norm_method=znorm HTTP/1.1" 404 43
+[2026-03-02 17:35:56,703] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:35:56,705] WARNING django.server "GET /api/roc/?t=1772444156697&norm_method=none HTTP/1.1" 404 42
+[2026-03-02 17:35:57,445] INFO django.server "POST /api/roc/evaluate/ HTTP/1.1" 200 137
+[2026-03-02 17:35:58,957] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 17:36:00,464] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 17:36:01,227] ERROR api Eval thread failed: Error(s) in loading state_dict for LightECAPA:
+	size mismatch for layer1.conv.weight: copying a param with shape torch.Size([256, 39, 5]) from checkpoint, the shape in current model is torch.Size([512, 39, 5]).
+	size mismatch for layer1.conv.bias: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for layer1.bn.weight: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for layer1.bn.bias: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for layer1.bn.running_mean: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for layer1.bn.running_var: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for layer2.conv.weight: copying a param with shape torch.Size([256, 256, 3]) from checkpoint, the shape in current model is torch.Size([512, 512, 3]).
+	size mismatch for layer2.conv.bias: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for layer2.bn.weight: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for layer2.bn.bias: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for layer2.bn.running_mean: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for layer2.bn.running_var: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for se.fc1.weight: copying a param with shape torch.Size([32, 256, 1]) from checkpoint, the shape in current model is torch.Size([64, 512, 1]).
+	size mismatch for se.fc1.bias: copying a param with shape torch.Size([32]) from checkpoint, the shape in current model is torch.Size([64]).
+	size mismatch for se.fc2.weight: copying a param with shape torch.Size([256, 32, 1]) from checkpoint, the shape in current model is torch.Size([512, 64, 1]).
+	size mismatch for se.fc2.bias: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for pool.tdnn.weight: copying a param with shape torch.Size([256, 256, 1]) from checkpoint, the shape in current model is torch.Size([512, 512, 1]).
+	size mismatch for pool.tdnn.bias: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for pool.conv.weight: copying a param with shape torch.Size([256, 256, 1]) from checkpoint, the shape in current model is torch.Size([512, 512, 1]).
+	size mismatch for pool.conv.bias: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for bn_pool.weight: copying a param with shape torch.Size([512]) from checkpoint, the shape in current model is torch.Size([1024]).
+	size mismatch for bn_pool.bias: copying a param with shape torch.Size([512]) from checkpoint, the shape in current model is torch.Size([1024]).
+	size mismatch for bn_pool.running_mean: copying a param with shape torch.Size([512]) from checkpoint, the shape in current model is torch.Size([1024]).
+	size mismatch for bn_pool.running_var: copying a param with shape torch.Size([512]) from checkpoint, the shape in current model is torch.Size([1024]).
+	size mismatch for fc1.weight: copying a param with shape torch.Size([192, 512]) from checkpoint, the shape in current model is torch.Size([192, 1024]).
+[2026-03-02 17:36:01,958] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 9064
+[2026-03-02 17:38:08,147] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\scripts\evaluate.py changed, reloading.
+[2026-03-02 17:38:09,846] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-03-02 17:38:36,104] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-03-02 17:38:36,304] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 6053
+[2026-03-02 17:38:36,311] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-03-02 17:38:36,348] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 5109
+[2026-03-02 17:38:36,362] INFO django.server "GET /api/users/?page=1&is_staff=false HTTP/1.1" 200 625
+[2026-03-02 17:38:36,379] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:38:36,382] WARNING django.server "GET /api/roc/?t=1772444316262&norm_method=snorm HTTP/1.1" 404 43
+[2026-03-02 17:38:36,385] WARNING django.request Not Found: /api/analysis/embedding/image/
+[2026-03-02 17:38:36,393] WARNING django.server "GET /api/analysis/embedding/image/?method=tsne&score_norm=none HTTP/1.1" 404 37
+[2026-03-02 17:38:36,396] INFO django.server "GET /api/admin-access-logs/ HTTP/1.1" 200 2584
+[2026-03-02 17:38:36,403] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 9064
+[2026-03-02 17:38:36,439] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 5109
+[2026-03-02 17:38:36,492] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:38:36,493] WARNING django.server "GET /api/roc/?t=1772444316475&norm_method=tnorm HTTP/1.1" 404 43
+[2026-03-02 17:38:36,542] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 1044
+[2026-03-02 17:38:36,568] INFO django.server "GET /api/models/ HTTP/1.1" 200 1231
+[2026-03-02 17:38:36,604] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:38:36,605] WARNING django.server "GET /api/roc/?t=1772444316578&norm_method=znorm HTTP/1.1" 404 43
+[2026-03-02 17:38:36,647] INFO django.server "GET /api/roc/?t=1772444316632&norm_method=none HTTP/1.1" 200 423
+[2026-03-02 17:38:38,365] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:38:38,366] WARNING django.server "GET /api/roc/?t=1772444318352&norm_method=snorm HTTP/1.1" 404 43
+[2026-03-02 17:38:38,366] WARNING django.request Not Found: /api/analysis/embedding/image/
+[2026-03-02 17:38:38,368] WARNING django.server "GET /api/analysis/embedding/image/?method=tsne&score_norm=none HTTP/1.1" 404 37
+[2026-03-02 17:38:38,369] INFO django.server "GET /api/models/ HTTP/1.1" 200 1231
+[2026-03-02 17:38:38,386] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:38:38,388] WARNING django.server "GET /api/roc/?t=1772444318380&norm_method=tnorm HTTP/1.1" 404 43
+[2026-03-02 17:38:38,399] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:38:38,401] WARNING django.server "GET /api/roc/?t=1772444318392&norm_method=znorm HTTP/1.1" 404 43
+[2026-03-02 17:38:38,411] INFO django.server "GET /api/roc/?t=1772444318404&norm_method=none HTTP/1.1" 200 423
+[2026-03-02 17:39:22,300] INFO django.server "POST /api/roc/evaluate/ HTTP/1.1" 200 137
+[2026-03-02 17:39:23,832] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 17:39:25,294] ERROR api Eval thread failed: Error(s) in loading state_dict for LightECAPA:
+	size mismatch for layer1.conv.weight: copying a param with shape torch.Size([256, 39, 5]) from checkpoint, the shape in current model is torch.Size([512, 39, 5]).
+	size mismatch for layer1.conv.bias: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for layer1.bn.weight: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for layer1.bn.bias: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for layer1.bn.running_mean: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for layer1.bn.running_var: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for layer2.conv.weight: copying a param with shape torch.Size([256, 256, 3]) from checkpoint, the shape in current model is torch.Size([512, 512, 3]).
+	size mismatch for layer2.conv.bias: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for layer2.bn.weight: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for layer2.bn.bias: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for layer2.bn.running_mean: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for layer2.bn.running_var: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for se.fc1.weight: copying a param with shape torch.Size([32, 256, 1]) from checkpoint, the shape in current model is torch.Size([64, 512, 1]).
+	size mismatch for se.fc1.bias: copying a param with shape torch.Size([32]) from checkpoint, the shape in current model is torch.Size([64]).
+	size mismatch for se.fc2.weight: copying a param with shape torch.Size([256, 32, 1]) from checkpoint, the shape in current model is torch.Size([512, 64, 1]).
+	size mismatch for se.fc2.bias: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for pool.tdnn.weight: copying a param with shape torch.Size([256, 256, 1]) from checkpoint, the shape in current model is torch.Size([512, 512, 1]).
+	size mismatch for pool.tdnn.bias: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for pool.conv.weight: copying a param with shape torch.Size([256, 256, 1]) from checkpoint, the shape in current model is torch.Size([512, 512, 1]).
+	size mismatch for pool.conv.bias: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for bn_pool.weight: copying a param with shape torch.Size([512]) from checkpoint, the shape in current model is torch.Size([1024]).
+	size mismatch for bn_pool.bias: copying a param with shape torch.Size([512]) from checkpoint, the shape in current model is torch.Size([1024]).
+	size mismatch for bn_pool.running_mean: copying a param with shape torch.Size([512]) from checkpoint, the shape in current model is torch.Size([1024]).
+	size mismatch for bn_pool.running_var: copying a param with shape torch.Size([512]) from checkpoint, the shape in current model is torch.Size([1024]).
+	size mismatch for fc1.weight: copying a param with shape torch.Size([192, 512]) from checkpoint, the shape in current model is torch.Size([192, 1024]).
+[2026-03-02 17:39:25,313] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 5138
+[2026-03-02 17:41:21,990] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\scripts\evaluate.py changed, reloading.
+[2026-03-02 17:41:23,859] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-03-02 17:42:20,385] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 5109
+[2026-03-02 17:42:20,417] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 5109
+[2026-03-02 17:42:23,300] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-03-02 17:42:24,003] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-03-02 17:42:24,061] INFO django.server "GET /api/users/?page=1&is_staff=false HTTP/1.1" 200 625
+[2026-03-02 17:42:24,104] WARNING django.request Not Found: /api/analysis/embedding/image/
+[2026-03-02 17:42:24,115] WARNING django.server "GET /api/analysis/embedding/image/?method=tsne&score_norm=none HTTP/1.1" 404 37
+[2026-03-02 17:42:24,129] INFO django.server "GET /api/admin-access-logs/ HTTP/1.1" 200 2584
+[2026-03-02 17:42:24,138] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 5109
+[2026-03-02 17:42:24,163] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 6053
+[2026-03-02 17:42:24,173] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:42:24,179] WARNING django.server "GET /api/roc/?t=1772444543933&norm_method=snorm HTTP/1.1" 404 43
+[2026-03-02 17:42:24,186] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 5138
+[2026-03-02 17:42:24,235] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 5109
+[2026-03-02 17:42:24,367] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 1044
+[2026-03-02 17:42:24,382] INFO django.server "GET /api/models/ HTTP/1.1" 200 1231
+[2026-03-02 17:42:24,444] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:42:24,444] WARNING django.server "GET /api/roc/?t=1772444544428&norm_method=tnorm HTTP/1.1" 404 43
+[2026-03-02 17:42:24,550] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:42:24,551] WARNING django.server "GET /api/roc/?t=1772444544539&norm_method=znorm HTTP/1.1" 404 43
+[2026-03-02 17:42:24,579] INFO django.server "GET /api/roc/?t=1772444544567&norm_method=none HTTP/1.1" 200 444
+[2026-03-02 17:42:25,543] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:42:25,546] WARNING django.server "GET /api/roc/?t=1772444545525&norm_method=snorm HTTP/1.1" 404 43
+[2026-03-02 17:42:25,546] INFO django.server "GET /api/models/ HTTP/1.1" 200 1231
+[2026-03-02 17:42:25,547] WARNING django.request Not Found: /api/analysis/embedding/image/
+[2026-03-02 17:42:25,550] WARNING django.server "GET /api/analysis/embedding/image/?method=tsne&score_norm=none HTTP/1.1" 404 37
+[2026-03-02 17:42:25,591] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:42:25,592] WARNING django.server "GET /api/roc/?t=1772444545581&norm_method=tnorm HTTP/1.1" 404 43
+[2026-03-02 17:42:25,613] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:42:25,615] WARNING django.server "GET /api/roc/?t=1772444545602&norm_method=znorm HTTP/1.1" 404 43
+[2026-03-02 17:42:25,635] INFO django.server "GET /api/roc/?t=1772444545619&norm_method=none HTTP/1.1" 200 444
+[2026-03-02 17:42:27,455] INFO django.server "POST /api/roc/evaluate/ HTTP/1.1" 200 137
+[2026-03-02 17:42:28,972] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 17:42:30,476] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 17:42:31,267] ERROR api Eval thread failed: Error(s) in loading state_dict for LightECAPA:
+	size mismatch for layer1.conv.weight: copying a param with shape torch.Size([256, 39, 5]) from checkpoint, the shape in current model is torch.Size([512, 39, 5]).
+	size mismatch for layer1.conv.bias: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for layer1.bn.weight: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for layer1.bn.bias: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for layer1.bn.running_mean: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for layer1.bn.running_var: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for layer2.conv.weight: copying a param with shape torch.Size([256, 256, 3]) from checkpoint, the shape in current model is torch.Size([512, 512, 3]).
+	size mismatch for layer2.conv.bias: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for layer2.bn.weight: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for layer2.bn.bias: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for layer2.bn.running_mean: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for layer2.bn.running_var: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for se.fc1.weight: copying a param with shape torch.Size([32, 256, 1]) from checkpoint, the shape in current model is torch.Size([64, 512, 1]).
+	size mismatch for se.fc1.bias: copying a param with shape torch.Size([32]) from checkpoint, the shape in current model is torch.Size([64]).
+	size mismatch for se.fc2.weight: copying a param with shape torch.Size([256, 32, 1]) from checkpoint, the shape in current model is torch.Size([512, 64, 1]).
+	size mismatch for se.fc2.bias: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for pool.tdnn.weight: copying a param with shape torch.Size([256, 256, 1]) from checkpoint, the shape in current model is torch.Size([512, 512, 1]).
+	size mismatch for pool.tdnn.bias: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for pool.conv.weight: copying a param with shape torch.Size([256, 256, 1]) from checkpoint, the shape in current model is torch.Size([512, 512, 1]).
+	size mismatch for pool.conv.bias: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for bn_pool.weight: copying a param with shape torch.Size([512]) from checkpoint, the shape in current model is torch.Size([1024]).
+	size mismatch for bn_pool.bias: copying a param with shape torch.Size([512]) from checkpoint, the shape in current model is torch.Size([1024]).
+	size mismatch for bn_pool.running_mean: copying a param with shape torch.Size([512]) from checkpoint, the shape in current model is torch.Size([1024]).
+	size mismatch for bn_pool.running_var: copying a param with shape torch.Size([512]) from checkpoint, the shape in current model is torch.Size([1024]).
+	size mismatch for fc1.weight: copying a param with shape torch.Size([192, 512]) from checkpoint, the shape in current model is torch.Size([192, 1024]).
+[2026-03-02 17:42:31,968] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 5178
+[2026-03-02 17:43:33,078] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\scripts\evaluate.py changed, reloading.
+[2026-03-02 17:43:35,131] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-03-02 17:44:05,060] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-03-02 17:44:05,664] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-03-02 17:44:05,690] INFO django.server "GET /api/users/?page=1&is_staff=false HTTP/1.1" 200 625
+[2026-03-02 17:44:05,721] WARNING django.request Not Found: /api/analysis/embedding/image/
+[2026-03-02 17:44:05,729] WARNING django.server "GET /api/analysis/embedding/image/?method=tsne&score_norm=none HTTP/1.1" 404 37
+[2026-03-02 17:44:05,751] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 6053
+[2026-03-02 17:44:05,765] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:44:05,775] WARNING django.server "GET /api/roc/?t=1772444645602&norm_method=snorm HTTP/1.1" 404 43
+[2026-03-02 17:44:05,780] INFO django.server "GET /api/admin-access-logs/ HTTP/1.1" 200 2584
+[2026-03-02 17:44:05,789] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 5178
+[2026-03-02 17:44:05,803] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 5109
+[2026-03-02 17:44:05,847] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 5109
+[2026-03-02 17:44:05,972] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:44:05,973] WARNING django.server "GET /api/roc/?t=1772444645952&norm_method=tnorm HTTP/1.1" 404 43
+[2026-03-02 17:44:06,051] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 1044
+[2026-03-02 17:44:06,054] INFO django.server "GET /api/models/ HTTP/1.1" 200 1231
+[2026-03-02 17:44:06,201] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:44:06,202] WARNING django.server "GET /api/roc/?t=1772444646190&norm_method=znorm HTTP/1.1" 404 43
+[2026-03-02 17:44:06,289] INFO django.server "GET /api/roc/?t=1772444646270&norm_method=none HTTP/1.1" 200 444
+[2026-03-02 17:44:15,345] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:44:15,347] WARNING django.server "GET /api/roc/?t=1772444655027&norm_method=snorm HTTP/1.1" 404 43
+[2026-03-02 17:44:15,348] WARNING django.request Not Found: /api/analysis/embedding/image/
+[2026-03-02 17:44:15,348] INFO django.server "GET /api/models/ HTTP/1.1" 200 1231
+[2026-03-02 17:44:15,350] WARNING django.server "GET /api/analysis/embedding/image/?method=tsne&score_norm=none HTTP/1.1" 404 37
+[2026-03-02 17:44:15,365] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:44:15,365] WARNING django.server "GET /api/roc/?t=1772444655353&norm_method=tnorm HTTP/1.1" 404 43
+[2026-03-02 17:44:15,383] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:44:15,384] WARNING django.server "GET /api/roc/?t=1772444655370&norm_method=znorm HTTP/1.1" 404 43
+[2026-03-02 17:44:15,405] INFO django.server "GET /api/roc/?t=1772444655389&norm_method=none HTTP/1.1" 200 444
+[2026-03-02 17:44:16,049] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:44:16,049] WARNING django.request Not Found: /api/analysis/embedding/image/
+[2026-03-02 17:44:16,051] WARNING django.server "GET /api/roc/?t=1772444656039&norm_method=snorm HTTP/1.1" 404 43
+[2026-03-02 17:44:16,051] WARNING django.server "GET /api/analysis/embedding/image/?method=tsne&score_norm=none HTTP/1.1" 404 37
+[2026-03-02 17:44:16,065] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:44:16,065] WARNING django.server "GET /api/roc/?t=1772444656056&norm_method=tnorm HTTP/1.1" 404 43
+[2026-03-02 17:44:16,080] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:44:16,080] WARNING django.server "GET /api/roc/?t=1772444656069&norm_method=znorm HTTP/1.1" 404 43
+[2026-03-02 17:44:16,093] INFO django.server "GET /api/roc/?t=1772444656084&norm_method=none HTTP/1.1" 200 444
+[2026-03-02 17:44:16,686] INFO django.server "POST /api/roc/evaluate/ HTTP/1.1" 200 137
+[2026-03-02 17:44:18,214] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 17:44:19,706] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 17:44:19,979] ERROR api Eval thread failed: Error(s) in loading state_dict for LightECAPA:
+	size mismatch for layer1.conv.weight: copying a param with shape torch.Size([256, 39, 5]) from checkpoint, the shape in current model is torch.Size([512, 39, 5]).
+	size mismatch for layer1.conv.bias: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for layer1.bn.weight: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for layer1.bn.bias: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for layer1.bn.running_mean: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for layer1.bn.running_var: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for layer2.conv.weight: copying a param with shape torch.Size([256, 256, 3]) from checkpoint, the shape in current model is torch.Size([512, 512, 3]).
+	size mismatch for layer2.conv.bias: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for layer2.bn.weight: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for layer2.bn.bias: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for layer2.bn.running_mean: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for layer2.bn.running_var: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for se.fc1.weight: copying a param with shape torch.Size([32, 256, 1]) from checkpoint, the shape in current model is torch.Size([64, 512, 1]).
+	size mismatch for se.fc1.bias: copying a param with shape torch.Size([32]) from checkpoint, the shape in current model is torch.Size([64]).
+	size mismatch for se.fc2.weight: copying a param with shape torch.Size([256, 32, 1]) from checkpoint, the shape in current model is torch.Size([512, 64, 1]).
+	size mismatch for se.fc2.bias: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for pool.tdnn.weight: copying a param with shape torch.Size([256, 256, 1]) from checkpoint, the shape in current model is torch.Size([512, 512, 1]).
+	size mismatch for pool.tdnn.bias: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for pool.conv.weight: copying a param with shape torch.Size([256, 256, 1]) from checkpoint, the shape in current model is torch.Size([512, 512, 1]).
+	size mismatch for pool.conv.bias: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for bn_pool.weight: copying a param with shape torch.Size([512]) from checkpoint, the shape in current model is torch.Size([1024]).
+	size mismatch for bn_pool.bias: copying a param with shape torch.Size([512]) from checkpoint, the shape in current model is torch.Size([1024]).
+	size mismatch for bn_pool.running_mean: copying a param with shape torch.Size([512]) from checkpoint, the shape in current model is torch.Size([1024]).
+	size mismatch for bn_pool.running_var: copying a param with shape torch.Size([512]) from checkpoint, the shape in current model is torch.Size([1024]).
+	size mismatch for fc1.weight: copying a param with shape torch.Size([192, 512]) from checkpoint, the shape in current model is torch.Size([192, 1024]).
+[2026-03-02 17:44:21,200] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 5178
+[2026-03-02 17:44:31,037] INFO django.server "POST /api/models/switch/ HTTP/1.1" 200 39
+[2026-03-02 17:44:31,795] INFO django.server "POST /api/roc/evaluate/ HTTP/1.1" 200 137
+[2026-03-02 17:44:33,310] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 17:44:34,030] ERROR api Eval thread failed: Error(s) in loading state_dict for LightECAPA:
+	size mismatch for layer1.conv.weight: copying a param with shape torch.Size([256, 39, 5]) from checkpoint, the shape in current model is torch.Size([512, 39, 5]).
+	size mismatch for layer1.conv.bias: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for layer1.bn.weight: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for layer1.bn.bias: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for layer1.bn.running_mean: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for layer1.bn.running_var: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for layer2.conv.weight: copying a param with shape torch.Size([256, 256, 3]) from checkpoint, the shape in current model is torch.Size([512, 512, 3]).
+	size mismatch for layer2.conv.bias: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for layer2.bn.weight: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for layer2.bn.bias: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for layer2.bn.running_mean: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for layer2.bn.running_var: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for se.fc1.weight: copying a param with shape torch.Size([32, 256, 1]) from checkpoint, the shape in current model is torch.Size([64, 512, 1]).
+	size mismatch for se.fc1.bias: copying a param with shape torch.Size([32]) from checkpoint, the shape in current model is torch.Size([64]).
+	size mismatch for se.fc2.weight: copying a param with shape torch.Size([256, 32, 1]) from checkpoint, the shape in current model is torch.Size([512, 64, 1]).
+	size mismatch for se.fc2.bias: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for pool.tdnn.weight: copying a param with shape torch.Size([256, 256, 1]) from checkpoint, the shape in current model is torch.Size([512, 512, 1]).
+	size mismatch for pool.tdnn.bias: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for pool.conv.weight: copying a param with shape torch.Size([256, 256, 1]) from checkpoint, the shape in current model is torch.Size([512, 512, 1]).
+	size mismatch for pool.conv.bias: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for bn_pool.weight: copying a param with shape torch.Size([512]) from checkpoint, the shape in current model is torch.Size([1024]).
+	size mismatch for bn_pool.bias: copying a param with shape torch.Size([512]) from checkpoint, the shape in current model is torch.Size([1024]).
+	size mismatch for bn_pool.running_mean: copying a param with shape torch.Size([512]) from checkpoint, the shape in current model is torch.Size([1024]).
+	size mismatch for bn_pool.running_var: copying a param with shape torch.Size([512]) from checkpoint, the shape in current model is torch.Size([1024]).
+	size mismatch for fc1.weight: copying a param with shape torch.Size([192, 512]) from checkpoint, the shape in current model is torch.Size([192, 1024]).
+[2026-03-02 17:44:34,809] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 5146
+[2026-03-02 17:45:45,537] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\backend\api\view_utils.py changed, reloading.
+[2026-03-02 17:45:47,064] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-03-02 17:46:16,702] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-03-02 17:46:17,156] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-03-02 17:46:17,181] INFO django.server "GET /api/users/?page=1&is_staff=false HTTP/1.1" 200 625
+[2026-03-02 17:46:17,217] WARNING django.request Not Found: /api/analysis/embedding/image/
+[2026-03-02 17:46:17,222] WARNING django.server "GET /api/analysis/embedding/image/?method=tsne&score_norm=none HTTP/1.1" 404 37
+[2026-03-02 17:46:17,235] INFO django.server "GET /api/admin-access-logs/ HTTP/1.1" 200 2584
+[2026-03-02 17:46:17,239] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 6053
+[2026-03-02 17:46:17,250] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:46:17,254] WARNING django.server "GET /api/roc/?t=1772444777121&norm_method=snorm HTTP/1.1" 404 43
+[2026-03-02 17:46:17,265] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 5146
+[2026-03-02 17:46:17,272] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 5109
+[2026-03-02 17:46:17,309] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 5109
+[2026-03-02 17:46:17,436] INFO django.server "GET /api/models/ HTTP/1.1" 200 1215
+[2026-03-02 17:46:17,442] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 1044
+[2026-03-02 17:46:17,508] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:46:17,510] WARNING django.server "GET /api/roc/?t=1772444777496&norm_method=tnorm HTTP/1.1" 404 43
+[2026-03-02 17:46:17,681] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:46:17,683] WARNING django.server "GET /api/roc/?t=1772444777671&norm_method=znorm HTTP/1.1" 404 43
+[2026-03-02 17:46:17,746] INFO django.server "GET /api/roc/?t=1772444777728&norm_method=none HTTP/1.1" 200 453
+[2026-03-02 17:46:19,402] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 5109
+[2026-03-02 17:46:20,872] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 5109
+[2026-03-02 17:46:21,286] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 5109
+[2026-03-02 17:46:25,461] INFO django.server "DELETE /api/logs/bulk-delete/ HTTP/1.1" 200 14
+[2026-03-02 17:46:25,489] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 5129
+[2026-03-02 17:46:31,591] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 5129
+[2026-03-02 17:46:31,722] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 5129
+[2026-03-02 17:46:36,456] INFO django.server "DELETE /api/logs/bulk-delete/ HTTP/1.1" 200 14
+[2026-03-02 17:46:36,475] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 5960
+[2026-03-02 17:46:38,313] INFO django.server "GET /api/logs/?page=3 HTTP/1.1" 200 6363
+[2026-03-02 17:46:41,103] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 5960
+[2026-03-02 17:46:47,183] INFO django.server "DELETE /api/logs/bulk-delete/ HTTP/1.1" 200 13
+[2026-03-02 17:46:47,202] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6019
+[2026-03-02 17:46:51,644] WARNING django.request Not Found: /api/logs/
+[2026-03-02 17:46:51,644] WARNING django.server "GET /api/logs/?page=7 HTTP/1.1" 404 28
+[2026-03-02 17:46:54,166] INFO django.server "GET /api/logs/?page=6 HTTP/1.1" 200 3945
+[2026-03-02 17:46:54,716] WARNING django.request Not Found: /api/logs/
+[2026-03-02 17:46:54,716] WARNING django.server "GET /api/logs/?page=7 HTTP/1.1" 404 28
+[2026-03-02 17:46:55,530] INFO django.server "GET /api/logs/?page=6 HTTP/1.1" 200 3945
+[2026-03-02 17:46:55,956] WARNING django.request Not Found: /api/logs/
+[2026-03-02 17:46:55,956] WARNING django.server "GET /api/logs/?page=7 HTTP/1.1" 404 28
+[2026-03-02 17:46:56,524] INFO django.server "GET /api/logs/?page=5 HTTP/1.1" 200 6441
+[2026-03-02 17:46:57,056] INFO django.server "GET /api/logs/?page=4 HTTP/1.1" 200 6303
+[2026-03-02 17:46:57,500] INFO django.server "GET /api/logs/?page=6 HTTP/1.1" 200 3945
+[2026-03-02 17:46:58,089] WARNING django.request Not Found: /api/logs/
+[2026-03-02 17:46:58,090] WARNING django.server "GET /api/logs/?page=7 HTTP/1.1" 404 28
+[2026-03-02 17:47:00,415] INFO django.server "GET /api/logs/?page=6 HTTP/1.1" 200 3945
+[2026-03-02 17:47:00,952] WARNING django.request Not Found: /api/logs/
+[2026-03-02 17:47:00,953] WARNING django.server "GET /api/logs/?page=7 HTTP/1.1" 404 28
+[2026-03-02 17:47:07,500] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6019
+[2026-03-02 17:47:09,143] WARNING django.request Not Found: /api/analysis/embedding/image/
+[2026-03-02 17:47:09,145] WARNING django.server "GET /api/analysis/embedding/image/?method=tsne&score_norm=none HTTP/1.1" 404 37
+[2026-03-02 17:47:09,145] INFO django.server "GET /api/models/ HTTP/1.1" 200 1215
+[2026-03-02 17:47:09,153] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:47:09,154] WARNING django.server "GET /api/roc/?t=1772444829133&norm_method=snorm HTTP/1.1" 404 43
+[2026-03-02 17:47:09,187] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:47:09,188] WARNING django.server "GET /api/roc/?t=1772444829178&norm_method=tnorm HTTP/1.1" 404 43
+[2026-03-02 17:47:09,199] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:47:09,199] WARNING django.server "GET /api/roc/?t=1772444829192&norm_method=znorm HTTP/1.1" 404 43
+[2026-03-02 17:47:09,212] INFO django.server "GET /api/roc/?t=1772444829204&norm_method=none HTTP/1.1" 200 453
+[2026-03-02 17:47:09,931] INFO django.server "GET /api/admin-access-logs/ HTTP/1.1" 200 2584
+[2026-03-02 17:47:15,155] INFO django.server "POST /api/maintenance/cache-clean/ HTTP/1.1" 200 49
+[2026-03-02 17:47:16,502] INFO django.server "GET /api/maintenance/models-check/ HTTP/1.1" 200 108
+[2026-03-02 17:47:18,358] INFO django.server "POST /api/maintenance/logs-clean/ HTTP/1.1" 200 83
+[2026-03-02 17:47:24,099] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6019
+[2026-03-02 17:47:26,964] INFO django.server "DELETE /api/logs/bulk-delete/ HTTP/1.1" 200 14
+[2026-03-02 17:47:26,981] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6438
+[2026-03-02 17:47:29,603] WARNING django.request Not Found: /api/logs/
+[2026-03-02 17:47:29,604] WARNING django.server "GET /api/logs/?page=6 HTTP/1.1" 404 28
+[2026-03-02 17:47:30,307] INFO django.server "GET /api/logs/?page=5 HTTP/1.1" 200 3944
+[2026-03-02 17:47:30,777] INFO django.server "GET /api/logs/?page=4 HTTP/1.1" 200 6440
+[2026-03-02 17:47:31,188] INFO django.server "GET /api/logs/?page=3 HTTP/1.1" 200 6302
+[2026-03-02 17:47:31,595] INFO django.server "GET /api/logs/?page=2 HTTP/1.1" 200 6361
+[2026-03-02 17:47:32,148] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6438
+[2026-03-02 17:47:32,950] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6438
+[2026-03-02 17:47:34,070] WARNING django.request Not Found: /api/analysis/embedding/image/
+[2026-03-02 17:47:34,070] INFO django.server "GET /api/models/ HTTP/1.1" 200 1215
+[2026-03-02 17:47:34,072] WARNING django.server "GET /api/analysis/embedding/image/?method=tsne&score_norm=none HTTP/1.1" 404 37
+[2026-03-02 17:47:34,078] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:47:34,080] WARNING django.server "GET /api/roc/?t=1772444854059&norm_method=snorm HTTP/1.1" 404 43
+[2026-03-02 17:47:34,108] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:47:34,108] WARNING django.server "GET /api/roc/?t=1772444854099&norm_method=tnorm HTTP/1.1" 404 43
+[2026-03-02 17:47:34,120] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:47:34,122] WARNING django.server "GET /api/roc/?t=1772444854112&norm_method=znorm HTTP/1.1" 404 43
+[2026-03-02 17:47:34,134] INFO django.server "GET /api/roc/?t=1772444854125&norm_method=none HTTP/1.1" 200 453
+[2026-03-02 17:47:37,571] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:47:37,573] WARNING django.request Not Found: /api/analysis/embedding/image/
+[2026-03-02 17:47:37,573] WARNING django.server "GET /api/roc/?t=1772444857561&norm_method=snorm HTTP/1.1" 404 43
+[2026-03-02 17:47:37,573] WARNING django.server "GET /api/analysis/embedding/image/?method=tsne&score_norm=none HTTP/1.1" 404 37
+[2026-03-02 17:47:37,586] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:47:37,588] WARNING django.server "GET /api/roc/?t=1772444857576&norm_method=tnorm HTTP/1.1" 404 43
+[2026-03-02 17:47:37,599] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:47:37,600] WARNING django.server "GET /api/roc/?t=1772444857591&norm_method=znorm HTTP/1.1" 404 43
+[2026-03-02 17:47:37,616] INFO django.server "GET /api/roc/?t=1772444857604&norm_method=none HTTP/1.1" 200 453
+[2026-03-02 17:47:38,825] INFO django.server "POST /api/models/switch/ HTTP/1.1" 200 39
+[2026-03-02 17:47:39,635] INFO django.server "POST /api/roc/evaluate/ HTTP/1.1" 200 137
+[2026-03-02 17:47:41,159] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 17:47:42,654] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 17:47:42,992] ERROR api Eval thread failed: Error(s) in loading state_dict for LightECAPA:
+	size mismatch for layer1.conv.weight: copying a param with shape torch.Size([256, 39, 5]) from checkpoint, the shape in current model is torch.Size([512, 39, 5]).
+	size mismatch for layer1.conv.bias: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for layer1.bn.weight: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for layer1.bn.bias: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for layer1.bn.running_mean: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for layer1.bn.running_var: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for layer2.conv.weight: copying a param with shape torch.Size([256, 256, 3]) from checkpoint, the shape in current model is torch.Size([512, 512, 3]).
+	size mismatch for layer2.conv.bias: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for layer2.bn.weight: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for layer2.bn.bias: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for layer2.bn.running_mean: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for layer2.bn.running_var: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for se.fc1.weight: copying a param with shape torch.Size([32, 256, 1]) from checkpoint, the shape in current model is torch.Size([64, 512, 1]).
+	size mismatch for se.fc1.bias: copying a param with shape torch.Size([32]) from checkpoint, the shape in current model is torch.Size([64]).
+	size mismatch for se.fc2.weight: copying a param with shape torch.Size([256, 32, 1]) from checkpoint, the shape in current model is torch.Size([512, 64, 1]).
+	size mismatch for se.fc2.bias: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for pool.tdnn.weight: copying a param with shape torch.Size([256, 256, 1]) from checkpoint, the shape in current model is torch.Size([512, 512, 1]).
+	size mismatch for pool.tdnn.bias: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for pool.conv.weight: copying a param with shape torch.Size([256, 256, 1]) from checkpoint, the shape in current model is torch.Size([512, 512, 1]).
+	size mismatch for pool.conv.bias: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for bn_pool.weight: copying a param with shape torch.Size([512]) from checkpoint, the shape in current model is torch.Size([1024]).
+	size mismatch for bn_pool.bias: copying a param with shape torch.Size([512]) from checkpoint, the shape in current model is torch.Size([1024]).
+	size mismatch for bn_pool.running_mean: copying a param with shape torch.Size([512]) from checkpoint, the shape in current model is torch.Size([1024]).
+	size mismatch for bn_pool.running_var: copying a param with shape torch.Size([512]) from checkpoint, the shape in current model is torch.Size([1024]).
+	size mismatch for fc1.weight: copying a param with shape torch.Size([192, 512]) from checkpoint, the shape in current model is torch.Size([192, 1024]).
+[2026-03-02 17:47:44,148] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 5146
+[2026-03-02 17:49:57,554] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\scripts\evaluate.py changed, reloading.
+[2026-03-02 17:49:59,285] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-03-02 17:52:42,057] INFO django.server "POST /api/models/switch/ HTTP/1.1" 200 39
+[2026-03-02 17:52:43,762] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:52:43,763] WARNING django.server "GET /api/roc/?t=1772445163752&norm_method=snorm HTTP/1.1" 404 43
+[2026-03-02 17:52:43,763] WARNING django.request Not Found: /api/analysis/embedding/image/
+[2026-03-02 17:52:43,765] WARNING django.server "GET /api/analysis/embedding/image/?method=tsne&score_norm=none HTTP/1.1" 404 37
+[2026-03-02 17:52:43,779] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:52:43,779] WARNING django.server "GET /api/roc/?t=1772445163767&norm_method=tnorm HTTP/1.1" 404 43
+[2026-03-02 17:52:43,795] WARNING django.request Not Found: /api/roc/
+[2026-03-02 17:52:43,796] WARNING django.server "GET /api/roc/?t=1772445163785&norm_method=znorm HTTP/1.1" 404 43
+[2026-03-02 17:52:43,810] INFO django.server "GET /api/roc/?t=1772445163799&norm_method=none HTTP/1.1" 200 453
+[2026-03-02 17:52:46,684] INFO django.server "POST /api/roc/evaluate/ HTTP/1.1" 200 137
+[2026-03-02 17:52:48,213] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 17:52:49,700] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 17:52:49,948] ERROR api Eval thread failed: Error(s) in loading state_dict for LightECAPA:
+	size mismatch for layer1.conv.weight: copying a param with shape torch.Size([256, 39, 5]) from checkpoint, the shape in current model is torch.Size([512, 39, 5]).
+	size mismatch for layer1.conv.bias: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for layer1.bn.weight: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for layer1.bn.bias: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for layer1.bn.running_mean: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for layer1.bn.running_var: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for layer2.conv.weight: copying a param with shape torch.Size([256, 256, 3]) from checkpoint, the shape in current model is torch.Size([512, 512, 3]).
+	size mismatch for layer2.conv.bias: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for layer2.bn.weight: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for layer2.bn.bias: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for layer2.bn.running_mean: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for layer2.bn.running_var: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for se.fc1.weight: copying a param with shape torch.Size([32, 256, 1]) from checkpoint, the shape in current model is torch.Size([64, 512, 1]).
+	size mismatch for se.fc1.bias: copying a param with shape torch.Size([32]) from checkpoint, the shape in current model is torch.Size([64]).
+	size mismatch for se.fc2.weight: copying a param with shape torch.Size([256, 32, 1]) from checkpoint, the shape in current model is torch.Size([512, 64, 1]).
+	size mismatch for se.fc2.bias: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for pool.tdnn.weight: copying a param with shape torch.Size([256, 256, 1]) from checkpoint, the shape in current model is torch.Size([512, 512, 1]).
+	size mismatch for pool.tdnn.bias: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for pool.conv.weight: copying a param with shape torch.Size([256, 256, 1]) from checkpoint, the shape in current model is torch.Size([512, 512, 1]).
+	size mismatch for pool.conv.bias: copying a param with shape torch.Size([256]) from checkpoint, the shape in current model is torch.Size([512]).
+	size mismatch for bn_pool.weight: copying a param with shape torch.Size([512]) from checkpoint, the shape in current model is torch.Size([1024]).
+	size mismatch for bn_pool.bias: copying a param with shape torch.Size([512]) from checkpoint, the shape in current model is torch.Size([1024]).
+	size mismatch for bn_pool.running_mean: copying a param with shape torch.Size([512]) from checkpoint, the shape in current model is torch.Size([1024]).
+	size mismatch for bn_pool.running_var: copying a param with shape torch.Size([512]) from checkpoint, the shape in current model is torch.Size([1024]).
+	size mismatch for fc1.weight: copying a param with shape torch.Size([192, 512]) from checkpoint, the shape in current model is torch.Size([192, 1024]).
+[2026-03-02 17:52:51,197] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 5146
+[2026-03-02 17:58:25,849] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\scripts\evaluate.py changed, reloading.
+[2026-03-02 17:58:27,385] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-03-02 18:01:41,309] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-03-02 18:01:41,841] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-03-02 18:01:41,865] INFO django.server "GET /api/users/?page=1&is_staff=false HTTP/1.1" 200 625
+[2026-03-02 18:01:41,867] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 5610
+[2026-03-02 18:01:41,886] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6438
+[2026-03-02 18:01:41,889] WARNING django.request Not Found: /api/analysis/embedding/image/
+[2026-03-02 18:01:41,895] WARNING django.server "GET /api/analysis/embedding/image/?method=tsne&score_norm=none HTTP/1.1" 404 37
+[2026-03-02 18:01:41,911] INFO django.server "GET /api/admin-access-logs/ HTTP/1.1" 200 2584
+[2026-03-02 18:01:41,920] WARNING django.request Not Found: /api/roc/
+[2026-03-02 18:01:41,922] WARNING django.server "GET /api/roc/?t=1772445701803&norm_method=snorm HTTP/1.1" 404 43
+[2026-03-02 18:01:41,922] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 5146
+[2026-03-02 18:01:41,931] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6438
+[2026-03-02 18:01:42,038] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 946
+[2026-03-02 18:01:42,067] INFO django.server "GET /api/models/ HTTP/1.1" 200 1215
+[2026-03-02 18:01:42,152] WARNING django.request Not Found: /api/roc/
+[2026-03-02 18:01:42,154] WARNING django.server "GET /api/roc/?t=1772445702143&norm_method=tnorm HTTP/1.1" 404 43
+[2026-03-02 18:01:42,315] WARNING django.request Not Found: /api/roc/
+[2026-03-02 18:01:42,317] WARNING django.server "GET /api/roc/?t=1772445702282&norm_method=znorm HTTP/1.1" 404 43
+[2026-03-02 18:01:42,383] INFO django.server "GET /api/roc/?t=1772445702364&norm_method=none HTTP/1.1" 200 453
+[2026-03-02 18:01:58,329] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-03-02 18:03:38,360] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-03-02 18:03:38,884] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-03-02 18:03:38,928] INFO django.server "GET /api/users/?page=1&is_staff=false HTTP/1.1" 200 625
+[2026-03-02 18:03:38,931] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6438
+[2026-03-02 18:03:38,955] WARNING django.request Not Found: /api/analysis/embedding/image/
+[2026-03-02 18:03:38,956] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 5610
+[2026-03-02 18:03:38,957] WARNING django.server "GET /api/analysis/embedding/image/?method=tsne&score_norm=none HTTP/1.1" 404 37
+[2026-03-02 18:03:38,976] WARNING django.request Not Found: /api/roc/
+[2026-03-02 18:03:38,981] INFO django.server "GET /api/admin-access-logs/ HTTP/1.1" 200 2584
+[2026-03-02 18:03:38,981] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 5146
+[2026-03-02 18:03:38,985] WARNING django.server "GET /api/roc/?t=1772445818834&norm_method=snorm HTTP/1.1" 404 43
+[2026-03-02 18:03:38,995] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6438
+[2026-03-02 18:03:39,168] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 946
+[2026-03-02 18:03:39,173] INFO django.server "GET /api/models/ HTTP/1.1" 200 1215
+[2026-03-02 18:03:39,261] WARNING django.request Not Found: /api/roc/
+[2026-03-02 18:03:39,262] WARNING django.server "GET /api/roc/?t=1772445819250&norm_method=tnorm HTTP/1.1" 404 43
+[2026-03-02 18:03:39,364] WARNING django.request Not Found: /api/roc/
+[2026-03-02 18:03:39,366] WARNING django.server "GET /api/roc/?t=1772445819353&norm_method=znorm HTTP/1.1" 404 43
+[2026-03-02 18:03:39,400] INFO django.server "GET /api/roc/?t=1772445819383&norm_method=none HTTP/1.1" 200 453
+[2026-03-02 18:04:17,097] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6438
+[2026-03-02 18:04:17,716] WARNING django.request Not Found: /api/analysis/embedding/image/
+[2026-03-02 18:04:17,716] INFO django.server "GET /api/models/ HTTP/1.1" 200 1215
+[2026-03-02 18:04:17,717] WARNING django.server "GET /api/analysis/embedding/image/?method=tsne&score_norm=none HTTP/1.1" 404 37
+[2026-03-02 18:04:17,737] WARNING django.request Not Found: /api/roc/
+[2026-03-02 18:04:17,744] WARNING django.server "GET /api/roc/?t=1772445857704&norm_method=snorm HTTP/1.1" 404 43
+[2026-03-02 18:04:17,757] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6438
+[2026-03-02 18:04:17,795] WARNING django.request Not Found: /api/roc/
+[2026-03-02 18:04:17,796] WARNING django.server "GET /api/roc/?t=1772445857787&norm_method=tnorm HTTP/1.1" 404 43
+[2026-03-02 18:04:17,829] WARNING django.request Not Found: /api/roc/
+[2026-03-02 18:04:17,830] WARNING django.server "GET /api/roc/?t=1772445857818&norm_method=znorm HTTP/1.1" 404 43
+[2026-03-02 18:04:17,847] INFO django.server "GET /api/roc/?t=1772445857835&norm_method=none HTTP/1.1" 200 453
+[2026-03-02 18:04:18,712] INFO django.server "POST /api/roc/evaluate/ HTTP/1.1" 200 137
+[2026-03-02 18:04:20,229] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 18:04:21,727] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 18:04:23,225] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 18:04:24,727] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 18:04:26,224] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 1355
+[2026-03-02 18:04:26,242] INFO django.server "GET /api/analysis/embedding/image/?method=tsne&score_norm=none HTTP/1.1" 200 63576
+[2026-03-02 18:04:26,243] INFO django.server "GET /api/roc/?t=1772445866227&norm_method=none HTTP/1.1" 200 453
+[2026-03-02 18:04:31,478] INFO django.server "GET /api/analysis/embedding/image/?method=tsne&score_norm=none HTTP/1.1" 200 63576
+[2026-03-02 18:04:41,016] INFO django.server "POST /api/models/switch/ HTTP/1.1" 200 55
+[2026-03-02 18:04:44,526] INFO django.server "POST /api/roc/evaluate/ HTTP/1.1" 200 137
+[2026-03-02 18:04:46,044] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 18:04:47,542] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 18:04:49,037] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 1387
+[2026-03-02 18:04:49,056] INFO django.server "GET /api/roc/?t=1772445889042&norm_method=none HTTP/1.1" 200 444
+[2026-03-02 18:04:49,057] INFO django.server "GET /api/analysis/embedding/image/?method=tsne&score_norm=none HTTP/1.1" 200 65842
+[2026-03-02 18:05:27,316] INFO django.server "GET /api/analysis/embedding/image/?method=tsne&score_norm=none HTTP/1.1" 200 65842
+[2026-03-02 18:06:03,228] WARNING django.request Not Found: /api/roc/
+[2026-03-02 18:06:03,228] WARNING django.server "GET /api/roc/?t=1772445963218&norm_method=snorm HTTP/1.1" 404 43
+[2026-03-02 18:06:03,237] INFO django.server "GET /api/models/ HTTP/1.1" 200 1231
+[2026-03-02 18:06:03,248] INFO django.server "GET /api/analysis/embedding/image/?method=tsne&score_norm=none HTTP/1.1" 200 65842
+[2026-03-02 18:06:03,265] WARNING django.request Not Found: /api/roc/
+[2026-03-02 18:06:03,266] WARNING django.server "GET /api/roc/?t=1772445963256&norm_method=tnorm HTTP/1.1" 404 43
+[2026-03-02 18:06:03,314] WARNING django.request Not Found: /api/roc/
+[2026-03-02 18:06:03,317] WARNING django.server "GET /api/roc/?t=1772445963274&norm_method=znorm HTTP/1.1" 404 43
+[2026-03-02 18:06:03,337] INFO django.server "GET /api/roc/?t=1772445963323&norm_method=none HTTP/1.1" 200 444
+[2026-03-02 18:06:05,843] INFO django.server "GET /api/analysis/embedding/image/?method=tsne&score_norm=none HTTP/1.1" 200 65842
+[2026-03-02 18:07:50,954] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\scripts\evaluate.py changed, reloading.
+[2026-03-02 18:07:52,720] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-03-02 18:09:19,019] INFO django.server "GET /api/admin-access-logs/ HTTP/1.1" 200 2584
+[2026-03-02 18:09:19,464] INFO django.server "GET /api/analysis/embedding/image/?method=tsne&score_norm=none HTTP/1.1" 200 65842
+[2026-03-02 18:09:19,479] WARNING django.request Not Found: /api/roc/
+[2026-03-02 18:09:19,480] WARNING django.server "GET /api/roc/?t=1772446159437&norm_method=snorm HTTP/1.1" 404 43
+[2026-03-02 18:09:19,498] WARNING django.request Not Found: /api/roc/
+[2026-03-02 18:09:19,500] WARNING django.server "GET /api/roc/?t=1772446159485&norm_method=tnorm HTTP/1.1" 404 43
+[2026-03-02 18:09:19,524] WARNING django.request Not Found: /api/roc/
+[2026-03-02 18:09:19,525] WARNING django.server "GET /api/roc/?t=1772446159507&norm_method=znorm HTTP/1.1" 404 43
+[2026-03-02 18:09:19,542] INFO django.server "GET /api/roc/?t=1772446159529&norm_method=none HTTP/1.1" 200 444
+[2026-03-02 18:09:19,615] INFO django.server "GET /api/models/ HTTP/1.1" 200 1231
+[2026-03-02 18:26:10,318] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-03-02 18:26:10,792] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-03-02 18:26:10,822] INFO django.server "GET /api/models/ HTTP/1.1" 200 1231
+[2026-03-02 18:26:10,822] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6438
+[2026-03-02 18:26:10,822] INFO django.server "GET /api/users/?page=1&is_staff=false HTTP/1.1" 200 625
+[2026-03-02 18:26:10,840] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 5610
+[2026-03-02 18:26:10,845] WARNING django.request Not Found: /api/roc/
+[2026-03-02 18:26:10,850] WARNING django.server "GET /api/roc/?t=1772447170754&norm_method=snorm HTTP/1.1" 404 43
+[2026-03-02 18:26:10,853] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 1387
+[2026-03-02 18:26:10,861] INFO django.server "GET /api/analysis/embedding/image/?method=tsne&score_norm=none HTTP/1.1" 200 65842
+[2026-03-02 18:26:10,864] INFO django.server "GET /api/admin-access-logs/ HTTP/1.1" 200 2584
+[2026-03-02 18:26:10,902] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6438
+[2026-03-02 18:26:10,937] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 946
+[2026-03-02 18:26:11,147] WARNING django.request Not Found: /api/roc/
+[2026-03-02 18:26:11,148] WARNING django.server "GET /api/roc/?t=1772447171136&norm_method=tnorm HTTP/1.1" 404 43
+[2026-03-02 18:26:11,249] WARNING django.request Not Found: /api/roc/
+[2026-03-02 18:26:11,249] WARNING django.server "GET /api/roc/?t=1772447171239&norm_method=znorm HTTP/1.1" 404 43
+[2026-03-02 18:26:11,404] INFO django.server "GET /api/roc/?t=1772447171336&norm_method=none HTTP/1.1" 200 453497
+[2026-03-02 18:26:14,553] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6438
+[2026-03-02 18:26:15,985] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6438
+[2026-03-02 18:26:20,351] INFO django.server "GET /api/models/ HTTP/1.1" 200 1231
+[2026-03-02 18:26:20,359] WARNING django.request Not Found: /api/roc/
+[2026-03-02 18:26:20,361] WARNING django.server "GET /api/roc/?t=1772447180343&norm_method=snorm HTTP/1.1" 404 43
+[2026-03-02 18:26:20,368] INFO django.server "GET /api/analysis/embedding/image/?method=tsne&score_norm=none HTTP/1.1" 200 65842
+[2026-03-02 18:26:20,387] WARNING django.request Not Found: /api/roc/
+[2026-03-02 18:26:20,389] WARNING django.server "GET /api/roc/?t=1772447180378&norm_method=tnorm HTTP/1.1" 404 43
+[2026-03-02 18:26:20,401] WARNING django.request Not Found: /api/roc/
+[2026-03-02 18:26:20,401] WARNING django.server "GET /api/roc/?t=1772447180392&norm_method=znorm HTTP/1.1" 404 43
+[2026-03-02 18:26:20,449] INFO django.server "GET /api/roc/?t=1772447180405&norm_method=none HTTP/1.1" 200 453497
+[2026-03-02 18:26:33,538] INFO django.server "GET /api/analysis/embedding/image/?method=tsne&score_norm=none HTTP/1.1" 200 65842
+[2026-03-02 18:26:43,876] INFO django.server "GET /api/analysis/embedding/image/?method=tsne&score_norm=znorm HTTP/1.1" 200 65842
+[2026-03-02 18:26:43,884] WARNING django.request Not Found: /api/roc/
+[2026-03-02 18:26:43,886] WARNING django.server "GET /api/roc/?t=1772447203867&norm_method=znorm HTTP/1.1" 404 43
+[2026-03-02 18:26:44,512] INFO django.server "POST /api/roc/evaluate/ HTTP/1.1" 200 137
+[2026-03-02 18:26:46,032] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 18:26:47,533] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 18:26:47,739] ERROR api Eval thread failed: compute_cohort_stats() missing 2 required positional arguments: 'cohort_embs' and 'cohort_labels'
+[2026-03-02 18:26:49,024] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 1208
+[2026-03-02 18:27:01,973] INFO django.server "GET /api/analysis/embedding/image/?method=tsne&score_norm=tnorm HTTP/1.1" 200 65842
+[2026-03-02 18:27:01,981] WARNING django.request Not Found: /api/roc/
+[2026-03-02 18:27:01,981] WARNING django.server "GET /api/roc/?t=1772447221964&norm_method=tnorm HTTP/1.1" 404 43
+[2026-03-02 18:27:05,495] INFO django.server "GET /api/analysis/embedding/image/?method=tsne&score_norm=none HTTP/1.1" 200 65842
+[2026-03-02 18:27:05,495] INFO django.server "GET /api/roc/?t=1772447225448&norm_method=none HTTP/1.1" 200 453497
+[2026-03-02 18:27:08,425] WARNING django.request Not Found: /api/roc/
+[2026-03-02 18:27:08,426] WARNING django.server "GET /api/roc/?t=1772447228416&norm_method=znorm HTTP/1.1" 404 43
+[2026-03-02 18:27:08,428] INFO django.server "GET /api/analysis/embedding/image/?method=tsne&score_norm=znorm HTTP/1.1" 200 65842
+[2026-03-02 18:27:09,731] WARNING django.request Not Found: /api/roc/
+[2026-03-02 18:27:09,733] WARNING django.server "GET /api/roc/?t=1772447229720&norm_method=znorm HTTP/1.1" 404 43
+[2026-03-02 18:27:09,736] INFO django.server "GET /api/analysis/embedding/image/?method=tsne&score_norm=znorm HTTP/1.1" 200 65842
+[2026-03-02 18:29:30,291] INFO django.server "GET /api/analysis/embedding/image/?method=tsne&score_norm=none HTTP/1.1" 200 65842
+[2026-03-02 18:29:30,328] INFO django.server "GET /api/roc/?t=1772447369975&norm_method=none HTTP/1.1" 200 453497
+[2026-03-02 18:29:33,135] INFO django.server "GET /api/analysis/embedding/image/?method=tsne&score_norm=none HTTP/1.1" 200 65842
+[2026-03-02 18:30:07,426] WARNING django.request Not Found: /api/roc/
+[2026-03-02 18:30:07,426] WARNING django.server "GET /api/roc/?t=1772447407418&norm_method=znorm HTTP/1.1" 404 43
+[2026-03-02 18:30:07,435] INFO django.server "GET /api/analysis/embedding/image/?method=tsne&score_norm=znorm HTTP/1.1" 200 65842
+[2026-03-02 18:30:08,176] INFO django.server "POST /api/roc/evaluate/ HTTP/1.1" 200 137
+[2026-03-02 18:30:09,693] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 152
+[2026-03-02 18:30:09,792] ERROR api Eval thread failed: compute_cohort_stats() missing 2 required positional arguments: 'cohort_embs' and 'cohort_labels'
+[2026-03-02 18:30:11,189] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 1208
+[2026-03-02 18:36:35,352] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\scripts\evaluate.py changed, reloading.
+[2026-03-02 18:36:37,032] INFO django.utils.autoreload Watching for file changes with StatReloader

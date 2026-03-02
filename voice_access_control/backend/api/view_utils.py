@@ -4,6 +4,7 @@ import json
 import threading
 import math
 import logging
+import importlib
 from datetime import datetime
 from argparse import Namespace
 from contextlib import redirect_stdout
@@ -216,6 +217,10 @@ def _start_eval_thread(model_path, feature_dir, norm_method="none"):
             from scripts import evaluate as evaluate_module
             from scripts.analysis import plot_embedding
             
+            # Force reload to pick up script changes without restarting backend
+            importlib.reload(evaluate_module)
+            importlib.reload(plot_embedding)
+            
             # 1. Run Evaluation (ROC/EER/DET)
             # ------------------------------------------------
             # Construct namespace args for evaluate.py
@@ -267,7 +272,7 @@ def _start_eval_thread(model_path, feature_dir, norm_method="none"):
             full_output = output_buffer.getvalue().strip()
             _set_eval_status("ok", model=model_name, output=full_output, finished_at=timezone.now().isoformat())
             
-        except Exception as e:
+        except BaseException as e:
             # Failure
             err_msg = str(e) or "Evaluation failed"
             full_output = output_buffer.getvalue().strip()

@@ -10,7 +10,7 @@ import io
 import wave
 import audioop
 from ..config import SAMPLE_RATE
-from .service import VoiceService
+from voice_engine.service import VoiceService
 from .nlu import LocalNLU
 from .stt_service import STTService
 from .agent_service import AgentService

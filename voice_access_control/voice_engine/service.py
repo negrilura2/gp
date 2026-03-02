@@ -83,8 +83,15 @@ def load_model(model_path=MODEL_PATH, device=None, feature_type=None, n_mels=DEF
         else:
             feature_type = FEATURE_TYPE_MFCC_DELTA
             
+    # Try to infer channels from model weights
+    channels = 256 # Default
+    w1 = state.get("layer1.conv.weight")
+    if w1 is not None:
+        channels = w1.shape[0]
+        logger.info(f"Inferred channels from weights: {channels}")
+
     feat_dim = get_feature_dim(feature_type, n_mels)
-    model = LightECAPA(feat_dim=feat_dim, emb_dim=emb_dim, n_speakers=None).to(device)
+    model = LightECAPA(feat_dim=feat_dim, channels=channels, emb_dim=emb_dim, n_speakers=None).to(device)
     model.load_state_dict(state, strict=False)
     model.eval()
     return model, device, feature_type

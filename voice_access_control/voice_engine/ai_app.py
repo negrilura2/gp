@@ -27,7 +27,7 @@ from api.models import VerifyLog
 from voice_engine.services.agent_service import AgentService
 from .service import VoiceService
 from .services.stt_service import STTService
-from .services.stream_processor import AudioBuffer
+from voice_engine.services.stream_processor import AudioBuffer
 
 logger = logging.getLogger("voice_engine.api")
 

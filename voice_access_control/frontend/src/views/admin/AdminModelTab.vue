@@ -243,4 +243,10 @@ defineProps({
   font-weight: 600;
   font-size: 16px;
 }
+
+.roc-chart {
+  width: 100%;
+  height: 260px;
+  margin-top: 16px;
+}
 </style>

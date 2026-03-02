@@ -48,7 +48,7 @@ def compute_pairs_scores(embs, labels, max_pairs=20000, seed=42, return_indices=
         diff_pairs.append((int(i1), int(i2)))
         attempts += 1
 
-    y = np.hstack([np.ones(len(same_scores)), np.zeros(len(diff_scores))])
+    y = np.hstack([np.ones(len(same_scores)), np.zeros(len(diff_scores))]).astype(int)
     scores = np.hstack([same_scores, diff_scores])
     if return_indices:
         pair_indices = same_pairs + diff_pairs

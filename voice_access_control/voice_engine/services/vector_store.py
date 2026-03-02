@@ -17,9 +17,7 @@ class VectorStore:
     def __init__(self, persist_path: str = None, collection_name: str = "voiceprints"):
         # Default path relative to project root if not specified
         if not persist_path:
-            # Try to infer project root from this file location
-            base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-            persist_path = os.path.join(base_dir, "data", "chroma_db")
+            persist_path = CHROMA_DB_DIR
             
         self.persist_path = persist_path
         self.collection_name = collection_name

@@ -58,7 +58,11 @@ ROOT_DIR = get_path_env("PROJECT_ROOT", _default_root)
 MODELS_DIR = get_path_env("MODELS_DIR", os.path.join(ROOT_DIR, "checkpoints"))
 DATA_DIR = get_path_env("DATA_DIR", os.path.join(ROOT_DIR, "data"))
 FEATURES_DIR = get_path_env("FEATURES_DIR", os.path.join(DATA_DIR, "features"))
+PROCESSED_DIR = get_path_env("PROCESSED_DIR", os.path.join(DATA_DIR, "processed"))
 VOICEPRINTS_DIR = get_path_env("VOICEPRINTS_DIR", os.path.join(DATA_DIR, "voiceprints"))
+ENROLL_DIR = get_path_env("ENROLL_DIR", os.path.join(DATA_DIR, "enroll"))
+RECORDINGS_DIR = get_path_env("RECORDINGS_DIR", os.path.join(DATA_DIR, "recordings"))
+REPORTS_DIR = get_path_env("REPORTS_DIR", os.path.join(ROOT_DIR, "reports"))
 
 # 默认模型路径
 _default_model_name = "ecapa_mfcc_delta_best.pth"
@@ -128,4 +132,19 @@ DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY", "")
 DEEPSEEK_BASE_URL = os.getenv("DEEPSEEK_BASE_URL", "https://api.deepseek.com")
 DEEPSEEK_MODEL = os.getenv("DEEPSEEK_MODEL", "deepseek-chat")
 
+# -----------------------------------------------------------------------------
+# 6. RAG / Knowledge Base Configuration
+# -----------------------------------------------------------------------------
+CHROMA_KNOWLEDGE_DIR = get_path_env("CHROMA_KNOWLEDGE_DIR", os.path.join(DATA_DIR, "chroma_knowledge"))
+RAG_EMBEDDING_MODEL = os.getenv("RAG_EMBEDDING_MODEL", "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2")
+KNOWLEDGE_COLLECTION_NAME = os.getenv("KNOWLEDGE_COLLECTION_NAME", "local_knowledge_base")
+VOICE_ENGINE_DEVICE = DEFAULT_DEVICE
+CHROMA_DB_DIR = get_path_env("CHROMA_DB_DIR", os.path.join(DATA_DIR, "chroma_db"))
+
+# -----------------------------------------------------------------------------
+# 7. STT Configuration (Faster-Whisper)
+# -----------------------------------------------------------------------------
+STT_MODEL_SIZE = os.getenv("STT_MODEL_SIZE", "tiny")
+STT_DEVICE = os.getenv("STT_DEVICE", "auto")
+STT_COMPUTE_TYPE = os.getenv("STT_COMPUTE_TYPE", "default")
 

@@ -34,7 +34,7 @@ class KnowledgeService:
             # 1. Initialize Embeddings
             # 使用支持多语言（含中文）的轻量级模型
             # 如果下载慢，可以手动下载模型并指定本地路径
-            model_name = os.getenv("RAG_EMBEDDING_MODEL", "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2")
+            model_name = RAG_EMBEDDING_MODEL
             model_kwargs = {'device': 'cpu'} # 默认用CPU，避免显存冲突
             encode_kwargs = {'normalize_embeddings': True}
             
@@ -47,10 +47,10 @@ class KnowledgeService:
 
             # 2. Initialize Vector Store (ChromaDB)
             # 使用持久化存储，路径与声纹数据库分开，或者共用同一个目录的不同 Collection
-            persist_directory = os.path.join(DATA_DIR, "chroma_knowledge")
+            persist_directory = CHROMA_KNOWLEDGE_DIR
             
             self.vector_store = Chroma(
-                collection_name="local_knowledge_base",
+                collection_name=KNOWLEDGE_COLLECTION_NAME,
                 embedding_function=self.embeddings,
                 persist_directory=persist_directory,
             )

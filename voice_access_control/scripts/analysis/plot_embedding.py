@@ -152,13 +152,22 @@ def run(args):
         
     state = torch.load(model_path, map_location=device)
     ckpt_feat_dim = None
+    
+    # Infer channels and feat_dim
+    channels = 256 # Default
     w = state.get("layer1.conv.weight")
+    if w is None:
+        w = state.get("module.layer1.conv.weight")
+        
     if w is not None:
+        channels = int(w.shape[0])
         ckpt_feat_dim = int(w.shape[1])
+        
     if ckpt_feat_dim is not None and ckpt_feat_dim != feat_dim_data:
         print(f"Warning: Model expects {ckpt_feat_dim} but data has {feat_dim_data}")
+        
     feat_dim = ckpt_feat_dim or feat_dim_data
-    model = LightECAPA(feat_dim=feat_dim, emb_dim=EMBEDDING_DIM, n_speakers=None).to(device)
+    model = LightECAPA(feat_dim=feat_dim, channels=channels, emb_dim=EMBEDDING_DIM, n_speakers=None).to(device)
     model.load_state_dict(state, strict=False)
     model.eval()
 
