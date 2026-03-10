@@ -1,0 +1,110 @@
+services:
+  # MySQL 服务 (用户指定必需)
+  db:
+    image: mysql:8.0
+    container_name: voice_access_db_laptop
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-rootpassword}
+      MYSQL_DATABASE: ${DB_NAME:-voice_access_db}
+      MYSQL_USER: ${DB_USER:-voice_user}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-voice_password}
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data_laptop:/var/lib/mysql
+    restart: unless-stopped
+    # 优化: 禁用性能模式以节省内存，使用 native password 插件兼容性更好
+    command: >
+      --default-authentication-plugin=mysql_native_password
+      --performance-schema=OFF
+      --innodb-buffer-pool-size=256M
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+    # 资源限制 (Docker Compose v2/v3 兼容写法，取决于部署环境支持)
+    # deploy:
+    #   resources:
+    #     limits:
+    #       memory: 1G
+
+  # 移除 Redis (代码中未发现显式依赖，节省资源)
+
+  ai_service:
+    build: 
+      context: .
+      dockerfile: Dockerfile.laptop
+    container_name: voice_access_ai_laptop
+    ports:
+      - "9000:9000"
+    volumes:
+      - .:/app
+      - ./data:/app/data
+      - ./models:/app/models
+    env_file:
+      - .env.docker
+    environment:
+      - APP_ENV=docker
+      - PYTHONUNBUFFERED=1
+      # 强制 CPU 模式
+      - VOICE_ENGINE_DEVICE=cpu
+      # 使用轻量级 Embedding 模型 (减少内存占用)
+      - RAG_EMBEDDING_MODEL=sentence-transformers/all-MiniLM-L6-v2
+      # 减少并发 Worker 数
+      - WEB_CONCURRENCY=1
+      # AI Service 实际上不直连 SQL DB，但保持一致性
+      - DB_HOST=db
+    command: uvicorn voice_engine.ai_app:app --host 0.0.0.0 --port 9000 --reload
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.laptop
+    container_name: voice_access_backend_laptop
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+      - ./data:/app/data
+      - ./models:/app/models
+    env_file:
+      - .env.docker
+    environment:
+      - APP_ENV=docker
+      - PYTHONUNBUFFERED=1
+      # 使用 MySQL
+      - DB_ENGINE=django.db.backends.mysql
+      - DB_NAME=${DB_NAME:-voice_access_db}
+      - DB_USER=${DB_USER:-voice_user}
+      - DB_PASSWORD=${DB_PASSWORD:-voice_password}
+      - DB_HOST=db
+      - DB_PORT=3306
+      - AI_SERVICE_URL=http://ai_service:9000
+    # 初始化数据库并启动
+    command: >
+      sh -c "python backend/manage.py migrate &&
+             python backend/manage.py runserver 0.0.0.0:8000"
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+      ai_service:
+        condition: service_started
+
+  frontend:
+    build: ./frontend
+    container_name: voice_access_frontend_laptop
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - VITE_API_TARGET=http://backend:8000
+
+volumes:
+  db_data_laptop:

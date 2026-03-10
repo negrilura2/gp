@@ -1,4 +1,4 @@
-# Generated from environment.yml
+# Generated from environment.yml for CPU-only environments
 altair==5.5.0
 anyio==4.12.1
 asgiref==3.11.1
@@ -103,9 +103,9 @@ tensorboard==2.20.0
 threadpoolctl==3.6.0
 tiktoken==0.12.0
 toml==0.10.2
-torch==2.7.1+cu118
-torchaudio==2.7.1+cu118
-torchvision==0.22.1+cu118
+torch==2.7.1
+torchaudio==2.7.1
+torchvision==0.22.1
 tornado==6.5.4
 tqdm==4.67.3
 transformers==4.57.6

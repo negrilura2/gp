@@ -17,12 +17,16 @@ RUN apt-get update && apt-get install -y \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
-# 复制依赖文件 (利用 Docker 缓存)
-COPY requirements.txt .
+# 复制 CPU 专用依赖文件
+COPY requirements.cpu.txt requirements.txt
 
-# 安装 Python 依赖
-# 使用清华源加速，并添加 PyTorch 官方源以支持 +cu118 版本
-RUN pip install --no-cache-dir -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple --extra-index-url https://download.pytorch.org/whl/cu118
+# 安装 Python 依赖 (CPU Optimized)
+# 1. 使用清华源加速
+# 2. 使用 PyTorch CPU 官方源 (大幅减小体积，避免下载 CUDA 库)
+# 3. --no-cache-dir 减小镜像体积
+RUN pip install --no-cache-dir -r requirements.txt \
+    -i https://pypi.tuna.tsinghua.edu.cn/simple \
+    --extra-index-url https://download.pytorch.org/whl/cpu
 
 # 复制项目代码
 COPY . .
@@ -32,6 +36,8 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 ENV PROJECT_ROOT=/app
 ENV PYTHONPATH=/app
+# 强制使用 CPU
+ENV VOICE_ENGINE_DEVICE=cpu
 
 # 暴露端口 (Django 默认)
 EXPOSE 8000
