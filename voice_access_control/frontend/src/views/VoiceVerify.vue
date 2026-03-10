@@ -589,6 +589,91 @@ function stopRecording() {
 }
 
 // -----------------------------------------------------------------------------
+// Audio Playback Logic (TTS)
+// -----------------------------------------------------------------------------
+let mediaSource = null;
+let sourceBuffer = null;
+let audioPlayer = new Audio(); // Global player instance
+let audioQueue = [];           // Binary queue
+let isAudioUpdating = false;   // Renamed from isUpdating to avoid conflicts
+
+const initAudioStream = () => {
+    audioPlayer.pause();
+    audioQueue = [];
+    isAudioUpdating = false;
+
+    mediaSource = new MediaSource();
+    audioPlayer.src = URL.createObjectURL(mediaSource);
+
+    mediaSource.addEventListener('sourceopen', () => {
+        try {
+            // Edge TTS returns MP3 (audio/mpeg)
+            sourceBuffer = mediaSource.addSourceBuffer('audio/mpeg');
+            sourceBuffer.addEventListener('updateend', () => {
+                isAudioUpdating = false;
+                processQueue();
+            });
+        } catch (e) {
+            console.error("MSE AddSourceBuffer Error:", e);
+        }
+    });
+
+    audioPlayer.play().catch(e => console.error("等待用户交互以播放音频"));
+};
+
+const processQueue = () => {
+    if (isAudioUpdating || audioQueue.length === 0 || !sourceBuffer || sourceBuffer.updating) {
+        return;
+    }
+
+    isAudioUpdating = true;
+    const chunk = audioQueue.shift();
+    try {
+        sourceBuffer.appendBuffer(chunk);
+    } catch (e) {
+        console.error("SourceBuffer Append Error:", e);
+        isAudioUpdating = false;
+    }
+};
+
+const stopAudio = () => {
+    audioPlayer.pause();
+    audioQueue = [];
+    isAudioUpdating = false;
+
+    if (mediaSource) {
+        if (mediaSource.readyState === 'open') {
+            try {
+                mediaSource.endOfStream();
+            } catch (e) {
+            }
+        }
+        mediaSource = null;
+    }
+
+    if (audioPlayer.src) {
+        URL.revokeObjectURL(audioPlayer.src);
+        audioPlayer.src = '';
+    }
+};
+
+const handleAudioChunk = (base64Data) => {
+    try {
+        const binaryString = atob(base64Data);
+        const len = binaryString.length;
+        const bytes = new Uint8Array(len);
+        for (let i = 0; i < len; i++) {
+            bytes[i] = binaryString.charCodeAt(i);
+        }
+
+        audioQueue.push(bytes);
+        processQueue();
+    } catch (e) {
+        console.error("Base64 Decode Error:", e);
+    }
+};
+
+// -----------------------------------------------------------------------------
 // WebSocket Streaming Logic
 // -----------------------------------------------------------------------------
 const TARGET_SAMPLE_RATE = 16000;
@@ -616,6 +701,7 @@ async function startWebSocket() {
       statusMessage.value = "已连接，请说话...";
       isStreaming.value = true;
       agentResult.value = null; // Clear previous result
+      initAudioStream(); // Initialize audio playback
       await startAudioCapture();
     };
 
@@ -624,6 +710,10 @@ async function startWebSocket() {
         const data = JSON.parse(event.data);
         if (data.type === 'result') {
           agentResult.value = data;
+          // Handle TTS Audio if present
+          if (data.audio) {
+              handleAudioChunk(data.audio);
+          }
           // Sync with legacy result format for compatibility
           if (data.identity) {
              result.value = {
@@ -671,6 +761,7 @@ function stopWebSocket() {
     ws = null;
   }
   stopAudioCapture();
+  stopAudio(); // Stop audio playback
 }
 
 async function startAudioCapture() {

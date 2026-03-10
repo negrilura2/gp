@@ -170,6 +170,7 @@ async def websocket_audio(websocket: WebSocket):
     svc = VoiceService.get_instance()
     stt = STTService.get_instance()
     agent_svc = AgentService.get_instance()
+    tts_svc = TTSService.get_instance()
     loop = asyncio.get_running_loop()
 
     try:
@@ -241,6 +242,19 @@ async def websocket_audio(websocket: WebSocket):
                         logger.error(f"Failed to write log to DB: {db_err}")
                     # ------------------------
 
+                    # Generate TTS audio
+                    audio_base64 = None
+                    agent_text = agent_response.get("response", "")
+                    if agent_text:
+                        try:
+                            logger.info(f"Generating TTS for: {agent_text[:30]}...")
+                            audio_bytes = await tts_svc.generate_audio(agent_text)
+                            if audio_bytes:
+                                audio_base64 = base64.b64encode(audio_bytes).decode('utf-8')
+                                logger.info(f"TTS generated {len(audio_bytes)} bytes")
+                        except Exception as e:
+                            logger.error(f"TTS generation error: {e}")
+
                     response = {
                         "type": "result",
                         "identity": {
@@ -250,7 +264,8 @@ async def websocket_audio(websocket: WebSocket):
                         },
                         "text": text,
                         "language": trans_res.get("language"),
-                        "agent": agent_response
+                        "agent": agent_response,
+                        "audio": audio_base64
                     }
                     await websocket.send_json(response)
 

@@ -156,6 +156,12 @@ REST_FRAMEWORK = {
 }
 
 
+# ---------- OpenClaw Integration ----------
+OPENCLAW_ENABLED = os.getenv('OPENCLAW_ENABLED', 'False').lower() in ('true', '1')
+OPENCLAW_API_URL = os.getenv('OPENCLAW_API_URL', 'http://localhost:18789')
+OPENCLAW_DEFAULT_RECIPIENT = os.getenv('OPENCLAW_DEFAULT_RECIPIENT', '')
+OPENCLAW_MODE = os.getenv('OPENCLAW_MODE', 'cli')  # 'cli' or 'http'
+
 # ---------- Logging ----------
 LOG_DIR = BASE_DIR / 'logs'
 LOG_DIR.mkdir(exist_ok=True)

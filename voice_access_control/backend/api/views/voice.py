@@ -16,6 +16,7 @@ from ..view_utils import (
     validate_audio_file,
     get_default_feature_dir_for_eval,
 )
+from ..utils.openclaw import claw_client
 
 logger = logging.getLogger("api")
 
@@ -192,6 +193,10 @@ class VerifyView(APIView):
                 "email": matched_user.email,
                 "is_staff": matched_user.is_staff,
             }
+            # OpenClaw 通知：验证成功（可选，防止打扰可设为仅重要人员或时段）
+            claw_client.send_notification(
+                f"✅ 声纹验证通过\n用户: {matched_user.username}\n置信度: {best_score:.2f}"
+            )
 
         VerifyLog.objects.create(
             user=request.user if request.user.is_authenticated else None,
@@ -204,6 +209,12 @@ class VerifyView(APIView):
             client_ip=client_ip,
             error_msg="",
         )
+        
+        if result == "REJECT":
+            # OpenClaw 通知：验证失败（陌生人入侵警告）
+            claw_client.send_notification(
+                f"🚨 声纹验证失败 (潜在入侵)\n匹配用户: {best_spk}\n置信度: {best_score:.2f} (阈值 {thr})\n来源IP: {client_ip}"
+            )
 
         logger.info(f"声纹验证: {best_spk} score={best_score:.4f} => {result}")
         return Response(
