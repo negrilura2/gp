@@ -1,0 +1,8 @@
+﻿{
+    "method":  "snorm",
+    "eer":  0.1099,
+    "mindcf_res":  {
+                       "min_dcf":  0.008298
+                   },
+    "threshold":  0.4214164861647064
+}

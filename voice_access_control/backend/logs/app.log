@@ -13977,3 +13977,95 @@ For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/St
 [2026-03-02 23:42:40,318] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 6057
 [2026-03-03 00:15:05,507] INFO django.utils.autoreload D:\traepg\gp\voice_access_control\backend\backend\__init__.py changed, reloading.
 [2026-03-03 00:15:09,575] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-03-22 23:47:23,234] INFO django.utils.autoreload Watching for file changes with StatReloader
+[2026-03-22 23:51:01,284] WARNING django.request Not Found: /
+[2026-03-22 23:51:01,284] WARNING django.server "GET / HTTP/1.1" 404 2164
+[2026-03-22 23:51:01,618] WARNING django.request Not Found: /favicon.ico
+[2026-03-22 23:51:01,618] WARNING django.server "GET /favicon.ico HTTP/1.1" 404 2215
+[2026-03-22 23:54:00,077] INFO django.server "GET /api/threshold/ HTTP/1.1" 200 17
+[2026-03-22 23:56:14,833] INFO django.server "GET /api/threshold/ HTTP/1.1" 200 17
+[2026-03-22 23:56:40,195] INFO django.server "GET /api/threshold/ HTTP/1.1" 200 17
+[2026-03-22 23:57:08,021] INFO api 用户登录: admin
+[2026-03-22 23:57:08,026] INFO django.server "POST /api/login/ HTTP/1.1" 200 99
+[2026-03-22 23:57:08,052] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-03-22 23:57:08,268] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 5831
+[2026-03-22 23:57:08,294] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 5858
+[2026-03-22 23:57:08,314] INFO django.server "GET /api/users/?page=1&is_staff=false HTTP/1.1" 200 625
+[2026-03-22 23:57:08,350] INFO django.server "GET /api/admin-access-logs/ HTTP/1.1" 200 2584
+[2026-03-22 23:57:08,361] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-03-22 23:57:08,400] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 1043
+[2026-03-22 23:57:08,418] INFO django.server "GET /api/analysis/embedding/image/?method=tsne&score_norm=none HTTP/1.1" 200 69202
+[2026-03-22 23:57:08,510] INFO django.server "GET /api/models/ HTTP/1.1" 200 455
+[2026-03-22 23:57:08,557] INFO django.server "GET /api/roc/?t=1774195028211&norm_method=snorm HTTP/1.1" 200 545848
+[2026-03-22 23:57:08,564] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 1695
+[2026-03-22 23:57:08,577] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 5858
+[2026-03-22 23:57:17,009] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 5858
+[2026-03-22 23:57:18,447] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 5858
+[2026-03-22 23:57:19,701] INFO django.server "GET /api/models/ HTTP/1.1" 200 455
+[2026-03-22 23:57:19,712] INFO django.server "GET /api/analysis/embedding/image/?method=tsne&score_norm=snorm HTTP/1.1" 200 69202
+[2026-03-22 23:57:19,747] INFO django.server "GET /api/roc/?t=1774195039687&norm_method=snorm HTTP/1.1" 200 545848
+[2026-03-22 23:57:21,863] INFO django.server "GET /api/analysis/embedding/image/?method=tsne&score_norm=snorm HTTP/1.1" 200 69202
+[2026-03-22 23:57:34,372] INFO django.server "GET /api/admin-access-logs/ HTTP/1.1" 200 2584
+[2026-03-22 23:57:35,121] INFO django.server "GET /api/models/ HTTP/1.1" 200 455
+[2026-03-22 23:57:35,168] INFO django.server "GET /api/roc/?t=1774195055114&norm_method=snorm HTTP/1.1" 200 545848
+[2026-03-22 23:57:35,170] INFO django.server "GET /api/analysis/embedding/image/?method=tsne&score_norm=snorm HTTP/1.1" 200 69202
+[2026-03-22 23:57:39,134] INFO django.server "GET /api/models/ HTTP/1.1" 200 455
+[2026-03-22 23:57:39,145] INFO django.server "GET /api/analysis/embedding/image/?method=tsne&score_norm=snorm HTTP/1.1" 200 69202
+[2026-03-22 23:57:39,182] INFO django.server "GET /api/roc/?t=1774195059122&norm_method=snorm HTTP/1.1" 200 545848
+[2026-03-22 23:57:51,011] INFO api 用户登录: admin
+[2026-03-22 23:57:51,017] INFO django.server "POST /api/login/ HTTP/1.1" 200 99
+[2026-03-22 23:57:51,172] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 5831
+[2026-03-22 23:57:51,193] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 5858
+[2026-03-22 23:57:51,202] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-03-22 23:57:51,220] INFO django.server "GET /api/users/?page=1&is_staff=false HTTP/1.1" 200 625
+[2026-03-22 23:57:51,247] INFO django.server "GET /api/admin-access-logs/ HTTP/1.1" 200 2584
+[2026-03-22 23:57:51,255] INFO django.server "GET /api/models/ HTTP/1.1" 200 455
+[2026-03-22 23:57:51,322] INFO django.server "GET /api/roc/?t=1774195071141&norm_method=snorm HTTP/1.1" 200 545848
+[2026-03-22 23:57:51,337] INFO django.server "GET /api/analysis/embedding/image/?method=tsne&score_norm=none HTTP/1.1" 200 69202
+[2026-03-22 23:57:51,337] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 1043
+[2026-03-22 23:57:51,348] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 1695
+[2026-03-22 23:57:51,363] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 5858
+[2026-03-22 23:58:00,227] INFO django.server "DELETE /api/users/5/voiceprint/ HTTP/1.1" 200 84
+[2026-03-22 23:58:00,262] INFO django.server "GET /api/users/?page=1&is_staff=false HTTP/1.1" 200 626
+[2026-03-22 23:58:08,292] INFO api 用户登录: guo
+[2026-03-22 23:58:08,293] INFO django.server "POST /api/login/ HTTP/1.1" 200 98
+[2026-03-22 23:58:08,347] INFO django.server "GET /api/me/ HTTP/1.1" 200 106
+[2026-03-22 23:58:08,360] INFO django.server "GET /api/my-logs/ HTTP/1.1" 200 5859
+[2026-03-22 23:58:09,164] WARNING api Voiceprint preview failed: user 'guo' not found in Service.
+[2026-03-22 23:58:09,165] INFO django.server "GET /api/me/voiceprint/ HTTP/1.1" 200 91
+[2026-03-22 23:58:40,335] INFO api 声纹注册成功: guo, 7 条音频
+[2026-03-22 23:58:40,335] INFO django.server "POST /api/enroll/ HTTP/1.1" 200 48
+[2026-03-22 23:58:40,409] INFO django.server "GET /api/me/voiceprint/ HTTP/1.1" 200 547
+[2026-03-22 23:58:40,421] INFO django.server "GET /api/me/ HTTP/1.1" 200 105
+[2026-03-22 23:58:59,451] INFO django.server "GET /api/threshold/ HTTP/1.1" 200 17
+[2026-03-22 23:59:12,888] INFO django.server "GET /api/threshold/ HTTP/1.1" 200 17
+[2026-03-22 23:59:30,511] INFO django.server "GET /api/threshold/ HTTP/1.1" 200 17
+[2026-03-22 23:59:50,751] INFO django.server "GET /api/threshold/ HTTP/1.1" 200 17
+[2026-03-23 00:00:02,265] INFO api 用户登录: admin
+[2026-03-23 00:00:02,270] INFO django.server "POST /api/login/ HTTP/1.1" 200 99
+[2026-03-23 00:00:02,442] INFO django.server "GET /api/stats/?mode=echarts HTTP/1.1" 200 5901
+[2026-03-23 00:00:02,473] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 5583
+[2026-03-23 00:00:02,494] INFO django.server "GET /api/me/ HTTP/1.1" 200 107
+[2026-03-23 00:00:02,518] INFO django.server "GET /api/users/?page=1&is_staff=false HTTP/1.1" 200 625
+[2026-03-23 00:00:02,584] INFO django.server "GET /api/roc/?t=1774195202408&norm_method=snorm HTTP/1.1" 200 545848
+[2026-03-23 00:00:02,614] INFO django.server "GET /api/admin-access-logs/ HTTP/1.1" 200 2584
+[2026-03-23 00:00:02,623] INFO django.server "GET /api/models/ HTTP/1.1" 200 455
+[2026-03-23 00:00:02,636] INFO django.server "GET /api/dashboard/ HTTP/1.1" 200 1072
+[2026-03-23 00:00:02,638] INFO django.server "GET /api/analysis/embedding/image/?method=tsne&score_norm=none HTTP/1.1" 200 69202
+[2026-03-23 00:00:02,650] INFO django.server "GET /api/roc/evaluate/status/ HTTP/1.1" 200 1695
+[2026-03-23 00:00:02,670] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 5583
+[2026-03-23 00:00:04,048] INFO django.server "GET /api/admin-access-logs/ HTTP/1.1" 200 2584
+[2026-03-23 00:00:05,850] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 5583
+[2026-03-23 00:00:06,506] INFO django.server "GET /api/logs/?page=1 HTTP/1.1" 200 5583
+[2026-03-23 00:00:11,986] INFO django.server "GET /api/models/ HTTP/1.1" 200 455
+[2026-03-23 00:00:11,992] INFO django.server "GET /api/analysis/embedding/image/?method=tsne&score_norm=snorm HTTP/1.1" 200 69202
+[2026-03-23 00:00:12,036] INFO django.server "GET /api/roc/?t=1774195211975&norm_method=snorm HTTP/1.1" 200 545848
+[2026-03-23 00:00:13,469] INFO django.server "GET /api/admin-access-logs/ HTTP/1.1" 200 2584
+[2026-03-23 00:00:15,829] INFO django.server "GET /api/models/ HTTP/1.1" 200 455
+[2026-03-23 00:00:15,844] INFO django.server "GET /api/analysis/embedding/image/?method=tsne&score_norm=snorm HTTP/1.1" 200 69202
+[2026-03-23 00:00:15,875] INFO django.server "GET /api/roc/?t=1774195215819&norm_method=snorm HTTP/1.1" 200 545848
+[2026-03-23 00:00:17,473] INFO django.server "GET /api/admin-access-logs/ HTTP/1.1" 200 2584
+[2026-03-23 00:00:23,539] INFO django.server "POST /api/threshold/ HTTP/1.1" 200 18
+[2026-03-23 00:00:29,024] INFO django.server "GET /api/threshold/ HTTP/1.1" 200 18
+[2026-03-23 00:00:49,197] INFO django.server "GET /api/threshold/ HTTP/1.1" 200 18
+[2026-03-23 00:01:10,343] INFO django.server "GET /api/threshold/ HTTP/1.1" 200 18

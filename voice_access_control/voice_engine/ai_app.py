@@ -6,6 +6,7 @@ import time
 from typing import List, Optional
 import logging
 import asyncio
+import base64
 
 from fastapi import FastAPI, UploadFile, File, Form, WebSocket, WebSocketDisconnect
 from fastapi.responses import JSONResponse
@@ -25,6 +26,7 @@ from api.models import VerifyLog
 # ------------------
 
 from voice_engine.services.agent_service import AgentService
+from voice_engine.services.tts_service import TTSService
 from .service import VoiceService
 from .services.stt_service import STTService
 from voice_engine.services.stream_processor import AudioBuffer

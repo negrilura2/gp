@@ -1,0 +1,8 @@
+﻿{
+    "method":  "znorm",
+    "eer":  0.1089,
+    "mindcf_res":  {
+                       "min_dcf":  0.009051
+                   },
+    "threshold":  0.41363328139148153
+}
