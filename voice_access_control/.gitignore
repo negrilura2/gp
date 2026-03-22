@@ -40,15 +40,16 @@ Thumbs.db
 node_modules/
 frontend/node_modules/
 
-# Models
-*.pth
-*.pt
+# Models (Except the ones we want to keep)
+# *.pth
+# *.pt
 *.onnx
-*.pth
 frontend/dist/
+
+# Reports (Keep plots and metrics for thesis)
 reports/backend_responses/
-reports/plots/
-reports/noise_tests/
-reports/metrics/
-reports/*.png
-reports/*.json
+# reports/plots/
+# reports/noise_tests/
+# reports/metrics/
+# reports/*.png
+# reports/*.json
