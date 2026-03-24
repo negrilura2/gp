@@ -28,6 +28,8 @@ env/
 backend/db.sqlite3
 backend/logs/
 backend/api_verify_output.json
+backend/*.bak
+backend/data_dump*.json
 *.pyc
 
 # OS / editor junk
@@ -53,3 +55,7 @@ reports/backend_responses/
 # reports/metrics/
 # reports/*.png
 # reports/*.json
+
+# Temporary / local artifacts
+scripts/temp_*.py
+envv.md

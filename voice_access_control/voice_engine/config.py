@@ -128,7 +128,7 @@ VALID_FEATURE_TYPES = [FEATURE_TYPE_MFCC_DELTA, FEATURE_TYPE_LOGMEL]
 # -----------------------------------------------------------------------------
 # 5. LLM Configuration (DeepSeek)
 # -----------------------------------------------------------------------------
-DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY", "sk-966746e1e1d347aaa7a308960b7958b1")
+DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY", "").strip()
 DEEPSEEK_BASE_URL = os.getenv("DEEPSEEK_BASE_URL", "https://api.deepseek.com")
 DEEPSEEK_MODEL = os.getenv("DEEPSEEK_MODEL", "deepseek-chat")
 
