@@ -37,3 +37,17 @@ class TTSService:
         except Exception as e:
             logger.error(f"TTS generation failed: {e}")
             return b""
+
+    async def generate_audio_stream(self, text: str):
+        """
+        Stream audio chunks back as soon as they are generated.
+        """
+        if not text:
+            return
+        try:
+            communicate = edge_tts.Communicate(text, self.voice)
+            async for chunk in communicate.stream():
+                if chunk["type"] == "audio":
+                    yield chunk["data"]
+        except Exception as e:
+            logger.error(f"TTS streaming failed: {e}")

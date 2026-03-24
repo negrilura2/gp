@@ -597,10 +597,40 @@ let audioPlayer = new Audio(); // Global player instance
 let audioQueue = [];           // Binary queue
 let isAudioUpdating = false;   // Renamed from isUpdating to avoid conflicts
 
-const initAudioStream = () => {
-    audioPlayer.pause();
+const stopAudio = () => {
+    // 1. 立刻让原播放器静音并暂停
+    if (audioPlayer) {
+        audioPlayer.pause();
+        audioPlayer.removeAttribute('src'); // 彻底断开与原 Source 的连接
+        audioPlayer.load(); // 强制停止加载
+    }
+    
     audioQueue = [];
     isAudioUpdating = false;
+
+    if (mediaSource) {
+        if (mediaSource.readyState === 'open') {
+            try {
+                // 如果 sourceBuffer 还在 updating，可以尝试 abort
+                if (sourceBuffer && sourceBuffer.updating) {
+                    sourceBuffer.abort();
+                }
+                mediaSource.endOfStream();
+            } catch (e) {
+                // 忽略结束流时的错误
+            }
+        }
+        mediaSource = null;
+        sourceBuffer = null;
+    }
+};
+
+const initAudioStream = () => {
+    stopAudio(); // 确保旧的被彻底清理
+
+    // 创建一个全新的 Audio 实例，避免旧流干扰
+    audioPlayer = new Audio();
+    audioPlayer.autoplay = true;
 
     mediaSource = new MediaSource();
     audioPlayer.src = URL.createObjectURL(mediaSource);
@@ -613,6 +643,8 @@ const initAudioStream = () => {
                 isAudioUpdating = false;
                 processQueue();
             });
+            // Try processing queue immediately in case chunks arrived before sourceopen
+            processQueue();
         } catch (e) {
             console.error("MSE AddSourceBuffer Error:", e);
         }
@@ -633,27 +665,6 @@ const processQueue = () => {
     } catch (e) {
         console.error("SourceBuffer Append Error:", e);
         isAudioUpdating = false;
-    }
-};
-
-const stopAudio = () => {
-    audioPlayer.pause();
-    audioQueue = [];
-    isAudioUpdating = false;
-
-    if (mediaSource) {
-        if (mediaSource.readyState === 'open') {
-            try {
-                mediaSource.endOfStream();
-            } catch (e) {
-            }
-        }
-        mediaSource = null;
-    }
-
-    if (audioPlayer.src) {
-        URL.revokeObjectURL(audioPlayer.src);
-        audioPlayer.src = '';
     }
 };
 
@@ -708,22 +719,35 @@ async function startWebSocket() {
     ws.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data);
-        if (data.type === 'result') {
-          agentResult.value = data;
-          // Handle TTS Audio if present
-          if (data.audio) {
-              handleAudioChunk(data.audio);
-          }
-          // Sync with legacy result format for compatibility
-          if (data.identity) {
-             result.value = {
-                predicted_user: data.identity.user,
-                score: data.identity.score,
-                threshold: "N/A",
-                result: data.identity.status,
-                door_state: data.identity.status === 'ACCEPT' ? 'OPEN' : 'CLOSED'
-             };
-          }
+        if (data.type === 'interrupted') {
+          console.log("Interrupted by user");
+          stopAudio();
+          initAudioStream(); // Re-init for next possible audio
+          statusMessage.value = "已打断，正在聆听...";
+        } else if (data.type === 'result_start') {
+          agentResult.value = {
+            identity: data.identity,
+            text: data.text,
+            agent: { response: "" }
+          };
+          result.value = {
+            predicted_user: data.identity.user,
+            score: data.identity.score,
+            threshold: "N/A",
+            result: data.identity.status,
+            door_state: data.identity.status === 'ACCEPT' ? 'OPEN' : 'CLOSED'
+          };
+          statusMessage.value = `你: "${data.text}"`;
+        } else if (data.type === 'agent_chunk') {
+          if (!agentResult.value) agentResult.value = { agent: { response: "" } };
+          if (!agentResult.value.agent) agentResult.value.agent = { response: "" };
+          agentResult.value.agent.response += data.text;
+        } else if (data.type === 'tts_chunk') {
+          handleAudioChunk(data.audio);
+        } else if (data.type === 'agent_text_done') {
+          // 文本生成完成
+        } else if (data.type === 'agent_done') {
+          statusMessage.value = "回答完毕，请继续说话...";
         } else if (data.type === 'error') {
           ElMessage.error(data.message);
         }

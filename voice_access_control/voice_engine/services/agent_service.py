@@ -241,3 +241,69 @@ class AgentService:
         except Exception as e:
             logger.error(f"Agent processing error: {e}")
             return {"status": "error", "message": str(e)}
+
+    async def process_command_stream(self, text: str, user_context: Dict[str, Any]):
+        """
+        流式处理自然语言指令，逐块 yield 文本
+        """
+        if self.agent_executor is None:
+            yield {"type": "error", "message": "Agent not initialized"}
+            return
+
+        if not text or len(text.strip()) < 2:
+            return
+            
+        user_identity = user_context.get("user", "unknown")
+        confidence = float(user_context.get("score", 0.0) or 0.0)
+
+        # 1. 本地 NLU 拦截（因为是秒级响应，直接 yield 完整结果）
+        intent_name, slots = self.local_nlu.parse(text)
+        thr = self._get_verify_threshold()
+        
+        if intent_name == "open_door":
+            if confidence > thr:
+                tool_resp = open_door(user_identity)
+                yield {"type": "intent", "intent": "command", "source": "local_nlu"}
+                yield {"type": "chunk", "content": tool_resp}
+                return
+            else:
+                yield {"type": "intent", "intent": "command", "source": "local_nlu"}
+                yield {"type": "chunk", "content": f"识别到开门指令，但您的身份置信度 ({confidence:.2f}) 低于阈值，无法执行。"}
+                return
+
+        if intent_name == "turn_on_light":
+            location = slots.get("location", "客厅")
+            tool_resp = turn_on_light(location)
+            yield {"type": "intent", "intent": "command", "source": "local_nlu"}
+            yield {"type": "chunk", "content": tool_resp}
+            return
+
+        if intent_name == "alert_police":
+            reason = slots.get("reason", "紧急情况")
+            tool_resp = alert_police(reason)
+            yield {"type": "intent", "intent": "command", "source": "local_nlu"}
+            yield {"type": "chunk", "content": tool_resp}
+            return
+            
+        # 2. 云端大模型流式输出
+        yield {"type": "intent", "intent": "chat", "source": "cloud_agent"}
+        try:
+            async for event in self.agent_executor.astream_events(
+                {"input": text, "user_identity": user_identity, "confidence": f"{confidence:.2f}"},
+                version="v2"
+            ):
+                if event["event"] == "on_chat_model_stream":
+                    chunk = event["data"]["chunk"].content
+                    if chunk:
+                        # 兼容 content 可能是列表或字符串的情况
+                        if isinstance(chunk, list):
+                            for c in chunk:
+                                if "text" in c:
+                                    yield {"type": "chunk", "content": c["text"]}
+                        else:
+                            yield {"type": "chunk", "content": chunk}
+                elif event["event"] == "on_tool_end":
+                    pass
+        except Exception as e:
+            logger.error(f"Agent streaming error: {e}")
+            yield {"type": "error", "message": str(e)}

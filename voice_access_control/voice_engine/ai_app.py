@@ -175,6 +175,138 @@ async def websocket_audio(websocket: WebSocket):
     tts_svc = TTSService.get_instance()
     loop = asyncio.get_running_loop()
 
+    current_task = None
+
+    async def process_interaction(seg_bytes):
+        fd, tmp_path = tempfile.mkstemp(suffix=".wav")
+        os.close(fd)
+        with open(tmp_path, "wb") as f:
+            f.write(seg_bytes)
+
+        try:
+            start_time = time.time()
+            verify_res = await loop.run_in_executor(None, svc.verify, tmp_path)
+            trans_res = await loop.run_in_executor(None, stt.transcribe, tmp_path)
+            text = trans_res.get("text", "")
+
+            if not text or len(text.strip()) < 2:
+                return
+
+            await websocket.send_json({
+                "type": "result_start",
+                "text": text,
+                "identity": {
+                    "user": verify_res.get("best_speaker"),
+                    "score": verify_res.get("best_score"),
+                    "status": verify_res.get("result")
+                }
+            })
+
+            user_context = {
+                "user": verify_res.get("best_speaker"),
+                "score": verify_res.get("best_score")
+            }
+
+            full_response = ""
+            intent = "chat"
+            source = "cloud_agent"
+
+            # 1. Stream Text
+            # We will also buffer sentences here to send to TTS immediately
+            # achieving true End-to-End Streaming.
+            sentence_buffer = ""
+            
+            async for chunk_obj in agent_svc.process_command_stream(text, user_context):
+                if asyncio.current_task().cancelled():
+                    break
+                if chunk_obj["type"] == "intent":
+                    intent = chunk_obj.get("intent", intent)
+                    source = chunk_obj.get("source", source)
+                elif chunk_obj["type"] == "chunk":
+                    content = chunk_obj["content"]
+                    full_response += content
+                    sentence_buffer += content
+                    
+                    # Send text to frontend for typing effect
+                    await websocket.send_json({
+                        "type": "agent_chunk",
+                        "text": content
+                    })
+
+                    # If we hit a punctuation mark, send the buffered sentence to TTS immediately
+                    if any(p in sentence_buffer for p in ['。', '！', '？', '；', '\n', '.', '!', '?']):
+                        clean_sentence = sentence_buffer.replace('*', '').replace('#', '').strip()
+                        if clean_sentence:
+                            # Start a background task for this sentence's TTS to not block the LLM stream
+                            async def stream_sentence_audio(text_to_speak):
+                                async for audio_chunk in tts_svc.generate_audio_stream(text_to_speak):
+                                    if asyncio.current_task().cancelled():
+                                        break
+                                    await websocket.send_json({
+                                        "type": "tts_chunk",
+                                        "audio": base64.b64encode(audio_chunk).decode('utf-8')
+                                    })
+                            
+                            # We await it directly here to ensure audio chunks arrive in order.
+                            # Since Edge-TTS is fast, this slight blocking is acceptable and keeps order.
+                            await stream_sentence_audio(clean_sentence)
+                            
+                        sentence_buffer = ""
+
+                elif chunk_obj["type"] == "error":
+                    await websocket.send_json({"type": "error", "message": chunk_obj["message"]})
+            
+            # Process any remaining text in the buffer
+            if sentence_buffer.strip():
+                clean_sentence = sentence_buffer.replace('*', '').replace('#', '').strip()
+                if clean_sentence:
+                    async for audio_chunk in tts_svc.generate_audio_stream(clean_sentence):
+                        if asyncio.current_task().cancelled():
+                            break
+                        await websocket.send_json({
+                            "type": "tts_chunk",
+                            "audio": base64.b64encode(audio_chunk).decode('utf-8')
+                        })
+
+            await websocket.send_json({"type": "agent_text_done", "full_text": full_response})
+            await websocket.send_json({"type": "agent_done"})
+
+            latency = int((time.time() - start_time) * 1000)
+
+            # --- Async DB Logging ---
+            try:
+                username = verify_res.get("best_speaker")
+                user_obj = await loop.run_in_executor(None, lambda: User.objects.filter(username=username).first())
+                await loop.run_in_executor(None, lambda: VerifyLog.objects.create(
+                    user=user_obj,
+                    predicted_user=username,
+                    score=verify_res.get("best_score", 0.0),
+                    result=verify_res.get("result", "REJECT"),
+                    intent=intent,
+                    source=source,
+                    response_text=full_response[:500],
+                    latency_ms=latency,
+                    client_ip=websocket.client.host
+                ))
+            except Exception as db_err:
+                logger.error(f"Failed to write log to DB: {db_err}")
+
+        except asyncio.CancelledError:
+            logger.info("Interaction cancelled by new speech.")
+            try:
+                await websocket.send_json({"type": "agent_interrupted"})
+            except:
+                pass
+            raise
+        except Exception as e:
+            logger.error(f"Stream processing error: {e}")
+            await websocket.send_json({"type": "error", "message": str(e)})
+        finally:
+            try:
+                os.remove(tmp_path)
+            except OSError:
+                pass
+
     try:
         chunk_count = 0
         while True:
@@ -185,100 +317,25 @@ async def websocket_audio(websocket: WebSocket):
                 
             segments = buffer.process(chunk)
 
+            # If user starts speaking (VAD triggered), cancel ongoing response!
+            if buffer.triggered:
+                if current_task and not current_task.done():
+                    logger.info("User started speaking, interrupting current AI response...")
+                    current_task.cancel()
+                    current_task = None
+                    await websocket.send_json({"type": "interrupted"})
+
             if segments:
-                logger.info(f"VAD triggered! Processing {len(segments)} segment(s)...")
-
-            for seg_bytes in segments:
-                fd, tmp_path = tempfile.mkstemp(suffix=".wav")
-                os.close(fd)
-                with open(tmp_path, "wb") as f:
-                    f.write(seg_bytes)
-
-                try:
-                    start_time = time.time()
-                    verify_res = await loop.run_in_executor(None, svc.verify, tmp_path)
-                    trans_res = await loop.run_in_executor(None, stt.transcribe, tmp_path)
-                    text = trans_res.get("text", "")
-
-                    agent_response = {}
-                    intent = "verify_only"
-                    source = "legacy"
-                    
-                    if text and len(text.strip()) > 1:
-                        user_context = {
-                            "user": verify_res.get("best_speaker"),
-                            "score": verify_res.get("best_score")
-                        }
-                        agent_response = await agent_svc.process_command(text, user_context)
-                        # Extract intent and source from agent response
-                        if agent_response.get("status") == "success":
-                            source = agent_response.get("source", "cloud_agent")
-                            # Simple heuristic for intent based on source or content
-                            if source == "local_nlu":
-                                intent = "command"
-                            elif "Tool called" in agent_response.get("response", ""):
-                                intent = "agent_action"
-                            else:
-                                intent = "chat"
-
-                    latency = int((time.time() - start_time) * 1000)
-
-                    # --- Async DB Logging ---
-                    try:
-                        # Find user object
-                        username = verify_res.get("best_speaker")
-                        user_obj = await loop.run_in_executor(None, lambda: User.objects.filter(username=username).first())
-                        
-                        await loop.run_in_executor(None, lambda: VerifyLog.objects.create(
-                            user=user_obj,
-                            predicted_user=username,
-                            score=verify_res.get("best_score", 0.0),
-                            result=verify_res.get("result", "REJECT"),
-                            intent=intent,
-                            source=source,
-                            response_text=agent_response.get("response", "")[:500], # Truncate if too long
-                            latency_ms=latency,
-                            client_ip=websocket.client.host
-                        ))
-                    except Exception as db_err:
-                        logger.error(f"Failed to write log to DB: {db_err}")
-                    # ------------------------
-
-                    # Generate TTS audio
-                    audio_base64 = None
-                    agent_text = agent_response.get("response", "")
-                    if agent_text:
-                        try:
-                            logger.info(f"Generating TTS for: {agent_text[:30]}...")
-                            audio_bytes = await tts_svc.generate_audio(agent_text)
-                            if audio_bytes:
-                                audio_base64 = base64.b64encode(audio_bytes).decode('utf-8')
-                                logger.info(f"TTS generated {len(audio_bytes)} bytes")
-                        except Exception as e:
-                            logger.error(f"TTS generation error: {e}")
-
-                    response = {
-                        "type": "result",
-                        "identity": {
-                            "user": verify_res.get("best_speaker"),
-                            "score": verify_res.get("best_score"),
-                            "status": verify_res.get("result")
-                        },
-                        "text": text,
-                        "language": trans_res.get("language"),
-                        "agent": agent_response,
-                        "audio": audio_base64
-                    }
-                    await websocket.send_json(response)
-
-                except Exception as e:
-                    logger.error(f"Stream processing error: {e}")
-                    await websocket.send_json({"type": "error", "message": str(e)})
-                finally:
-                    try:
-                        os.remove(tmp_path)
-                    except OSError:
-                        pass
+                logger.info(f"VAD speech ended! Processing {len(segments)} segment(s)...")
+                # Only process the last segment if multiple (edge case)
+                seg_bytes = segments[-1]
+                
+                # Cancel old task if still somehow running
+                if current_task and not current_task.done():
+                    current_task.cancel()
+                
+                # Start new task for processing
+                current_task = asyncio.create_task(process_interaction(seg_bytes))
 
     except asyncio.CancelledError:
         logger.info("WebSocket task cancelled (server shutdown)")
@@ -288,6 +345,8 @@ async def websocket_audio(websocket: WebSocket):
     except Exception as e:
         logger.error(f"WebSocket error: {e}")
     finally:
+        if current_task and not current_task.done():
+            current_task.cancel()
         try:
             await websocket.close()
         except:

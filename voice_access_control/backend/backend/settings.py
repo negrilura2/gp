@@ -8,8 +8,8 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 
-# 加载 .env 文件
-load_dotenv(os.path.join(Path(__file__).resolve().parent.parent.parent, '.env'))
+# 加载 .env 文件（允许 .env 覆盖系统环境变量）
+load_dotenv(os.path.join(Path(__file__).resolve().parent.parent.parent, '.env'), override=True)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -91,7 +91,7 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 
 
 # Database — 默认 SQLite（答辩 / 开发），可通过 .env 切 MySQL
-DB_ENGINE = os.getenv('DB_ENGINE', 'django.db.backends.sqlite3')
+DB_ENGINE = os.getenv('DB_ENGINE', 'django.db.backends.mysql')
 
 if DB_ENGINE == 'django.db.backends.sqlite3':
     DATABASES = {
@@ -109,6 +109,9 @@ else:
             'PASSWORD': os.getenv('DB_PASSWORD', ''),
             'HOST': os.getenv('DB_HOST', '127.0.0.1'),
             'PORT': os.getenv('DB_PORT', '3306'),
+            'OPTIONS': {
+                'charset': 'utf8mb4',
+            }
         }
     }
 
