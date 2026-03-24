@@ -12,17 +12,17 @@ env/
 .env.docker
 
 # Data files (audio, features, templates)
-data/raw/
-data/processed/
-data/features/
-data/voiceprints/
-data/recordings/
-*.wav
-*.flac
-*.mp3
-*.ogg
-*.m4a
-*.npy
+# data/raw/
+# data/processed/
+# data/features/
+# data/voiceprints/
+# data/recordings/
+# *.wav
+# *.flac
+# *.mp3
+# *.ogg
+# *.m4a
+# *.npy
 
 # Django runtime files
 backend/db.sqlite3
